@@ -695,8 +695,26 @@
           const resData = await res.json();
           state.fileSha = resData.content ? resData.content.sha : state.fileSha;
           showSaveIndicator('✓ Synchronisé avec GitHub');
+        } else if (res.status === 409) {
+          // Conflit de version SHA : récupérer immédiatement la dernière empreinte et retenter
+          const refetch = await fetch(GITHUB_API_URL, { headers: { 'Authorization': `token ${state.token}` } });
+          if (refetch.ok) {
+            state.fileSha = (await refetch.json()).sha;
+            const retryRes = await fetch(GITHUB_API_URL, {
+              method: 'PUT',
+              headers: { 'Authorization': `token ${state.token}`, 'Content-Type': 'application/json' },
+              body: JSON.stringify({ message: `${commitMsg} [${state.currentUser}]`, content, sha: state.fileSha, branch: 'main' })
+            });
+            if (retryRes.ok) {
+              const resData2 = await retryRes.json();
+              state.fileSha = resData2.content ? resData2.content.sha : state.fileSha;
+              showSaveIndicator('✓ Synchronisé avec GitHub');
+              return;
+            }
+          }
+          showSaveIndicator('Erreur sync GitHub (409)');
         } else {
-          showSaveIndicator('Erreur sync GitHub (vérifiez le token)');
+          showSaveIndicator('Erreur sync GitHub');
         }
       } catch (err) {
         console.error('Erreur saveDb:', err);
