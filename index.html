@@ -171,7 +171,7 @@
         </button>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         
         <!-- A FAIRE -->
         <div class="glass-card-subtle rounded-lg p-3 min-h-[460px] flex flex-col">
@@ -191,16 +191,7 @@
           <div class="space-y-2 flex-1 overflow-y-auto" id="kanban-in_progress"></div>
         </div>
 
-        <!-- TEST -->
-        <div class="glass-card-subtle rounded-lg p-3 min-h-[460px] flex flex-col">
-          <div class="flex justify-between items-center mb-3 pb-2 border-b border-gray-200/60 font-semibold text-xs">
-            <span>Banc de test</span>
-            <span class="text-gray-400 font-mono" id="count-testing">0</span>
-          </div>
-          <div class="space-y-2 flex-1 overflow-y-auto" id="kanban-testing"></div>
-        </div>
-
-        <!-- VALIDE -->
+        <!-- VALIDE / TERMINE -->
         <div class="glass-card-subtle rounded-lg p-3 min-h-[460px] flex flex-col">
           <div class="flex justify-between items-center mb-3 pb-2 border-b border-gray-200/60 font-semibold text-xs">
             <span>Validé</span>
@@ -314,7 +305,7 @@
             <option value="Domotique LTG">Domotique LTG</option>
             <option value="Véhicule Autonome">Véhicule Autonome</option>
             <option value="Cadre Commun">Cadre Commun (MQTT/Home Assistant)</option>
-            <option value="Banc de Test">Banc de Test</option>
+            <option value="Supervision & Comm">Supervision & Comm</option>
           </select>
         </div>
 
@@ -642,15 +633,16 @@
     }
 
     function renderKanban() {
-      ['todo', 'in_progress', 'testing', 'done'].forEach(s => {
+      ['todo', 'in_progress', 'done'].forEach(s => {
         document.getElementById(`kanban-${s}`).innerHTML = '';
         document.getElementById(`count-${s}`).textContent = '0';
       });
 
       const tasks = state.db.tasks || [];
-      const counts = { todo: 0, in_progress: 0, testing: 0, done: 0 };
+      const counts = { todo: 0, in_progress: 0, done: 0 };
 
       tasks.forEach(task => {
+        if (task.status === 'testing') task.status = 'in_progress';
         counts[task.status] = (counts[task.status] || 0) + 1;
         const col = document.getElementById(`kanban-${task.status}`);
         if (!col) return;
@@ -675,15 +667,16 @@
         col.appendChild(card);
       });
 
-      ['todo', 'in_progress', 'testing', 'done'].forEach(s => {
+      ['todo', 'in_progress', 'done'].forEach(s => {
         document.getElementById(`count-${s}`).textContent = counts[s] || 0;
       });
     }
 
     async function moveTask(id, dir) {
-      const steps = ['todo', 'in_progress', 'testing', 'done'];
+      const steps = ['todo', 'in_progress', 'done'];
       const t = state.db.tasks.find(x => x.id === id);
       if (!t) return;
+      if (t.status === 'testing') t.status = 'in_progress';
       const idx = steps.indexOf(t.status) + dir;
       if (idx >= 0 && idx < steps.length) {
         t.status = steps[idx];
