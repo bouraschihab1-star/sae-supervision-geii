@@ -19,11 +19,11 @@
       overflow-x: hidden;
     }
 
-    /* Grille de points de base ultra-resserrée (6px) et ultra-claire sur fond blanc pur */
+    /* Grille de points de base ultra-resserrée (6px) visible et nette sur fond blanc pur */
     .dot-pattern {
       position: fixed;
       inset: 0;
-      background-image: radial-gradient(#f4f4f7 0.65px, transparent 0.65px);
+      background-image: radial-gradient(#e4e4e7 0.75px, transparent 0.75px);
       background-size: 6px 6px;
       background-position: 0 0;
       pointer-events: none;
@@ -1004,10 +1004,10 @@
                   // Dégradé progressif vers les bords (smoothstep)
                   const ratio = 1 - (dist / z.radius);
                   const smoothRatio = ratio * ratio * (3 - 2 * ratio);
-                  const ptAlpha = smoothRatio * zoneAlpha * 0.45;
-                  const ptRadius = 0.55 + smoothRatio * 0.4;
+                  const ptAlpha = smoothRatio * zoneAlpha * 0.75;
+                  const ptRadius = 0.65 + smoothRatio * 0.5;
 
-                  ctx.fillStyle = `rgba(24, 24, 27, ${ptAlpha})`;
+                  ctx.fillStyle = `rgba(9, 9, 11, ${ptAlpha})`;
                   ctx.beginPath();
                   ctx.arc(x, y, ptRadius, 0, Math.PI * 2);
                   ctx.fill();
