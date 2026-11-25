@@ -1,4 +1,6 @@
 {
+  "_version": 10,
+  "_localModified": 1795648072451,
   "project": {
     "title": "SAÉ BUT3 GEII Troyes - Supervision & Avancement",
     "sub_title": "Véhicule Autonome et Domotique (Promo 2025-2026)",
@@ -6,7 +8,7 @@
       "https://wikigeii.iut-troyes.univ-reims.fr/index.php?title=Cours:SaeS5",
       "https://wikigeii.iut-troyes.univ-reims.fr/index.php?title=Cours:SaeBUT3_25_26"
     ],
-    "last_updated": "2026-11-25T20:45:43.635806"
+    "last_updated": "2026-11-26T00:00:00"
   },
   "members": [
     {
@@ -15,7 +17,7 @@
       "fullName": "Chihabedinne Bouras",
       "role": "Coordinateur / Membre",
       "avatar": "BO",
-      "progress": 25
+      "progress": 0
     },
     {
       "id": "damou",
@@ -23,7 +25,7 @@
       "fullName": "Damou",
       "role": "Membre",
       "avatar": "DA",
-      "progress": 20
+      "progress": 0
     },
     {
       "id": "diouf",
@@ -31,7 +33,7 @@
       "fullName": "Diouf",
       "role": "Membre",
       "avatar": "DI",
-      "progress": 20
+      "progress": 0
     },
     {
       "id": "elghazouani",
@@ -39,7 +41,7 @@
       "fullName": "Al Gahzouani",
       "role": "Membre",
       "avatar": "EL",
-      "progress": 20
+      "progress": 0
     },
     {
       "id": "locko",
@@ -47,7 +49,7 @@
       "fullName": "Locko",
       "role": "Membre",
       "avatar": "LO",
-      "progress": 20
+      "progress": 0
     }
   ],
   "milestones": [
@@ -87,82 +89,8 @@
       "done": false
     }
   ],
-  "tasks": [
-    {
-      "id": "T1",
-      "title": "Analyse fonctionnelle : Régulation LTG (22°C consigne, 25°C Clim, 28°C alerte)",
-      "category": "Domotique LTG",
-      "assignee": "damou",
-      "status": "in_progress",
-      "priority": "high",
-      "milestone": "L1",
-      "desc": "Modéliser la régulation thermique et les seuils d'alarme pour la salle serveur LTG."
-    },
-    {
-      "id": "T2",
-      "title": "Pilotage Infrarouge de la Climatisation LTG",
-      "category": "Domotique LTG",
-      "assignee": "diouf",
-      "status": "todo",
-      "priority": "high",
-      "milestone": "L1",
-      "desc": "Étudier le décodage et l'émission des trames IR de la télécommande de la clim."
-    },
-    {
-      "id": "T3",
-      "title": "Spécifications et comparatif composants Variateur Véhicule",
-      "category": "Véhicule Autonome",
-      "assignee": "bouras",
-      "status": "in_progress",
-      "priority": "urgent",
-      "milestone": "L1",
-      "desc": "Comparatif technique et justification des composants puissance/commande pour le variateur."
-    },
-    {
-      "id": "T4",
-      "title": "Architecture Banc de Test & Communication MQTT / Zigbee",
-      "category": "Cadre Commun",
-      "assignee": "elghazouani",
-      "status": "in_progress",
-      "priority": "high",
-      "milestone": "L1",
-      "desc": "Définir les topics MQTT, la passerelle Zigbee et l'intégration Home Assistant."
-    },
-    {
-      "id": "T5",
-      "title": "Direction et Asservissement du Véhicule",
-      "category": "Véhicule Autonome",
-      "assignee": "locko",
-      "status": "todo",
-      "priority": "medium",
-      "milestone": "L1",
-      "desc": "Schéma cinématique et choix de l'actionneur de direction."
-    },
-    {
-      "id": "T6",
-      "title": "Borne de recharge AC & Outil de test",
-      "category": "Véhicule Autonome",
-      "assignee": "diouf",
-      "status": "todo",
-      "priority": "medium",
-      "milestone": "L2",
-      "desc": "Conception de la prise et du protocole de test de charge AC."
-    }
-  ],
-  "journal": [
-    {
-      "id": "J1",
-      "date": "2026-11-25",
-      "author": "bouras",
-      "title": "Coup d'envoi SAÉ & Mise en place de la supervision",
-      "content": "Analyse des exigences du wiki GEII. Prise en compte des 9 work packages et des livrables L1 (6 déc), L2 (20 déc) et L3 (24 janv). Mise en place de la plateforme de suivi pour les 5 membres de l'équipe.",
-      "tags": [
-        "Organisation",
-        "L0",
-        "Supervision"
-      ]
-    }
-  ],
+  "tasks": [],
+  "journal": [],
   "files": [
     {
       "name": "cahier_des_charges_geii_s5.pdf",
@@ -171,14 +99,6 @@
       "date": "2026-11-25",
       "size": "Lien Wiki Officiel",
       "category": "Documentation"
-    },
-    {
-      "name": "TP4_éolienne.pdf",
-      "url": "https://raw.githubusercontent.com/bouraschihab1-star/sae-supervision-geii/main/uploads/1795646573295_TP4__olienne.pdf",
-      "uploader": "bouras",
-      "date": "2026-11-25",
-      "category": "Fichier"
     }
-  ],
-  "_localModified": 1795647728882
+  ]
 }
