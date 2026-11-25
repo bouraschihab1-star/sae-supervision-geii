@@ -19,12 +19,12 @@
       overflow-x: hidden;
     }
 
-    /* Grille de points de base ultra-resserrée (10px) sur fond blanc pur */
+    /* Grille de points de base ultra-resserrée (6px) et ultra-claire sur fond blanc pur */
     .dot-pattern {
       position: fixed;
       inset: 0;
-      background-image: radial-gradient(#ebebef 0.85px, transparent 0.85px);
-      background-size: 10px 10px;
+      background-image: radial-gradient(#f4f4f7 0.65px, transparent 0.65px);
+      background-size: 6px 6px;
       background-position: 0 0;
       pointer-events: none;
       z-index: 0;
@@ -943,7 +943,7 @@
       const canvas = document.getElementById('densityCanvas');
       if (!canvas) return;
       const ctx = canvas.getContext('2d');
-      const STEP = 10;
+      const STEP = 6;
       let w = canvas.width = window.innerWidth;
       let h = canvas.height = window.innerHeight;
 
@@ -956,12 +956,12 @@
         return {
           x: Math.random() * w,
           y: Math.random() * h,
-          vx: (Math.random() - 0.5) * 0.35,
-          vy: (Math.random() - 0.5) * 0.35,
-          radius: 150 + Math.random() * 120,
+          vx: (Math.random() - 0.5) * 0.3,
+          vy: (Math.random() - 0.5) * 0.3,
+          radius: 140 + Math.random() * 100,
           progress: Math.random(), // décalage d'apparition
-          speed: 0.003 + Math.random() * 0.002,
-          maxAlpha: 0.8 + Math.random() * 0.2
+          speed: 0.0025 + Math.random() * 0.0015,
+          maxAlpha: 0.45 + Math.random() * 0.15
         };
       }
 
@@ -1004,10 +1004,10 @@
                   // Dégradé progressif vers les bords (smoothstep)
                   const ratio = 1 - (dist / z.radius);
                   const smoothRatio = ratio * ratio * (3 - 2 * ratio);
-                  const ptAlpha = smoothRatio * zoneAlpha;
-                  const ptRadius = 0.8 + smoothRatio * 0.9;
+                  const ptAlpha = smoothRatio * zoneAlpha * 0.45;
+                  const ptRadius = 0.55 + smoothRatio * 0.4;
 
-                  ctx.fillStyle = `rgba(9, 9, 11, ${ptAlpha})`;
+                  ctx.fillStyle = `rgba(24, 24, 27, ${ptAlpha})`;
                   ctx.beginPath();
                   ctx.arc(x, y, ptRadius, 0, Math.PI * 2);
                   ctx.fill();
