@@ -19,12 +19,12 @@
       overflow-x: hidden;
     }
 
-    /* Grille de points ultra-resserrée (6px) calée à 0.65px (#d4d4d8) pour une netteté parfaite */
+    /* Grille de points resserrée (7px) nette et bien visible (1px #cbd5e1) sur blanc pur */
     .dot-pattern {
       position: fixed;
       inset: 0;
-      background-image: radial-gradient(#d4d4d8 0.65px, transparent 0.65px);
-      background-size: 6px 6px;
+      background-image: radial-gradient(circle, #cbd5e1 1px, transparent 1px);
+      background-size: 7px 7px;
       background-position: 0 0;
       pointer-events: none;
       z-index: 0;
@@ -939,7 +939,7 @@
       const canvas = document.getElementById('densityCanvas');
       if (!canvas) return;
       const ctx = canvas.getContext('2d');
-      const STEP = 6;
+      const STEP = 7;
       let w = canvas.width = window.innerWidth;
       let h = canvas.height = window.innerHeight;
 
@@ -1000,8 +1000,8 @@
                   // Dégradé progressif vers les bords (smoothstep)
                   const ratio = 1 - (dist / z.radius);
                   const smoothRatio = ratio * ratio * (3 - 2 * ratio);
-                  const ptAlpha = smoothRatio * zoneAlpha * 0.7;
-                  const ptRadius = 0.55 + smoothRatio * 0.4;
+                  const ptAlpha = smoothRatio * zoneAlpha * 0.85;
+                  const ptRadius = 0.75 + smoothRatio * 0.55;
 
                   ctx.fillStyle = `rgba(9, 9, 11, ${ptAlpha})`;
                   ctx.beginPath();
