@@ -30,6 +30,21 @@
       z-index: 0;
     }
 
+    /* Cartes effet verre translucide (Glassmorphism) avec contraste élevé */
+    .glass-card {
+      background: rgba(255, 255, 255, 0.48);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+    }
+    .glass-card-subtle {
+      background: rgba(255, 255, 255, 0.35);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(0, 0, 0, 0.07);
+    }
+
     .tab-btn {
       padding: 8px 14px;
       font-size: 13px;
@@ -100,21 +115,21 @@
       
       <!-- Chiffres Clés Compacts -->
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div class="border border-gray-200/90 rounded-lg p-4 bg-white/90 backdrop-blur-sm shadow-sm">
+        <div class="glass-card rounded-lg p-4">
           <div class="text-xs text-gray-500 font-medium">Progression globale</div>
           <div class="text-2xl font-bold text-black mt-1" id="statGlobal">0%</div>
-          <div class="w-full bg-gray-100 h-1.5 rounded mt-2.5 overflow-hidden">
+          <div class="w-full bg-gray-200/60 h-1.5 rounded mt-2.5 overflow-hidden">
             <div class="bg-black h-full rounded transition-all duration-300" id="statGlobalBar" style="width: 0%"></div>
           </div>
         </div>
 
-        <div class="border border-gray-200/90 rounded-lg p-4 bg-white/90 backdrop-blur-sm shadow-sm">
+        <div class="glass-card rounded-lg p-4">
           <div class="text-xs text-gray-500 font-medium">Tâches</div>
           <div class="text-2xl font-bold text-black mt-1" id="statTasksCount">0</div>
           <div class="text-xs text-gray-500 mt-1" id="statTasksDetails">0 en cours, 0 validées</div>
         </div>
 
-        <div class="border border-gray-200/90 rounded-lg p-4 bg-white/90 backdrop-blur-sm shadow-sm">
+        <div class="glass-card rounded-lg p-4">
           <div class="text-xs text-gray-500 font-medium">Échéance Livrable 1</div>
           <div class="text-2xl font-bold text-black mt-1">6 Déc.</div>
           <div class="text-xs text-gray-500 mt-1">Analyse fonctionnelle & matériel</div>
@@ -125,7 +140,7 @@
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 items-stretch">
         
         <!-- Graphique à gauche (2 colonnes) -->
-        <div class="lg:col-span-2 border border-gray-200/90 rounded-lg p-5 bg-white/90 backdrop-blur-sm shadow-sm flex flex-col justify-between">
+        <div class="lg:col-span-2 glass-card rounded-lg p-5 flex flex-col justify-between">
           <div class="flex items-center justify-between mb-2">
             <span class="text-xs font-semibold text-black uppercase tracking-wider">Courbe de Progression</span>
             <span class="text-xs text-gray-400">Avancement Réel vs Cible</span>
@@ -136,7 +151,7 @@
         </div>
 
         <!-- Membres à la verticale à droite (1 colonne) -->
-        <div class="border border-gray-200/90 rounded-lg p-4 bg-white/90 backdrop-blur-sm shadow-sm flex flex-col">
+        <div class="glass-card rounded-lg p-4 flex flex-col">
           <div class="text-xs font-semibold text-black uppercase tracking-wider mb-3">Membres</div>
           <div class="flex flex-col space-y-2.5 flex-1 justify-between" id="membersGrid"></div>
         </div>
@@ -146,7 +161,7 @@
       <!-- LIVRABLES EN BAS -->
       <div class="space-y-2">
         <div class="text-xs font-semibold text-black uppercase tracking-wider">Livrables & Jalons</div>
-        <div class="border border-gray-200/90 rounded-lg bg-white/90 backdrop-blur-sm shadow-sm divide-y divide-gray-100 text-xs" id="milestonesList"></div>
+        <div class="glass-card rounded-lg divide-y divide-gray-100 text-xs" id="milestonesList"></div>
       </div>
 
     </section>
@@ -163,8 +178,8 @@
       <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
         
         <!-- A FAIRE -->
-        <div class="border border-gray-200/80 rounded-lg p-3 bg-white/80 min-h-[460px] flex flex-col">
-          <div class="flex justify-between items-center mb-3 pb-2 border-b border-gray-200 font-semibold text-xs">
+        <div class="glass-card-subtle rounded-lg p-3 min-h-[460px] flex flex-col">
+          <div class="flex justify-between items-center mb-3 pb-2 border-b border-gray-200/60 font-semibold text-xs">
             <span>À faire</span>
             <span class="text-gray-400 font-mono" id="count-todo">0</span>
           </div>
@@ -172,8 +187,8 @@
         </div>
 
         <!-- EN COURS -->
-        <div class="border border-gray-200/80 rounded-lg p-3 bg-white/80 min-h-[460px] flex flex-col">
-          <div class="flex justify-between items-center mb-3 pb-2 border-b border-gray-200 font-semibold text-xs">
+        <div class="glass-card-subtle rounded-lg p-3 min-h-[460px] flex flex-col">
+          <div class="flex justify-between items-center mb-3 pb-2 border-b border-gray-200/60 font-semibold text-xs">
             <span>En cours</span>
             <span class="text-gray-400 font-mono" id="count-in_progress">0</span>
           </div>
@@ -181,8 +196,8 @@
         </div>
 
         <!-- TEST -->
-        <div class="border border-gray-200/80 rounded-lg p-3 bg-white/80 min-h-[460px] flex flex-col">
-          <div class="flex justify-between items-center mb-3 pb-2 border-b border-gray-200 font-semibold text-xs">
+        <div class="glass-card-subtle rounded-lg p-3 min-h-[460px] flex flex-col">
+          <div class="flex justify-between items-center mb-3 pb-2 border-b border-gray-200/60 font-semibold text-xs">
             <span>Banc de test</span>
             <span class="text-gray-400 font-mono" id="count-testing">0</span>
           </div>
@@ -190,8 +205,8 @@
         </div>
 
         <!-- VALIDE -->
-        <div class="border border-gray-200/80 rounded-lg p-3 bg-white/80 min-h-[460px] flex flex-col">
-          <div class="flex justify-between items-center mb-3 pb-2 border-b border-gray-200 font-semibold text-xs">
+        <div class="glass-card-subtle rounded-lg p-3 min-h-[460px] flex flex-col">
+          <div class="flex justify-between items-center mb-3 pb-2 border-b border-gray-200/60 font-semibold text-xs">
             <span>Validé</span>
             <span class="text-gray-400 font-mono" id="count-done">0</span>
           </div>
@@ -205,22 +220,22 @@
     <section id="view-journal" class="space-y-6 hidden">
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         
-        <div class="border border-gray-200/90 rounded-lg p-4 bg-white/90 space-y-3 h-fit">
+        <div class="glass-card rounded-lg p-4 space-y-3 h-fit">
           <span class="text-xs font-semibold text-black uppercase tracking-wider block">Nouvelle entrée</span>
           <form onsubmit="submitJournal(event)" class="space-y-3 text-xs">
             <div>
               <label class="block text-gray-500 mb-1">Titre :</label>
-              <input type="text" id="journalTitle" required placeholder="Dimensionnement variateur" class="w-full border border-gray-300 rounded p-2 outline-none focus:border-black" />
+              <input type="text" id="journalTitle" required placeholder="Dimensionnement variateur" class="w-full border border-gray-300 rounded p-2 outline-none focus:border-black bg-white/60" />
             </div>
 
             <div>
               <label class="block text-gray-500 mb-1">Tags :</label>
-              <input type="text" id="journalTags" placeholder="Variateur, L1" class="w-full border border-gray-300 rounded p-2 outline-none focus:border-black" />
+              <input type="text" id="journalTags" placeholder="Variateur, L1" class="w-full border border-gray-300 rounded p-2 outline-none focus:border-black bg-white/60" />
             </div>
 
             <div>
               <label class="block text-gray-500 mb-1">Détail :</label>
-              <textarea id="journalContent" rows="4" required placeholder="Travaux réalisés, composants, difficultés..." class="w-full border border-gray-300 rounded p-2 outline-none focus:border-black"></textarea>
+              <textarea id="journalContent" rows="4" required placeholder="Travaux réalisés, composants, difficultés..." class="w-full border border-gray-300 rounded p-2 outline-none focus:border-black bg-white/60"></textarea>
             </div>
 
             <div>
@@ -234,7 +249,7 @@
           </form>
         </div>
 
-        <div class="md:col-span-2 border border-gray-200/90 rounded-lg p-4 bg-white/90 space-y-3">
+        <div class="md:col-span-2 glass-card rounded-lg p-4 space-y-3">
           <span class="text-xs font-semibold text-black uppercase tracking-wider block">Historique</span>
           <div class="divide-y divide-gray-100 max-h-[550px] overflow-y-auto pr-1" id="journalList"></div>
         </div>
@@ -252,9 +267,9 @@
         <input type="file" id="fileInput" onchange="uploadFile(event)" class="hidden" />
       </div>
 
-      <div class="border border-gray-200/90 rounded-lg bg-white/90 overflow-hidden">
+      <div class="glass-card rounded-lg overflow-hidden">
         <table class="w-full text-left text-xs">
-          <thead class="bg-gray-50 text-gray-500 border-b border-gray-200">
+          <thead class="bg-gray-50/60 text-gray-500 border-b border-gray-200/60">
             <tr>
               <th class="py-2.5 px-4 font-semibold">Nom</th>
               <th class="py-2.5 px-4 font-semibold">Catégorie</th>
@@ -270,14 +285,14 @@
 
     <!-- 5. AUDIT -->
     <section id="view-audit" class="space-y-4 hidden">
-      <div class="border border-gray-200/90 rounded-lg p-5 bg-white/90 space-y-3">
+      <div class="glass-card rounded-lg p-5 space-y-3">
         <div class="flex items-center justify-between">
           <span class="text-xs font-semibold text-black uppercase tracking-wider">Rapport pour l'IA</span>
           <button onclick="generateAuditText()" class="px-3 py-1.5 text-xs font-semibold bg-black text-white rounded hover:bg-gray-800 transition">
             Actualiser
           </button>
         </div>
-        <textarea id="auditText" rows="12" readonly class="w-full font-mono text-xs p-3 border border-gray-200 rounded bg-gray-50 outline-none text-gray-800 leading-relaxed"></textarea>
+        <textarea id="auditText" rows="12" readonly class="w-full font-mono text-xs p-3 border border-gray-200/80 rounded bg-white/50 outline-none text-gray-800 leading-relaxed"></textarea>
       </div>
     </section>
 
@@ -595,7 +610,7 @@
         const isCurrent = m.id === state.currentUser;
 
         const el = document.createElement('div');
-        el.className = `p-2.5 rounded-md border cursor-pointer transition ${isCurrent ? 'border-black bg-white shadow-sm' : 'border-gray-200/90 bg-white/60 hover:border-gray-400'}`;
+        el.className = `p-2.5 rounded-md border cursor-pointer transition ${isCurrent ? 'border-black bg-white/80 shadow-sm' : 'border-gray-200/80 bg-white/40 backdrop-blur-sm hover:border-gray-400'}`;
         el.onclick = () => changeUser(m.id);
         el.innerHTML = `
           <div class="flex items-center justify-between text-xs">
@@ -645,7 +660,7 @@
         if (!col) return;
 
         const card = document.createElement('div');
-        card.className = 'p-2.5 rounded bg-white border border-gray-200 text-xs space-y-1.5 shadow-sm';
+        card.className = 'p-2.5 rounded bg-white/75 backdrop-blur-md border border-gray-200/90 text-xs space-y-1.5 shadow-sm';
         card.innerHTML = `
           <div class="flex justify-between text-[10px] text-gray-400 font-medium">
             <span class="text-black uppercase">${task.category}</span>
