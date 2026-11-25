@@ -14,7 +14,7 @@
       "name": "Bouras",
       "fullName": "Chihabedinne Bouras",
       "role": "Coordinateur / Membre",
-      "avatar": "⚡",
+      "avatar": "BO",
       "progress": 25
     },
     {
@@ -22,7 +22,7 @@
       "name": "Damou",
       "fullName": "Damou",
       "role": "Membre",
-      "avatar": "🛠️",
+      "avatar": "DA",
       "progress": 20
     },
     {
@@ -30,7 +30,7 @@
       "name": "Diouf",
       "fullName": "Diouf",
       "role": "Membre",
-      "avatar": "🔋",
+      "avatar": "DI",
       "progress": 20
     },
     {
@@ -38,7 +38,7 @@
       "name": "El Ghazouani",
       "fullName": "Al Gahzouani",
       "role": "Membre",
-      "avatar": "📡",
+      "avatar": "EL",
       "progress": 20
     },
     {
@@ -46,7 +46,7 @@
       "name": "Locko",
       "fullName": "Locko",
       "role": "Membre",
-      "avatar": "🚗",
+      "avatar": "LO",
       "progress": 20
     }
   ],
