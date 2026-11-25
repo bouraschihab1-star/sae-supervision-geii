@@ -1,6 +1,4 @@
 {
-  "_version": 3,
-  "_localModified": 1732579200000,
   "project": {
     "title": "SAÉ BUT3 GEII Troyes - Supervision & Avancement",
     "sub_title": "Véhicule Autonome et Domotique (Promo 2025-2026)",
@@ -8,97 +6,179 @@
       "https://wikigeii.iut-troyes.univ-reims.fr/index.php?title=Cours:SaeS5",
       "https://wikigeii.iut-troyes.univ-reims.fr/index.php?title=Cours:SaeBUT3_25_26"
     ],
-    "last_updated": "2026-11-25T23:58:00"
+    "last_updated": "2026-11-25T20:45:43.635806"
   },
-  "milestones": [
-    {
-      "id": "L0",
-      "title": "Livrable 0 — Dépôt Git & Répartition",
-      "date": "2026-11-15",
-      "done": true,
-      "desc": "Initialisation du repo Git partagé, arborescence et attribution des modules."
-    },
-    {
-      "id": "L1",
-      "title": "Livrable 1 — Analyse Fonctionnelle & Spécifications",
-      "date": "2026-12-06",
-      "done": false,
-      "desc": "Analyse fonctionnelle (FAST/SADT), fiches composants, dimensionnement variateur/batterie, protocoles MQTT."
-    },
-    {
-      "id": "L2",
-      "title": "Livrable 2 — Schémas Électroniques & Routage",
-      "date": "2026-01-17",
-      "done": false,
-      "desc": "Schémas de commande/puissance, routage PCB sous KiCad/Altium, dossiers de fabrication."
-    },
-    {
-      "id": "L3",
-      "title": "Livrable 3 — Intégration Logicielle & Tests Unox",
-      "date": "2026-01-31",
-      "done": false,
-      "desc": "Programmation microcontrôleurs (STM32/ESP32), asservissement de vitesse, communication Zigbee/WiFi."
-    },
-    {
-      "id": "L4",
-      "title": "Livrable 4 — Validation Globale & Soutenance",
-      "date": "2026-02-21",
-      "done": false,
-      "desc": "Essais sur piste, démonstration domotique globale, rapport final et soutenance devant jury."
-    }
-  ],
   "members": [
     {
       "id": "bouras",
       "name": "Bouras",
-      "subsystem": "Chef de projet & Supervision",
-      "progress": 0,
-      "tasks_count": 0,
-      "status": "Prêt"
+      "fullName": "Chihabedinne Bouras",
+      "role": "Coordinateur / Membre",
+      "avatar": "BO",
+      "progress": 25
     },
     {
       "id": "damou",
       "name": "Damou",
-      "subsystem": "Variateur & Chaîne de traction",
-      "progress": 0,
-      "tasks_count": 0,
-      "status": "Prêt"
+      "fullName": "Damou",
+      "role": "Membre",
+      "avatar": "DA",
+      "progress": 20
     },
     {
       "id": "diouf",
       "name": "Diouf",
-      "subsystem": "Asservissement & Direction véhicule",
-      "progress": 0,
-      "tasks_count": 0,
-      "status": "Prêt"
+      "fullName": "Diouf",
+      "role": "Membre",
+      "avatar": "DI",
+      "progress": 20
     },
     {
       "id": "elghazouani",
-      "name": "Al Gahzouani",
-      "subsystem": "Domotique LTG & Climatisation",
-      "progress": 0,
-      "tasks_count": 0,
-      "status": "Prêt"
+      "name": "El Ghazouani",
+      "fullName": "Al Gahzouani",
+      "role": "Membre",
+      "avatar": "EL",
+      "progress": 20
     },
     {
       "id": "locko",
       "name": "Locko",
-      "subsystem": "Supervision & Communication MQTT",
-      "progress": 0,
-      "tasks_count": 0,
-      "status": "Prêt"
+      "fullName": "Locko",
+      "role": "Membre",
+      "avatar": "LO",
+      "progress": 20
     }
   ],
-  "tasks": [],
-  "journal": [],
+  "milestones": [
+    {
+      "id": "L0",
+      "name": "Livrable 0 - Présentation CDC",
+      "date": "2026-11-25",
+      "desc": "Présentation du CDC par les enseignants",
+      "done": true
+    },
+    {
+      "id": "L1",
+      "name": "Livrable 1 - Analyse préliminaire & Matériel",
+      "date": "2026-12-06",
+      "desc": "Document support + discussion. Début analyse fonctionnelle, choix matériel comparatif/justification.",
+      "done": false
+    },
+    {
+      "id": "L2",
+      "name": "Livrable 2 - Chiffrage & Planning final",
+      "date": "2026-12-20",
+      "desc": "Analyse fonctionnelle finale, chiffrage, disponibilité, préparation commande, planning & répartition.",
+      "done": false
+    },
+    {
+      "id": "L3",
+      "name": "Livrable 3 - Soutenance S5 & Démo",
+      "date": "2027-01-24",
+      "desc": "Oral (5 min global + 5 min/pers + 10 min Q/pers) + Démonstration l'après-midi sur banc de test.",
+      "done": false
+    },
+    {
+      "id": "L4",
+      "name": "Livrable 4 - Soutenance Finale S6",
+      "date": "2027-03-14",
+      "desc": "Oral, démonstration et dossier finalisé.",
+      "done": false
+    }
+  ],
+  "tasks": [
+    {
+      "id": "T1",
+      "title": "Analyse fonctionnelle : Régulation LTG (22°C consigne, 25°C Clim, 28°C alerte)",
+      "category": "Domotique LTG",
+      "assignee": "damou",
+      "status": "in_progress",
+      "priority": "high",
+      "milestone": "L1",
+      "desc": "Modéliser la régulation thermique et les seuils d'alarme pour la salle serveur LTG."
+    },
+    {
+      "id": "T2",
+      "title": "Pilotage Infrarouge de la Climatisation LTG",
+      "category": "Domotique LTG",
+      "assignee": "diouf",
+      "status": "todo",
+      "priority": "high",
+      "milestone": "L1",
+      "desc": "Étudier le décodage et l'émission des trames IR de la télécommande de la clim."
+    },
+    {
+      "id": "T3",
+      "title": "Spécifications et comparatif composants Variateur Véhicule",
+      "category": "Véhicule Autonome",
+      "assignee": "bouras",
+      "status": "in_progress",
+      "priority": "urgent",
+      "milestone": "L1",
+      "desc": "Comparatif technique et justification des composants puissance/commande pour le variateur."
+    },
+    {
+      "id": "T4",
+      "title": "Architecture Banc de Test & Communication MQTT / Zigbee",
+      "category": "Cadre Commun",
+      "assignee": "elghazouani",
+      "status": "in_progress",
+      "priority": "high",
+      "milestone": "L1",
+      "desc": "Définir les topics MQTT, la passerelle Zigbee et l'intégration Home Assistant."
+    },
+    {
+      "id": "T5",
+      "title": "Direction et Asservissement du Véhicule",
+      "category": "Véhicule Autonome",
+      "assignee": "locko",
+      "status": "todo",
+      "priority": "medium",
+      "milestone": "L1",
+      "desc": "Schéma cinématique et choix de l'actionneur de direction."
+    },
+    {
+      "id": "T6",
+      "title": "Borne de recharge AC & Outil de test",
+      "category": "Véhicule Autonome",
+      "assignee": "diouf",
+      "status": "todo",
+      "priority": "medium",
+      "milestone": "L2",
+      "desc": "Conception de la prise et du protocole de test de charge AC."
+    }
+  ],
+  "journal": [
+    {
+      "id": "J1",
+      "date": "2026-11-25",
+      "author": "bouras",
+      "title": "Coup d'envoi SAÉ & Mise en place de la supervision",
+      "content": "Analyse des exigences du wiki GEII. Prise en compte des 9 work packages et des livrables L1 (6 déc), L2 (20 déc) et L3 (24 janv). Mise en place de la plateforme de suivi pour les 5 membres de l'équipe.",
+      "tags": [
+        "Organisation",
+        "L0",
+        "Supervision"
+      ]
+    }
+  ],
   "files": [
     {
-      "name": "Cahier_des_Charges_SAE_BUT3.pdf",
+      "name": "cahier_des_charges_geii_s5.pdf",
       "url": "https://wikigeii.iut-troyes.univ-reims.fr/index.php?title=Cours:SaeS5",
       "uploader": "bouras",
       "date": "2026-11-25",
-      "size": "Wiki Officiel GEII",
-      "category": "Cahier des charges"
+      "size": "Lien Wiki Officiel",
+      "category": "Documentation"
+    },
+    {
+      "name": "TP4_éolienne.pdf",
+      "url": "https://raw.githubusercontent.com/bouraschihab1-star/sae-supervision-geii/main/uploads/1795646573295_TP4__olienne.pdf",
+      "uploader": "bouras",
+      "date": "2026-11-25",
+      "category": "Fichier"
     }
-  ]
+  ],
+  "_localModified": 1795647718090
 }
