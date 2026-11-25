@@ -1,448 +1,298 @@
 <!DOCTYPE html>
-<html lang="fr" class="dark">
+<html lang="fr">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Supervision SAÉ BUT3 GEII - Véhicule & Domotique</title>
+  <title>SAE BUT3 GEII - Troyes</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          colors: {
-            brand: { 50: '#eef2ff', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca', 900: '#1e1b4b' },
-            darkbg: '#0b0f19',
-            darkcard: '#111827',
-            darkborder: '#1f2937'
-          }
-        }
-      }
-    }
-  </script>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-    body { font-family: 'Inter', sans-serif; background-color: #0b0f19; color: #f3f4f6; }
-    .glass-panel { background: rgba(17, 24, 39, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
-    .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
-    .custom-scrollbar::-webkit-scrollbar-track { background: #111827; }
-    .custom-scrollbar::-webkit-scrollbar-thumb { background: #374151; border-radius: 3px; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background-color: #ffffff;
+      color: #111827;
+      -webkit-font-smoothing: antialiased;
+    }
+    .border-subtle { border-color: #e5e7eb; }
+    .bg-subtle { background-color: #f9fafb; }
+    .bg-hover { background-color: #f3f4f6; }
+    .tab-active {
+      border-bottom: 2px solid #000000;
+      color: #000000;
+      font-weight: 600;
+    }
   </style>
 </head>
-<body class="min-h-screen flex flex-col selection:bg-brand-500 selection:text-white">
+<body class="min-h-screen flex flex-col bg-white text-gray-900">
 
-  <!-- HEADER NAVIGATION -->
-  <header class="sticky top-0 z-50 glass-panel border-b border-darkborder px-4 lg:px-8 py-3">
-    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
-      
-      <!-- Logo & Titre -->
-      <div class="flex items-center space-x-3">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-400 flex items-center justify-center shadow-lg shadow-brand-500/20 text-white font-bold text-lg">
-          <i class="fa-solid fa-microchip"></i>
-        </div>
-        <div>
-          <div class="flex items-center space-x-2">
-            <h1 class="font-bold text-lg text-white leading-tight">SAÉ BUT3 GEII Troyes</h1>
-            <span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center gap-1.5">
-              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> En Ligne
-            </span>
-          </div>
-          <p class="text-xs text-gray-400">Véhicule Autonome & Domotique LTG • Promo 2025-2026</p>
-        </div>
+  <!-- TOP BAR -->
+  <header class="border-b border-subtle bg-white sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+      <div>
+        <div class="text-sm font-semibold tracking-tight text-black">SAE BUT3 GEII — Troyes</div>
+        <div class="text-xs text-gray-500">Véhicule Autonome & Domotique • 2025-2026</div>
       </div>
 
-      <!-- Compte à rebours Livrable 1 -->
-      <div class="hidden md:flex items-center bg-gray-900/80 px-4 py-2 rounded-xl border border-gray-800 space-x-3">
-        <div class="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center font-bold text-sm">
-          <i class="fa-regular fa-clock"></i>
-        </div>
-        <div>
-          <div class="text-xs text-gray-400 font-medium">Prochain Jalon : <span class="text-amber-300 font-semibold">Livrable 1</span></div>
-          <div class="text-xs font-bold text-gray-200" id="countdownText">Vendredi 6 Décembre (J-11)</div>
-        </div>
+      <!-- Compte à rebours jalon -->
+      <div class="text-right">
+        <div class="text-xs text-gray-500">Prochain Jalon : <span class="text-black font-medium">Livrable 1</span></div>
+        <div class="text-xs font-semibold text-black" id="countdown">06 Décembre (J-10)</div>
       </div>
 
-      <!-- Membres & Sélecteur Actif -->
-      <div class="flex items-center space-x-3">
-        <div class="flex items-center space-x-1.5 bg-gray-900/90 p-1 rounded-xl border border-gray-800 text-xs">
-          <span class="text-gray-400 pl-2 pr-1 font-medium hidden sm:inline">Utilisateur :</span>
-          <select id="userSelect" onchange="changeUser(this.value)" class="bg-gray-800 text-white font-medium px-3 py-1.5 rounded-lg border border-gray-700 outline-none focus:border-brand-500 transition-all cursor-pointer">
-            <option value="bouras">⚡ Bouras (Chihab)</option>
-            <option value="damou">🛠️ Damou</option>
-            <option value="diouf">🔋 Diouf</option>
-            <option value="elghazouani">📡 Al Gahzouani</option>
-            <option value="locko">🚗 Locko</option>
-          </select>
-        </div>
-
-        <!-- Bouton Synchro GitHub -->
-        <button onclick="syncWithGitHub()" id="syncBtn" title="Synchroniser avec GitHub" class="p-2.5 rounded-xl bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white border border-gray-700 transition flex items-center justify-center">
-          <i class="fa-solid fa-rotate" id="syncIcon"></i>
+      <!-- Membre actif -->
+      <div class="flex items-center space-x-2">
+        <span class="text-xs text-gray-500">Utilisateur :</span>
+        <select id="userSelect" onchange="changeUser(this.value)" class="text-xs font-medium border border-subtle rounded px-2.5 py-1.5 bg-white text-black outline-none focus:border-black cursor-pointer">
+          <option value="bouras">Bouras</option>
+          <option value="damou">Damou</option>
+          <option value="diouf">Diouf</option>
+          <option value="elghazouani">Al Gahzouani</option>
+          <option value="locko">Locko</option>
+        </select>
+        <button onclick="syncWithGitHub()" id="syncBtn" title="Synchroniser avec GitHub" class="border border-subtle rounded px-2.5 py-1.5 text-xs text-gray-600 hover:text-black hover:bg-subtle transition">
+          Sync
         </button>
-
-        <!-- Configuration Token -->
-        <button onclick="openConfigModal()" title="Configuration GitHub" class="p-2.5 rounded-xl bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white border border-gray-700 transition">
-          <i class="fa-solid fa-gear"></i>
+        <button onclick="openConfigModal()" title="Paramètres GitHub" class="border border-subtle rounded px-2.5 py-1.5 text-xs text-gray-600 hover:text-black hover:bg-subtle transition">
+          Config
         </button>
       </div>
-
     </div>
 
-    <!-- TABS NAVIGATION -->
-    <div class="max-w-7xl mx-auto mt-3 pt-2 border-t border-gray-800/80 flex items-center space-x-2 overflow-x-auto custom-scrollbar">
-      <button onclick="switchTab('overview')" id="tab-overview" class="nav-tab px-4 py-2 rounded-lg text-sm font-medium transition flex items-center space-x-2 bg-brand-600 text-white">
-        <i class="fa-solid fa-chart-pie"></i> <span>Vue d'ensemble</span>
-      </button>
-      <button onclick="switchTab('kanban')" id="tab-kanban" class="nav-tab px-4 py-2 rounded-lg text-sm font-medium transition flex items-center space-x-2 text-gray-400 hover:text-gray-200 hover:bg-gray-800/60">
-        <i class="fa-solid fa-list-check"></i> <span>Kanban des Tâches</span>
-      </button>
-      <button onclick="switchTab('journal')" id="tab-journal" class="nav-tab px-4 py-2 rounded-lg text-sm font-medium transition flex items-center space-x-2 text-gray-400 hover:text-gray-200 hover:bg-gray-800/60">
-        <i class="fa-solid fa-book-open"></i> <span>Journal de Bord Quotidien</span>
-      </button>
-      <button onclick="switchTab('files')" id="tab-files" class="nav-tab px-4 py-2 rounded-lg text-sm font-medium transition flex items-center space-x-2 text-gray-400 hover:text-gray-200 hover:bg-gray-800/60">
-        <i class="fa-solid fa-folder-open"></i> <span>Dépôt de Fichiers & CDC</span>
-      </button>
-      <button onclick="switchTab('audit')" id="tab-audit" class="nav-tab px-4 py-2 rounded-lg text-sm font-medium transition flex items-center space-x-2 text-emerald-400 hover:text-emerald-300 hover:bg-emerald-950/30 border border-emerald-500/20">
-        <i class="fa-solid fa-robot"></i> <span>Audit IA du Soir</span>
-      </button>
+    <!-- NAVIGATION PAR ONGLETS -->
+    <div class="max-w-6xl mx-auto px-4 flex space-x-6 text-xs text-gray-500 border-t border-subtle overflow-x-auto">
+      <button onclick="switchTab('overview')" id="tab-overview" class="py-2.5 tab-active transition">Vue d'ensemble</button>
+      <button onclick="switchTab('kanban')" id="tab-kanban" class="py-2.5 hover:text-black transition">Tâches & Kanban</button>
+      <button onclick="switchTab('journal')" id="tab-journal" class="py-2.5 hover:text-black transition">Journal de bord</button>
+      <button onclick="switchTab('files')" id="tab-files" class="py-2.5 hover:text-black transition">Fichiers & CDC</button>
+      <button onclick="switchTab('audit')" id="tab-audit" class="py-2.5 hover:text-black transition">Audit du soir</button>
     </div>
   </header>
 
-  <!-- CONTENU PRINCIPAL -->
-  <main class="max-w-7xl mx-auto w-full p-4 lg:p-8 flex-1">
+  <!-- CONTENU -->
+  <main class="max-w-6xl mx-auto w-full px-4 py-6 flex-1 space-y-8">
 
-    <!-- ================= TAB 1: OVERVIEW ================= -->
+    <!-- TAB 1: OVERVIEW -->
     <section id="view-overview" class="space-y-6">
       
-      <!-- BANDEAU STATUS GLOBAL -->
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div class="glass-panel p-5 rounded-2xl border border-darkborder relative overflow-hidden">
-          <div class="flex justify-between items-start mb-2">
-            <span class="text-xs font-semibold uppercase tracking-wider text-gray-400">Avancement Global</span>
-            <span class="p-2 rounded-lg bg-indigo-500/10 text-indigo-400"><i class="fa-solid fa-bullseye"></i></span>
-          </div>
-          <div class="text-3xl font-extrabold text-white" id="statGlobalProgress">25%</div>
-          <div class="w-full bg-gray-800 h-2 rounded-full mt-3 overflow-hidden">
-            <div class="bg-indigo-500 h-full rounded-full transition-all duration-700" id="statProgressBar" style="width: 25%"></div>
-          </div>
-          <div class="text-xs text-gray-400 mt-2 flex justify-between">
-            <span>L0 Validé (25 Nov)</span>
-            <span class="text-indigo-400">Objectif L1 : 6 Déc</span>
+      <!-- Chiffres clés -->
+      <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+        <div class="border border-subtle rounded p-4">
+          <div class="text-xs text-gray-500 mb-1">Avancement global</div>
+          <div class="text-2xl font-bold text-black" id="statGlobal">0%</div>
+          <div class="w-full bg-gray-100 h-1 rounded mt-2 overflow-hidden">
+            <div class="bg-black h-full rounded transition-all duration-300" id="statGlobalBar" style="width: 0%"></div>
           </div>
         </div>
 
-        <div class="glass-panel p-5 rounded-2xl border border-darkborder">
-          <div class="flex justify-between items-start mb-2">
-            <span class="text-xs font-semibold uppercase tracking-wider text-gray-400">Tâches Actives</span>
-            <span class="p-2 rounded-lg bg-emerald-500/10 text-emerald-400"><i class="fa-solid fa-bars-progress"></i></span>
-          </div>
-          <div class="text-3xl font-extrabold text-white" id="statActiveTasks">6</div>
-          <p class="text-xs text-gray-400 mt-2">Réparties sur les 5 étudiants de l'équipe</p>
+        <div class="border border-subtle rounded p-4">
+          <div class="text-xs text-gray-500 mb-1">Tâches totales</div>
+          <div class="text-2xl font-bold text-black" id="statTasksCount">0</div>
+          <div class="text-xs text-gray-400 mt-2" id="statTasksDetails">0 en cours, 0 terminées</div>
         </div>
 
-        <div class="glass-panel p-5 rounded-2xl border border-darkborder">
-          <div class="flex justify-between items-start mb-2">
-            <span class="text-xs font-semibold uppercase tracking-wider text-gray-400">Prochain Oral Prof</span>
-            <span class="p-2 rounded-lg bg-amber-500/10 text-amber-400"><i class="fa-solid fa-user-tie"></i></span>
-          </div>
-          <div class="text-2xl font-bold text-amber-400">6 Déc. 2026</div>
-          <p class="text-xs text-gray-400 mt-2">Revue 10 min devant 5 enseignants</p>
+        <div class="border border-subtle rounded p-4">
+          <div class="text-xs text-gray-500 mb-1">Date Livrable 1</div>
+          <div class="text-2xl font-bold text-black">06 Déc. 2026</div>
+          <div class="text-xs text-gray-400 mt-2">Analyse fonctionnelle + Choix matériel</div>
         </div>
 
-        <div class="glass-panel p-5 rounded-2xl border border-darkborder">
-          <div class="flex justify-between items-start mb-2">
-            <span class="text-xs font-semibold uppercase tracking-wider text-gray-400">Banc de Test & MQTT</span>
-            <span class="p-2 rounded-lg bg-purple-500/10 text-purple-400"><i class="fa-solid fa-network-wired"></i></span>
-          </div>
-          <div class="text-2xl font-bold text-purple-300">Home Assistant</div>
-          <p class="text-xs text-gray-400 mt-2">Grafana + MQTT + Zigbee LTG</p>
+        <div class="border border-subtle rounded p-4">
+          <div class="text-xs text-gray-500 mb-1">Exigences clés</div>
+          <div class="text-xs font-semibold text-black">LTG : 22°C / 25°C / 28°C</div>
+          <div class="text-xs text-gray-400 mt-2">MQTT • Home Assistant • Bancs de test</div>
         </div>
       </div>
 
-      <!-- PROGRESSION PAR MEMBRE -->
-      <div class="glass-panel p-6 rounded-2xl border border-darkborder">
-        <h2 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
-          <i class="fa-solid fa-users text-indigo-400"></i> Progression Individuelle des 5 Membres
-        </h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4" id="membersProgressGrid">
-          <!-- Rempli par JavaScript -->
-        </div>
+      <!-- Progression des 5 membres -->
+      <div class="border border-subtle rounded p-5 space-y-4">
+        <div class="text-xs font-semibold uppercase tracking-wider text-gray-500">Répartition du travail (5 membres)</div>
+        <div class="grid grid-cols-1 sm:grid-cols-5 gap-3" id="membersGrid"></div>
       </div>
 
-      <!-- JALONS ET DATES DU WIKI -->
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div class="glass-panel p-6 rounded-2xl border border-darkborder">
-          <h2 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
-            <i class="fa-solid fa-calendar-check text-emerald-400"></i> Calendrier Officiel des Livrables (Wiki IUT)
-          </h2>
-          <div class="space-y-4" id="milestonesList">
-            <!-- Rempli par JavaScript -->
-          </div>
+      <!-- Calendrier officiel des Livrables -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="border border-subtle rounded p-5 space-y-3">
+          <div class="text-xs font-semibold uppercase tracking-wider text-gray-500">Livrables du Wiki</div>
+          <div class="divide-y divide-subtle" id="milestonesList"></div>
         </div>
 
-        <!-- CAHIER DES CHARGES RAPIDE -->
-        <div class="glass-panel p-6 rounded-2xl border border-darkborder flex flex-col justify-between">
-          <div>
-            <h2 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
-              <i class="fa-solid fa-triangle-exclamation text-amber-400"></i> Points Critiques du Cahier des Charges
-            </h2>
-            <div class="space-y-3 text-sm text-gray-300">
-              <div class="p-3 rounded-xl bg-gray-900/60 border border-gray-800">
-                <div class="font-semibold text-amber-300 mb-1"><i class="fa-solid fa-temperature-half"></i> Gestion Thermique Local LTG :</div>
-                <ul class="list-disc list-inside text-xs space-y-1 text-gray-400">
-                  <li>Maintien impératif à <span class="text-emerald-400 font-medium">22°C</span> (équipements Cisco & Dell 20-25°C).</li>
-                  <li>Déclenchement obligatoire de la climatisation à <span class="text-amber-400 font-medium">25°C</span> (pilotage IR).</li>
-                  <li>Mailing d'alerte immédiat déclenché à <span class="text-rose-400 font-medium">28°C</span>.</li>
-                </ul>
-              </div>
-
-              <div class="p-3 rounded-xl bg-gray-900/60 border border-gray-800">
-                <div class="font-semibold text-indigo-300 mb-1"><i class="fa-solid fa-car"></i> Véhicule Autonome & Recharge :</div>
-                <ul class="list-disc list-inside text-xs space-y-1 text-gray-400">
-                  <li>Création de la borne de recharge AC + outil de test dédié.</li>
-                  <li>Conception du variateur de vitesse et pilotage de la direction.</li>
-                </ul>
-              </div>
-
-              <div class="p-3 rounded-xl bg-gray-900/60 border border-gray-800">
-                <div class="font-semibold text-purple-300 mb-1"><i class="fa-solid fa-microchip"></i> Cadre Commun :</div>
-                <p class="text-xs text-gray-400">MQTT, Home Assistant, Grafana et création d'un banc de test associé à chaque système !</p>
-              </div>
-            </div>
+        <div class="border border-subtle rounded p-5 space-y-3">
+          <div class="text-xs font-semibold uppercase tracking-wider text-gray-500">Rappels Cahier des Charges</div>
+          <div class="text-xs space-y-2 text-gray-700 leading-relaxed">
+            <div><strong>Gestion LTG :</strong> Consigne 22°C permanente. Démarrage forcé de la climatisation par commande infrarouge à 25°C. Alerte mail immédiate à 28°C. Afficheur extérieur.</div>
+            <div><strong>Véhicule :</strong> Variateur de vitesse, pilotage de la direction, borne de recharge AC + outil de test dédié.</div>
+            <div><strong>Cadre :</strong> 1 banc de test par sous-système conçu. Communication MQTT / Zigbee. Centralisation Home Assistant et Grafana.</div>
           </div>
-
-          <div class="mt-4 pt-3 border-t border-gray-800 flex gap-2">
-            <a href="https://wikigeii.iut-troyes.univ-reims.fr/index.php?title=Cours:SaeS5" target="_blank" class="flex-1 text-center py-2 px-3 rounded-xl bg-gray-800 hover:bg-gray-700 text-xs text-gray-200 font-medium transition">
-              <i class="fa-solid fa-external-link mr-1"></i> Wiki SaeS5
-            </a>
-            <a href="https://wikigeii.iut-troyes.univ-reims.fr/index.php?title=Cours:SaeBUT3_25_26" target="_blank" class="flex-1 text-center py-2 px-3 rounded-xl bg-gray-800 hover:bg-gray-700 text-xs text-gray-200 font-medium transition">
-              <i class="fa-solid fa-external-link mr-1"></i> Wiki BUT3
-            </a>
+          <div class="pt-2 text-xs flex gap-3 text-gray-500">
+            <a href="https://wikigeii.iut-troyes.univ-reims.fr/index.php?title=Cours:SaeS5" target="_blank" class="underline hover:text-black">Wiki SaeS5</a>
+            <a href="https://wikigeii.iut-troyes.univ-reims.fr/index.php?title=Cours:SaeBUT3_25_26" target="_blank" class="underline hover:text-black">Wiki BUT3</a>
           </div>
         </div>
       </div>
 
     </section>
 
-    <!-- ================= TAB 2: KANBAN ================= -->
-    <section id="view-kanban" class="space-y-6 hidden">
-      <div class="flex flex-wrap items-center justify-between gap-4">
-        <div>
-          <h2 class="text-xl font-bold text-white">Tableau Kanban des 9 Work Packages</h2>
-          <p class="text-xs text-gray-400">Suivez l'avancement des tâches et des bancs de test en temps réel</p>
-        </div>
-        <button onclick="openAddTaskModal()" class="px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-medium text-sm transition flex items-center gap-2 shadow-lg shadow-brand-600/20">
-          <i class="fa-solid fa-plus"></i> Nouvelle Tâche
+    <!-- TAB 2: KANBAN -->
+    <section id="view-kanban" class="space-y-4 hidden">
+      <div class="flex items-center justify-between">
+        <div class="text-xs font-semibold uppercase tracking-wider text-gray-500">Tableau des Tâches</div>
+        <button onclick="openAddTaskModal()" class="px-3 py-1.5 text-xs font-medium bg-black text-white rounded hover:bg-gray-800 transition">
+          + Nouvelle Tâche
         </button>
       </div>
 
-      <!-- COLONNES KANBAN -->
       <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
         
-        <!-- À FAIRE -->
-        <div class="glass-panel p-4 rounded-2xl border border-darkborder flex flex-col h-[700px]">
-          <div class="flex justify-between items-center mb-3 pb-2 border-b border-gray-800">
-            <span class="font-bold text-sm text-gray-300 flex items-center gap-2">
-              <span class="w-2.5 h-2.5 rounded-full bg-slate-500"></span> À Faire
-            </span>
-            <span class="px-2 py-0.5 rounded-full bg-gray-800 text-xs text-gray-400 font-semibold" id="count-todo">0</span>
+        <!-- A FAIRE -->
+        <div class="border border-subtle rounded p-3 flex flex-col min-h-[500px] bg-subtle">
+          <div class="flex justify-between items-center mb-3 pb-2 border-b border-subtle text-xs font-semibold text-gray-700">
+            <span>À faire</span>
+            <span class="text-gray-400" id="count-todo">0</span>
           </div>
-          <div class="space-y-3 overflow-y-auto flex-1 pr-1 custom-scrollbar" id="kanban-todo"></div>
+          <div class="space-y-2 flex-1 overflow-y-auto" id="kanban-todo"></div>
         </div>
 
         <!-- EN COURS -->
-        <div class="glass-panel p-4 rounded-2xl border border-darkborder flex flex-col h-[700px]">
-          <div class="flex justify-between items-center mb-3 pb-2 border-b border-gray-800">
-            <span class="font-bold text-sm text-amber-300 flex items-center gap-2">
-              <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span> En Cours
-            </span>
-            <span class="px-2 py-0.5 rounded-full bg-amber-500/10 text-xs text-amber-400 font-semibold" id="count-in_progress">0</span>
+        <div class="border border-subtle rounded p-3 flex flex-col min-h-[500px] bg-subtle">
+          <div class="flex justify-between items-center mb-3 pb-2 border-b border-subtle text-xs font-semibold text-gray-700">
+            <span>En cours</span>
+            <span class="text-gray-400" id="count-in_progress">0</span>
           </div>
-          <div class="space-y-3 overflow-y-auto flex-1 pr-1 custom-scrollbar" id="kanban-in_progress"></div>
+          <div class="space-y-2 flex-1 overflow-y-auto" id="kanban-in_progress"></div>
         </div>
 
         <!-- SUR BANC DE TEST -->
-        <div class="glass-panel p-4 rounded-2xl border border-darkborder flex flex-col h-[700px]">
-          <div class="flex justify-between items-center mb-3 pb-2 border-b border-gray-800">
-            <span class="font-bold text-sm text-purple-300 flex items-center gap-2">
-              <span class="w-2.5 h-2.5 rounded-full bg-purple-500"></span> Sur Banc de Test
-            </span>
-            <span class="px-2 py-0.5 rounded-full bg-purple-500/10 text-xs text-purple-400 font-semibold" id="count-testing">0</span>
+        <div class="border border-subtle rounded p-3 flex flex-col min-h-[500px] bg-subtle">
+          <div class="flex justify-between items-center mb-3 pb-2 border-b border-subtle text-xs font-semibold text-gray-700">
+            <span>Sur banc de test</span>
+            <span class="text-gray-400" id="count-testing">0</span>
           </div>
-          <div class="space-y-3 overflow-y-auto flex-1 pr-1 custom-scrollbar" id="kanban-testing"></div>
+          <div class="space-y-2 flex-1 overflow-y-auto" id="kanban-testing"></div>
         </div>
 
-        <!-- VALIDÉ / TERMINÉ -->
-        <div class="glass-panel p-4 rounded-2xl border border-darkborder flex flex-col h-[700px]">
-          <div class="flex justify-between items-center mb-3 pb-2 border-b border-gray-800">
-            <span class="font-bold text-sm text-emerald-300 flex items-center gap-2">
-              <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Validé pour Livrable
-            </span>
-            <span class="px-2 py-0.5 rounded-full bg-emerald-500/10 text-xs text-emerald-400 font-semibold" id="count-done">0</span>
+        <!-- VALIDE -->
+        <div class="border border-subtle rounded p-3 flex flex-col min-h-[500px] bg-subtle">
+          <div class="flex justify-between items-center mb-3 pb-2 border-b border-subtle text-xs font-semibold text-gray-700">
+            <span>Validé</span>
+            <span class="text-gray-400" id="count-done">0</span>
           </div>
-          <div class="space-y-3 overflow-y-auto flex-1 pr-1 custom-scrollbar" id="kanban-done"></div>
+          <div class="space-y-2 flex-1 overflow-y-auto" id="kanban-done"></div>
         </div>
 
       </div>
     </section>
 
-    <!-- ================= TAB 3: JOURNAL ================= -->
+    <!-- TAB 3: JOURNAL -->
     <section id="view-journal" class="space-y-6 hidden">
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         
-        <!-- FORMULAIRE REDACTION JOURNAL -->
-        <div class="glass-panel p-6 rounded-2xl border border-darkborder h-fit space-y-4">
-          <h2 class="text-lg font-bold text-white flex items-center gap-2">
-            <i class="fa-solid fa-pen-nib text-brand-500"></i> Rédiger l'Avancement du Jour
-          </h2>
-          <p class="text-xs text-gray-400">Chaque membre saisit ici son bilan quotidien. Tout est sauvegardé et audité le soir par Antigravity.</p>
-
-          <form onsubmit="submitJournalEntry(event)" class="space-y-3">
+        <!-- Formulaire de saisie -->
+        <div class="border border-subtle rounded p-4 space-y-3 h-fit">
+          <div class="text-xs font-semibold uppercase tracking-wider text-gray-500">Saisie du Jour</div>
+          <form onsubmit="submitJournal(event)" class="space-y-3">
             <div>
-              <label class="block text-xs font-semibold text-gray-300 mb-1">Titre de la session :</label>
-              <input type="text" id="journalTitle" placeholder="Ex: Schéma du variateur & choix des MOSFETs" required class="w-full bg-gray-900 border border-gray-700 text-white rounded-xl px-3 py-2 text-sm focus:border-brand-500 outline-none" />
+              <label class="block text-xs text-gray-600 mb-1">Titre de l'avancement :</label>
+              <input type="text" id="journalTitle" required placeholder="Ex: Dimensionnement étage de puissance" class="w-full text-xs border border-subtle rounded p-2 outline-none focus:border-black" />
             </div>
 
             <div>
-              <label class="block text-xs font-semibold text-gray-300 mb-1">Mots-clés / Catégorie :</label>
-              <input type="text" id="journalTags" placeholder="Ex: Variateur, Puissance, L1" class="w-full bg-gray-900 border border-gray-700 text-white rounded-xl px-3 py-2 text-sm focus:border-brand-500 outline-none" />
+              <label class="block text-xs text-gray-600 mb-1">Catégorie / Mots-clés :</label>
+              <input type="text" id="journalTags" placeholder="Variateur, L1, Calculs" class="w-full text-xs border border-subtle rounded p-2 outline-none focus:border-black" />
             </div>
 
             <div>
-              <label class="block text-xs font-semibold text-gray-300 mb-1">Détail de l'avancement & Difficultés :</label>
-              <textarea id="journalContent" rows="6" placeholder="Ce que j'ai fait aujourd'hui, les tests réalisés, les composants sélectionnés, et les blocages rencontrés..." required class="w-full bg-gray-900 border border-gray-700 text-white rounded-xl px-3 py-2 text-sm focus:border-brand-500 outline-none"></textarea>
+              <label class="block text-xs text-gray-600 mb-1">Travail réalisé & Difficultés :</label>
+              <textarea id="journalContent" rows="6" required placeholder="Préciser les résultats, références choisies et éventuels blocages..." class="w-full text-xs border border-subtle rounded p-2 outline-none focus:border-black"></textarea>
             </div>
 
-            <button type="submit" class="w-full py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-semibold text-sm transition flex items-center justify-center gap-2 shadow-lg shadow-brand-600/20">
-              <i class="fa-solid fa-floppy-disk"></i> Enregistrer dans le Journal
+            <button type="submit" class="w-full py-2 bg-black text-white text-xs font-medium rounded hover:bg-gray-800 transition">
+              Enregistrer l'entrée
             </button>
           </form>
         </div>
 
-        <!-- LISTE DES ENTREES -->
-        <div class="lg:col-span-2 glass-panel p-6 rounded-2xl border border-darkborder">
-          <h2 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
-            <i class="fa-solid fa-clock-rotate-left text-gray-400"></i> Historique du Journal de Bord
-          </h2>
-          <div class="space-y-4 overflow-y-auto max-h-[700px] pr-2 custom-scrollbar" id="journalEntriesList">
-            <!-- Rempli par JavaScript -->
-          </div>
+        <!-- Liste des entrées -->
+        <div class="md:col-span-2 border border-subtle rounded p-4 space-y-3">
+          <div class="text-xs font-semibold uppercase tracking-wider text-gray-500">Historique des Saisies</div>
+          <div class="divide-y divide-subtle max-h-[600px] overflow-y-auto" id="journalList"></div>
         </div>
 
       </div>
     </section>
 
-    <!-- ================= TAB 4: FILES ================= -->
-    <section id="view-files" class="space-y-6 hidden">
-      <div class="glass-panel p-6 rounded-2xl border border-darkborder">
-        <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+    <!-- TAB 4: FILES -->
+    <section id="view-files" class="space-y-4 hidden">
+      <div class="flex items-center justify-between">
+        <div class="text-xs font-semibold uppercase tracking-wider text-gray-500">Documents & Fichiers</div>
+        <button onclick="document.getElementById('fileInput').click()" class="px-3 py-1.5 text-xs font-medium bg-black text-white rounded hover:bg-gray-800 transition">
+          + Téléverser un fichier
+        </button>
+        <input type="file" id="fileInput" onchange="uploadFile(event)" class="hidden" />
+      </div>
+
+      <div class="border border-subtle rounded overflow-hidden">
+        <table class="w-full text-left text-xs">
+          <thead class="bg-subtle text-gray-500 uppercase border-b border-subtle">
+            <tr>
+              <th class="py-2.5 px-4 font-semibold">Nom</th>
+              <th class="py-2.5 px-4 font-semibold">Catégorie</th>
+              <th class="py-2.5 px-4 font-semibold">Auteur</th>
+              <th class="py-2.5 px-4 font-semibold">Date</th>
+              <th class="py-2.5 px-4 text-right font-semibold">Lien</th>
+            </tr>
+          </thead>
+          <tbody id="filesTable" class="divide-y divide-subtle"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- TAB 5: AUDIT -->
+    <section id="view-audit" class="space-y-4 hidden">
+      <div class="border border-subtle rounded p-5 space-y-4">
+        <div class="flex items-center justify-between">
           <div>
-            <h2 class="text-xl font-bold text-white">Espace de Dépôt de Fichiers & Livrables</h2>
-            <p class="text-xs text-gray-400">Centralisez vos schémas électriques, datasheets, programmes C/MicroPython et documents de synthèse</p>
+            <div class="text-xs font-semibold uppercase tracking-wider text-gray-500">Audit & Point Quotidien</div>
+            <div class="text-xs text-gray-500 mt-0.5">Synthèse textuelle de la journée pour analyse par Antigravity</div>
           </div>
-          <button onclick="document.getElementById('fileUploadInput').click()" class="px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-medium text-sm transition flex items-center gap-2">
-            <i class="fa-solid fa-cloud-arrow-up"></i> Déposer un Fichier
-          </button>
-          <input type="file" id="fileUploadInput" onchange="handleFileUpload(event)" class="hidden" />
-        </div>
-
-        <div class="overflow-x-auto">
-          <table class="w-full text-left text-sm text-gray-300">
-            <thead class="text-xs uppercase bg-gray-900/80 text-gray-400 border-b border-gray-800">
-              <tr>
-                <th class="py-3 px-4">Nom du Fichier</th>
-                <th class="py-3 px-4">Catégorie</th>
-                <th class="py-3 px-4">Déposé par</th>
-                <th class="py-3 px-4">Date</th>
-                <th class="py-3 px-4 text-right">Action</th>
-              </tr>
-            </thead>
-            <tbody id="filesTableBody" class="divide-y divide-gray-800">
-              <!-- Rempli par JavaScript -->
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-
-    <!-- ================= TAB 5: AUDIT IA DU SOIR ================= -->
-    <section id="view-audit" class="space-y-6 hidden">
-      <div class="glass-panel p-6 rounded-2xl border border-emerald-500/20 bg-emerald-950/10">
-        <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
-          <div class="flex items-center space-x-3">
-            <div class="w-12 h-12 rounded-2xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-2xl font-bold border border-emerald-500/30">
-              <i class="fa-solid fa-brain"></i>
-            </div>
-            <div>
-              <h2 class="text-xl font-bold text-white">Rapport & Audit Quotidien Antigravity</h2>
-              <p class="text-xs text-emerald-400/90">Compilation automatique des actions du jour pour analyse par l'IA chaque soir</p>
-            </div>
-          </div>
-
-          <button onclick="generateAIPrompt()" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white font-semibold text-sm transition flex items-center gap-2 shadow-lg shadow-emerald-600/30">
-            <i class="fa-solid fa-wand-magic-sparkles"></i> Générer le Snapshot du Soir
+          <button onclick="generateAuditText()" class="px-3 py-1.5 text-xs font-medium bg-black text-white rounded hover:bg-gray-800 transition">
+            Actualiser l'audit
           </button>
         </div>
 
-        <div class="p-4 rounded-xl bg-gray-900/90 border border-gray-800 space-y-3">
-          <div class="flex justify-between items-center">
-            <span class="text-xs font-semibold text-gray-300 uppercase tracking-wider">Aperçu du Rapport à transmettre à Antigravity :</span>
-            <button onclick="copyAuditText()" id="copyAuditBtn" class="text-xs px-3 py-1 rounded-lg bg-gray-800 hover:bg-gray-700 text-emerald-400 border border-gray-700 transition flex items-center gap-1.5">
-              <i class="fa-regular fa-copy"></i> Copier
-            </button>
-          </div>
-          <textarea id="auditSnapshotOutput" rows="12" readonly class="w-full bg-black/60 text-emerald-300 font-mono text-xs p-3 rounded-lg border border-gray-800 outline-none leading-relaxed"></textarea>
-        </div>
-
-        <div class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-3 text-xs text-gray-400">
-          <div class="p-3 rounded-xl bg-gray-900/60 border border-gray-800 flex items-center gap-2.5">
-            <i class="fa-solid fa-check text-emerald-400 text-base"></i>
-            <span>Vérification automatique des délais jusqu'au 6 décembre.</span>
-          </div>
-          <div class="p-3 rounded-xl bg-gray-900/60 border border-gray-800 flex items-center gap-2.5">
-            <i class="fa-solid fa-scale-balanced text-indigo-400 text-base"></i>
-            <span>Contrôle de l'équilibre du travail entre les 5 membres.</span>
-          </div>
-          <div class="p-3 rounded-xl bg-gray-900/60 border border-gray-800 flex items-center gap-2.5">
-            <i class="fa-solid fa-shield-halved text-amber-400 text-base"></i>
-            <span>Détection précoce des incohérences avec le CDC wiki.</span>
-          </div>
-        </div>
+        <textarea id="auditText" rows="12" readonly class="w-full font-mono text-xs p-3 border border-subtle rounded bg-subtle outline-none text-gray-800 leading-relaxed"></textarea>
       </div>
     </section>
 
   </main>
 
   <!-- MODAL AJOUT TÂCHE -->
-  <div id="taskModal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
-    <div class="glass-panel w-full max-w-md p-6 rounded-2xl border border-gray-700 space-y-4">
-      <div class="flex justify-between items-center">
-        <h3 class="text-lg font-bold text-white">Ajouter une Tâche</h3>
-        <button onclick="closeModal('taskModal')" class="text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+  <div id="taskModal" class="fixed inset-0 z-50 bg-black/40 hidden flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-sm rounded border border-subtle p-5 space-y-3 shadow-lg">
+      <div class="flex justify-between items-center pb-2 border-b border-subtle">
+        <span class="text-xs font-semibold text-black uppercase">Nouvelle Tâche</span>
+        <button onclick="closeModal('taskModal')" class="text-xs text-gray-500 hover:text-black">Fermer</button>
       </div>
 
-      <form onsubmit="submitNewTask(event)" class="space-y-3">
+      <form onsubmit="submitTask(event)" class="space-y-2.5 text-xs">
         <div>
-          <label class="block text-xs font-semibold text-gray-300 mb-1">Intitulé de la tâche :</label>
-          <input type="text" id="taskTitle" required placeholder="Ex: Schéma de puissance variateur sous KiCad" class="w-full bg-gray-900 border border-gray-700 text-white rounded-xl px-3 py-2 text-sm outline-none focus:border-brand-500" />
+          <label class="block text-gray-600 mb-1">Titre de la tâche :</label>
+          <input type="text" id="taskTitle" required class="w-full border border-subtle rounded p-2 outline-none focus:border-black" />
         </div>
 
         <div>
-          <label class="block text-xs font-semibold text-gray-300 mb-1">Work Package / Catégorie :</label>
-          <select id="taskCategory" class="w-full bg-gray-900 border border-gray-700 text-white rounded-xl px-3 py-2 text-sm outline-none focus:border-brand-500">
-            <option value="Domotique LTG">Domotique LTG (Température, Clim, Alertes)</option>
-            <option value="Véhicule Autonome">Véhicule Autonome (Variateur, Direction, Borne)</option>
-            <option value="Cadre Commun">Cadre Commun (MQTT, Home Assistant, Grafana)</option>
-            <option value="Banc de Test">Banc de Test Associé</option>
+          <label class="block text-gray-600 mb-1">Sous-système :</label>
+          <select id="taskCategory" class="w-full border border-subtle rounded p-2 outline-none focus:border-black bg-white">
+            <option value="Domotique LTG">Domotique LTG</option>
+            <option value="Véhicule Autonome">Véhicule Autonome</option>
+            <option value="Cadre Commun">Cadre Commun (MQTT/Home Assistant)</option>
+            <option value="Banc de Test">Banc de Test</option>
           </select>
         </div>
 
-        <div class="grid grid-cols-2 gap-3">
+        <div class="grid grid-cols-2 gap-2">
           <div>
-            <label class="block text-xs font-semibold text-gray-300 mb-1">Attribué à :</label>
-            <select id="taskAssignee" class="w-full bg-gray-900 border border-gray-700 text-white rounded-xl px-3 py-2 text-sm outline-none focus:border-brand-500">
-              <option value="bouras">Bouras (Chihab)</option>
+            <label class="block text-gray-600 mb-1">Assigné à :</label>
+            <select id="taskAssignee" class="w-full border border-subtle rounded p-2 outline-none focus:border-black bg-white">
+              <option value="bouras">Bouras</option>
               <option value="damou">Damou</option>
               <option value="diouf">Diouf</option>
               <option value="elghazouani">Al Gahzouani</option>
@@ -450,8 +300,8 @@
             </select>
           </div>
           <div>
-            <label class="block text-xs font-semibold text-gray-300 mb-1">Jalon visé :</label>
-            <select id="taskMilestone" class="w-full bg-gray-900 border border-gray-700 text-white rounded-xl px-3 py-2 text-sm outline-none focus:border-brand-500">
+            <label class="block text-gray-600 mb-1">Jalon visé :</label>
+            <select id="taskMilestone" class="w-full border border-subtle rounded p-2 outline-none focus:border-black bg-white">
               <option value="L1">Livrable 1 (6 Déc)</option>
               <option value="L2">Livrable 2 (20 Déc)</option>
               <option value="L3">Livrable 3 (24 Janv)</option>
@@ -460,57 +310,42 @@
         </div>
 
         <div>
-          <label class="block text-xs font-semibold text-gray-300 mb-1">Priorité :</label>
-          <select id="taskPriority" class="w-full bg-gray-900 border border-gray-700 text-white rounded-xl px-3 py-2 text-sm outline-none focus:border-brand-500">
-            <option value="urgent">Urgent / Critique L1</option>
-            <option value="high">Élevée</option>
-            <option value="medium" selected>Normale</option>
-          </select>
+          <label class="block text-gray-600 mb-1">Détails :</label>
+          <textarea id="taskDesc" rows="2" class="w-full border border-subtle rounded p-2 outline-none focus:border-black"></textarea>
         </div>
 
-        <div>
-          <label class="block text-xs font-semibold text-gray-300 mb-1">Description / Détails :</label>
-          <textarea id="taskDesc" rows="2" class="w-full bg-gray-900 border border-gray-700 text-white rounded-xl px-3 py-2 text-sm outline-none focus:border-brand-500" placeholder="Détails de conception, références composants..."></textarea>
+        <div class="pt-2">
+          <button type="submit" class="w-full py-2 bg-black text-white text-xs font-medium rounded hover:bg-gray-800 transition">
+            Créer la tâche
+          </button>
         </div>
-
-        <button type="submit" class="w-full py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-semibold text-sm transition">
-          Ajouter la Tâche
-        </button>
       </form>
     </div>
   </div>
 
   <!-- MODAL CONFIG GITHUB -->
-  <div id="configModal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
-    <div class="glass-panel w-full max-w-md p-6 rounded-2xl border border-gray-700 space-y-4">
-      <div class="flex justify-between items-center">
-        <h3 class="text-lg font-bold text-white">Paramètres GitHub</h3>
-        <button onclick="closeModal('configModal')" class="text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+  <div id="configModal" class="fixed inset-0 z-50 bg-black/40 hidden flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-sm rounded border border-subtle p-5 space-y-3 shadow-lg">
+      <div class="flex justify-between items-center pb-2 border-b border-subtle">
+        <span class="text-xs font-semibold text-black uppercase">Configuration GitHub</span>
+        <button onclick="closeModal('configModal')" class="text-xs text-gray-500 hover:text-black">Fermer</button>
       </div>
 
-      <div class="space-y-3 text-xs text-gray-300">
-        <p>Les données sont stockées directement sur le dépôt GitHub : <strong class="text-indigo-400">bouraschihab1-star/sae-supervision-geii</strong></p>
-        
+      <div class="space-y-2.5 text-xs text-gray-600">
+        <p>Dépôt : <strong>bouraschihab1-star/sae-supervision-geii</strong></p>
         <div>
-          <label class="block text-xs font-semibold text-gray-300 mb-1">Token GitHub (sauvegardé dans ce navigateur) :</label>
-          <input type="password" id="githubTokenInput" placeholder="ghp_..." class="w-full bg-gray-900 border border-gray-700 text-white rounded-xl px-3 py-2 text-sm outline-none focus:border-brand-500" />
-          <p class="text-[11px] text-gray-400 mt-1">Ce token permet d'enregistrer vos tâches et votre journal directement dans le dépôt GitHub.</p>
+          <label class="block text-gray-600 mb-1">Clé GitHub (Token) :</label>
+          <input type="password" id="ghTokenInput" class="w-full border border-subtle rounded p-2 outline-none focus:border-black" />
+          <p class="text-[10px] text-gray-400 mt-1">Enregistrée uniquement dans votre navigateur.</p>
         </div>
-
-        <button onclick="saveGitHubToken()" class="w-full py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-semibold text-sm transition">
-          Sauvegarder la clé
+        <button onclick="saveToken()" class="w-full py-2 bg-black text-white text-xs font-medium rounded hover:bg-gray-800 transition">
+          Enregistrer
         </button>
       </div>
     </div>
   </div>
 
-  <!-- NOTIFICATION TOAST -->
-  <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 bg-gray-900 text-white border border-gray-700 px-4 py-3 rounded-xl shadow-2xl flex items-center space-x-2 text-sm">
-    <i class="fa-solid fa-circle-check text-emerald-400" id="toastIcon"></i>
-    <span id="toastMessage">Message</span>
-  </div>
-
-  <!-- SCRIPT LOGIQUE DASHBOARD -->
+  <!-- LOGIQUE JS -->
   <script>
     const GITHUB_REPO = 'bouraschihab1-star/sae-supervision-geii';
     const GITHUB_RAW_URL = `https://raw.githubusercontent.com/${GITHUB_REPO}/main/data/database.json`;
@@ -523,45 +358,29 @@
       token: localStorage.getItem('sae_gh_token') || ''
     };
 
-    // Auto-récupération du token depuis URL hash (#token=ghp_...)
     if (window.location.hash.includes('token=')) {
-      const match = window.location.hash.match(/token=([a-zA-Z0-9_]+)/);
-      if (match) {
-        state.token = match[1];
+      const m = window.location.hash.match(/token=([a-zA-Z0-9_]+)/);
+      if (m) {
+        state.token = m[1];
         localStorage.setItem('sae_gh_token', state.token);
         history.replaceState(null, null, ' ');
       }
     }
 
-    // Initialisation
     document.addEventListener('DOMContentLoaded', async () => {
       updateCountdown();
-      await loadDatabase();
+      await loadDb();
       renderAll();
     });
 
-    // Compte à rebours vers le 6 décembre 2026
     function updateCountdown() {
-      const targetDate = new Date('2026-12-06T09:00:00');
-      const now = new Date();
-      const diffTime = targetDate - now;
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-      const textEl = document.getElementById('countdownText');
-      if (diffDays > 0) {
-        textEl.textContent = `Vendredi 6 Décembre (J-${diffDays})`;
-      } else if (diffDays === 0) {
-        textEl.textContent = `AUJOURD'HUI ! Revue de projet`;
-        textEl.className = 'text-xs font-bold text-rose-400 animate-pulse';
-      } else {
-        textEl.textContent = `Livrable 1 passé. En route pour L2 !`;
-      }
+      const diff = new Date('2026-12-06T09:00:00') - new Date();
+      const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
+      document.getElementById('countdown').textContent = days > 0 ? `06 Décembre (J-${days})` : `Aujourd'hui !`;
     }
 
-    // Chargement de la Base de Données
-    async function loadDatabase() {
-      showSyncing(true);
+    async function loadDb() {
       try {
-        // Essayer d'abord via GitHub API si on a un token
         if (state.token) {
           const resp = await fetch(GITHUB_API_URL, {
             headers: { 'Authorization': `token ${state.token}`, 'Accept': 'application/vnd.github.v3+json' }
@@ -569,174 +388,127 @@
           if (resp.ok) {
             const data = await resp.json();
             state.fileSha = data.sha;
-            const decoded = decodeURIComponent(escape(atob(data.content)));
-            state.db = JSON.parse(decoded);
+            state.db = JSON.parse(decodeURIComponent(escape(atob(data.content))));
             localStorage.setItem('sae_db_cache', JSON.stringify(state.db));
-            showToast('Données synchronisées avec GitHub !', 'success');
-            showSyncing(false);
             return;
           }
         }
-
-        // Sinon via Raw URL avec cache buster
-        const rawResp = await fetch(`${GITHUB_RAW_URL}?t=${Date.now()}`);
-        if (rawResp.ok) {
-          state.db = await rawResp.json();
+        const raw = await fetch(`${GITHUB_RAW_URL}?t=${Date.now()}`);
+        if (raw.ok) {
+          state.db = await raw.json();
           localStorage.setItem('sae_db_cache', JSON.stringify(state.db));
-          showToast('Données chargées depuis GitHub Pages', 'info');
-        } else {
-          throw new Error('Erreur de chargement raw');
         }
-      } catch (err) {
-        console.warn('Utilisation du cache local:', err);
-        const cached = localStorage.getItem('sae_db_cache');
-        if (cached) {
-          state.db = JSON.parse(cached);
-          showToast('Données chargées depuis le cache local', 'warning');
-        } else {
-          showToast('Impossible de charger les données', 'error');
-        }
+      } catch (e) {
+        const c = localStorage.getItem('sae_db_cache');
+        if (c) state.db = JSON.parse(c);
       }
-      showSyncing(false);
     }
 
-    // Sauvegarde vers GitHub
-    async function saveDatabaseToGitHub(commitMsg = 'Mise à jour avancement') {
+    async function saveDb(commitMsg) {
       if (!state.db) return;
-      showSyncing(true);
       localStorage.setItem('sae_db_cache', JSON.stringify(state.db));
-
-      if (!state.token) {
-        showToast('Données sauvées en local. Entrez le token GitHub pour synchroniser en ligne.', 'warning');
-        showSyncing(false);
-        return;
-      }
+      if (!state.token) return;
 
       try {
-        // Récupérer le dernier sha si absent
         if (!state.fileSha) {
-          const getResp = await fetch(GITHUB_API_URL, {
-            headers: { 'Authorization': `token ${state.token}` }
-          });
-          if (getResp.ok) {
-            const resData = await getResp.json();
-            state.fileSha = resData.sha;
-          }
+          const res = await fetch(GITHUB_API_URL, { headers: { 'Authorization': `token ${state.token}` } });
+          if (res.ok) state.fileSha = (await res.json()).sha;
         }
 
-        const contentStr = unescape(encodeURIComponent(JSON.stringify(state.db, null, 2)));
-        const base64Content = btoa(contentStr);
-
-        const putResp = await fetch(GITHUB_API_URL, {
+        const content = btoa(unescape(encodeURIComponent(JSON.stringify(state.db, null, 2))));
+        const res = await fetch(GITHUB_API_URL, {
           method: 'PUT',
           headers: {
             'Authorization': `token ${state.token}`,
-            'Content-Type': 'application/json',
-            'Accept': 'application/vnd.github.v3+json'
+            'Content-Type': 'application/json'
           },
           body: JSON.stringify({
-            message: `${commitMsg} par ${state.currentUser}`,
-            content: base64Content,
+            message: `${commitMsg} [${state.currentUser}]`,
+            content,
             sha: state.fileSha,
             branch: 'main'
           })
         });
 
-        if (putResp.ok) {
-          const putData = await putResp.json();
-          state.fileSha = putData.content.sha;
-          showToast('Sauvegardé et commité sur GitHub ! 🚀', 'success');
-        } else {
-          throw new Error('Erreur PUT GitHub');
+        if (res.ok) {
+          state.fileSha = (await res.json()).content.sha;
         }
       } catch (err) {
-        console.error('Erreur save GitHub:', err);
-        showToast('Erreur lors du commit GitHub', 'error');
+        console.error('Erreur sauvegarde:', err);
       }
-      showSyncing(false);
     }
 
-    // RENDU GLOBAL
     function renderAll() {
       if (!state.db) return;
-      renderProgress();
+      renderStats();
+      renderMembers();
       renderMilestones();
       renderKanban();
       renderJournal();
       renderFiles();
-      generateAIPrompt();
+      generateAuditText();
     }
 
-    // Rendu des jauges de progression
-    function renderProgress() {
+    function renderStats() {
       const tasks = state.db.tasks || [];
-      const doneCount = tasks.filter(t => t.status === 'done').length;
-      const progressPercent = tasks.length > 0 ? Math.round((doneCount / tasks.length) * 100) : 25;
-      
-      document.getElementById('statGlobalProgress').textContent = `${progressPercent}%`;
-      document.getElementById('statProgressBar').style.width = `${progressPercent}%`;
-      document.getElementById('statActiveTasks').textContent = tasks.length;
+      const done = tasks.filter(t => t.status === 'done').length;
+      const inProg = tasks.filter(t => t.status === 'in_progress').length;
+      const pct = tasks.length ? Math.round((done / tasks.length) * 100) : 0;
 
-      const grid = document.getElementById('membersProgressGrid');
-      grid.innerHTML = '';
+      document.getElementById('statGlobal').textContent = `${pct}%`;
+      document.getElementById('statGlobalBar').style.width = `${pct}%`;
+      document.getElementById('statTasksCount').textContent = tasks.length;
+      document.getElementById('statTasksDetails').textContent = `${inProg} en cours, ${done} terminées`;
+    }
+
+    function renderMembers() {
+      const container = document.getElementById('membersGrid');
+      container.innerHTML = '';
+      const tasks = state.db.tasks || [];
 
       state.db.members.forEach(m => {
-        const memberTasks = tasks.filter(t => t.assignee === m.id);
-        const memberDone = memberTasks.filter(t => t.status === 'done').length;
-        const memberPct = memberTasks.length > 0 ? Math.round((memberDone / memberTasks.length) * 100) : m.progress;
-        
+        const mTasks = tasks.filter(t => t.assignee === m.id);
+        const mDone = mTasks.filter(t => t.status === 'done').length;
+        const pct = mTasks.length ? Math.round((mDone / mTasks.length) * 100) : 0;
         const isCurrent = m.id === state.currentUser;
-        const card = document.createElement('div');
-        card.className = `p-4 rounded-xl border transition-all cursor-pointer ${isCurrent ? 'bg-brand-950/40 border-brand-500 shadow-md shadow-brand-500/10' : 'bg-gray-900/60 border-gray-800 hover:border-gray-700'}`;
-        card.onclick = () => changeUser(m.id);
 
-        card.innerHTML = `
-          <div class="flex items-center space-x-3 mb-2">
-            <span class="text-2xl">${m.avatar}</span>
-            <div>
-              <div class="font-bold text-sm text-white">${m.name}</div>
-              <div class="text-[11px] text-gray-400">${memberTasks.length} tâches assignées</div>
-            </div>
-          </div>
-          <div class="flex justify-between items-center text-xs mt-3 mb-1">
-            <span class="text-gray-400">Avancement</span>
-            <span class="font-bold text-brand-400">${memberPct}%</span>
-          </div>
-          <div class="w-full bg-gray-800 h-1.5 rounded-full overflow-hidden">
-            <div class="bg-brand-500 h-full rounded-full" style="width: ${memberPct}%"></div>
-          </div>
-        `;
-        grid.appendChild(card);
-      });
-    }
-
-    // Rendu des Jalons
-    function renderMilestones() {
-      const container = document.getElementById('milestonesList');
-      container.innerHTML = '';
-      state.db.milestones.forEach(ms => {
         const el = document.createElement('div');
-        el.className = `p-3 rounded-xl border flex items-start justify-between gap-3 ${ms.done ? 'bg-emerald-950/20 border-emerald-500/30' : 'bg-gray-900/60 border-gray-800'}`;
+        el.className = `p-3 rounded border text-xs cursor-pointer transition ${isCurrent ? 'border-black bg-subtle font-medium' : 'border-subtle hover:border-gray-400'}`;
+        el.onclick = () => changeUser(m.id);
         el.innerHTML = `
-          <div class="space-y-1">
-            <div class="flex items-center gap-2">
-              <span class="font-bold text-sm ${ms.done ? 'text-emerald-400' : 'text-gray-200'}">${ms.name}</span>
-              ${ms.done ? '<span class="px-2 py-0.2 rounded-full bg-emerald-500/10 text-emerald-400 text-[10px] font-semibold border border-emerald-500/20">Validé</span>' : ''}
-            </div>
-            <p class="text-xs text-gray-400">${ms.desc}</p>
+          <div class="text-black font-semibold">${m.name}</div>
+          <div class="text-gray-500 text-[11px] mt-0.5">${mTasks.length} tâche(s)</div>
+          <div class="flex justify-between items-center text-[10px] text-gray-400 mt-2">
+            <span>Avancement</span>
+            <span class="text-black font-semibold">${pct}%</span>
           </div>
-          <div class="text-right shrink-0">
-            <span class="text-xs font-mono font-bold ${ms.done ? 'text-emerald-400' : 'text-amber-400'}">${ms.date}</span>
+          <div class="w-full bg-gray-200 h-1 rounded mt-1 overflow-hidden">
+            <div class="bg-black h-full" style="width: ${pct}%"></div>
           </div>
         `;
         container.appendChild(el);
       });
     }
 
-    // Rendu du Kanban
+    function renderMilestones() {
+      const c = document.getElementById('milestonesList');
+      c.innerHTML = '';
+      state.db.milestones.forEach(ms => {
+        const div = document.createElement('div');
+        div.className = 'py-2 flex items-center justify-between text-xs';
+        div.innerHTML = `
+          <div>
+            <div class="font-medium text-black">${ms.name}</div>
+            <div class="text-[11px] text-gray-500">${ms.desc}</div>
+          </div>
+          <div class="text-right font-mono text-gray-600 font-medium">${ms.date}</div>
+        `;
+        c.appendChild(div);
+      });
+    }
+
     function renderKanban() {
-      const statuses = ['todo', 'in_progress', 'testing', 'done'];
-      statuses.forEach(s => {
+      ['todo', 'in_progress', 'testing', 'done'].forEach(s => {
         document.getElementById(`kanban-${s}`).innerHTML = '';
         document.getElementById(`count-${s}`).textContent = '0';
       });
@@ -749,58 +521,45 @@
         const col = document.getElementById(`kanban-${task.status}`);
         if (!col) return;
 
-        const assigneeObj = state.db.members.find(m => m.id === task.assignee) || { name: task.assignee, avatar: '👤' };
-        const priorityColors = {
-          urgent: 'bg-rose-500/10 text-rose-400 border-rose-500/20',
-          high: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
-          medium: 'bg-blue-500/10 text-blue-400 border-blue-500/20'
-        };
-
         const card = document.createElement('div');
-        card.className = 'p-3.5 rounded-xl bg-gray-900/90 border border-gray-800 hover:border-gray-700 space-y-2.5 transition shadow-sm';
+        card.className = 'p-2.5 rounded bg-white border border-subtle text-xs space-y-1.5 shadow-sm';
         card.innerHTML = `
-          <div class="flex justify-between items-start gap-2">
-            <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full border ${priorityColors[task.priority] || priorityColors.medium}">${task.category}</span>
-            <span class="text-[10px] font-mono text-gray-400 font-bold">${task.milestone}</span>
+          <div class="flex justify-between text-[10px] text-gray-500">
+            <span class="font-semibold text-black uppercase tracking-wider">${task.category}</span>
+            <span class="font-mono">${task.milestone}</span>
           </div>
-          <div class="font-medium text-sm text-gray-200 leading-snug">${task.title}</div>
-          ${task.desc ? `<p class="text-xs text-gray-400 leading-relaxed">${task.desc}</p>` : ''}
-          <div class="pt-2 border-t border-gray-800/80 flex items-center justify-between">
-            <div class="flex items-center space-x-1.5 text-xs text-gray-300 font-medium">
-              <span>${assigneeObj.avatar}</span>
-              <span>${assigneeObj.name}</span>
-            </div>
-            <div class="flex items-center space-x-1">
-              ${task.status !== 'todo' ? `<button onclick="moveTask('${task.id}', -1)" title="Reculer" class="w-6 h-6 rounded bg-gray-800 hover:bg-gray-700 text-gray-300 flex items-center justify-center text-xs"><i class="fa-solid fa-chevron-left"></i></button>` : ''}
-              ${task.status !== 'done' ? `<button onclick="moveTask('${task.id}', 1)" title="Avancer" class="w-6 h-6 rounded bg-gray-800 hover:bg-gray-700 text-gray-300 flex items-center justify-center text-xs"><i class="fa-solid fa-chevron-right"></i></button>` : ''}
+          <div class="font-medium text-gray-900">${task.title}</div>
+          ${task.desc ? `<div class="text-gray-500 text-[11px]">${task.desc}</div>` : ''}
+          <div class="pt-1.5 border-t border-subtle flex justify-between items-center text-[11px] text-gray-500">
+            <span>${task.assignee}</span>
+            <div class="space-x-1">
+              ${task.status !== 'todo' ? `<button onclick="moveTask('${task.id}', -1)" class="px-1.5 py-0.5 border border-subtle rounded hover:bg-subtle">←</button>` : ''}
+              ${task.status !== 'done' ? `<button onclick="moveTask('${task.id}', 1)" class="px-1.5 py-0.5 border border-subtle rounded hover:bg-subtle">→</button>` : ''}
             </div>
           </div>
         `;
         col.appendChild(card);
       });
 
-      statuses.forEach(s => {
+      ['todo', 'in_progress', 'testing', 'done'].forEach(s => {
         document.getElementById(`count-${s}`).textContent = counts[s] || 0;
       });
     }
 
-    // Déplacer une tâche dans le Kanban
-    async function moveTask(taskId, direction) {
+    async function moveTask(id, dir) {
       const steps = ['todo', 'in_progress', 'testing', 'done'];
-      const task = state.db.tasks.find(t => t.id === taskId);
-      if (!task) return;
-      const curIdx = steps.indexOf(task.status);
-      const newIdx = curIdx + direction;
-      if (newIdx >= 0 && newIdx < steps.length) {
-        task.status = steps[newIdx];
+      const t = state.db.tasks.find(x => x.id === id);
+      if (!t) return;
+      const idx = steps.indexOf(t.status) + dir;
+      if (idx >= 0 && idx < steps.length) {
+        t.status = steps[idx];
         renderKanban();
-        renderProgress();
-        await saveDatabaseToGitHub(`Changement statut tâche: ${task.title}`);
+        renderStats();
+        await saveDb(`Tâche déplacée: ${t.title}`);
       }
     }
 
-    // Ajouter une nouvelle tâche
-    async function submitNewTask(e) {
+    async function submitTask(e) {
       e.preventDefault();
       const newTask = {
         id: 'T' + Date.now().toString().slice(-4),
@@ -808,7 +567,6 @@
         category: document.getElementById('taskCategory').value,
         assignee: document.getElementById('taskAssignee').value,
         milestone: document.getElementById('taskMilestone').value,
-        priority: document.getElementById('taskPriority').value,
         desc: document.getElementById('taskDesc').value.trim(),
         status: 'todo'
       };
@@ -816,152 +574,110 @@
       closeModal('taskModal');
       e.target.reset();
       renderKanban();
-      renderProgress();
-      await saveDatabaseToGitHub(`Nouvelle tâche: ${newTask.title}`);
+      renderStats();
+      await saveDb(`Nouvelle tâche: ${newTask.title}`);
     }
 
-    // Rendu du Journal de bord
     function renderJournal() {
-      const container = document.getElementById('journalEntriesList');
-      container.innerHTML = '';
+      const c = document.getElementById('journalList');
+      c.innerHTML = '';
       const list = [...(state.db.journal || [])].reverse();
 
-      if (list.length === 0) {
-        container.innerHTML = `<div class="text-center text-gray-500 py-8 text-sm">Aucune entrée pour le moment. Remplissez le formulaire à gauche !</div>`;
+      if (!list.length) {
+        c.innerHTML = `<div class="py-4 text-center text-gray-400 text-xs">Aucune entrée pour l'instant.</div>`;
         return;
       }
 
-      list.forEach(item => {
-        const authorObj = state.db.members.find(m => m.id === item.author) || { name: item.author, avatar: '👤' };
-        const el = document.createElement('div');
-        el.className = 'p-4 rounded-xl bg-gray-900/80 border border-gray-800 space-y-2';
-        el.innerHTML = `
-          <div class="flex flex-wrap items-center justify-between gap-2">
-            <div class="flex items-center space-x-2">
-              <span class="text-lg">${authorObj.avatar}</span>
-              <span class="font-bold text-sm text-white">${authorObj.name}</span>
-              <span class="text-xs text-gray-400 font-mono">• ${item.date}</span>
-            </div>
-            <div class="flex gap-1.5">
-              ${(item.tags || []).map(t => `<span class="px-2 py-0.5 rounded-full bg-brand-500/10 text-brand-400 text-[10px] font-semibold">#${t}</span>`).join('')}
-            </div>
+      list.forEach(j => {
+        const div = document.createElement('div');
+        div.className = 'py-3 space-y-1 text-xs';
+        div.innerHTML = `
+          <div class="flex justify-between items-center text-gray-500 text-[11px]">
+            <span class="font-semibold text-black uppercase">${j.author}</span>
+            <span class="font-mono">${j.date}</span>
           </div>
-          <h4 class="font-semibold text-sm text-gray-200">${item.title}</h4>
-          <p class="text-xs text-gray-300 whitespace-pre-line leading-relaxed">${item.content}</p>
+          <div class="font-medium text-black">${j.title}</div>
+          <div class="text-gray-700 whitespace-pre-line">${j.content}</div>
         `;
-        container.appendChild(el);
+        c.appendChild(div);
       });
     }
 
-    // Soumission entrée de journal
-    async function submitJournalEntry(e) {
+    async function submitJournal(e) {
       e.preventDefault();
-      const title = document.getElementById('journalTitle').value.trim();
-      const content = document.getElementById('journalContent').value.trim();
-      const tags = document.getElementById('journalTags').value.split(',').map(s => s.trim()).filter(Boolean);
-
       const entry = {
         id: 'J' + Date.now().toString().slice(-4),
         date: new Date().toISOString().split('T')[0],
         author: state.currentUser,
-        title,
-        content,
-        tags: tags.length ? tags : ['Avancement']
+        title: document.getElementById('journalTitle').value.trim(),
+        content: document.getElementById('journalContent').value.trim(),
+        tags: document.getElementById('journalTags').value.split(',').map(s => s.trim()).filter(Boolean)
       };
 
       if (!state.db.journal) state.db.journal = [];
       state.db.journal.push(entry);
-
       e.target.reset();
       renderJournal();
-      generateAIPrompt();
-      await saveDatabaseToGitHub(`Journal: ${title}`);
+      generateAuditText();
+      await saveDb(`Journal: ${entry.title}`);
     }
 
-    // Rendu des fichiers
     function renderFiles() {
-      const tbody = document.getElementById('filesTableBody');
+      const tbody = document.getElementById('filesTable');
       tbody.innerHTML = '';
       (state.db.files || []).forEach(f => {
-        const authorObj = state.db.members.find(m => m.id === f.uploader) || { name: f.uploader };
         const tr = document.createElement('tr');
-        tr.className = 'hover:bg-gray-800/40 transition';
+        tr.className = 'hover:bg-subtle';
         tr.innerHTML = `
-          <td class="py-3 px-4 font-medium text-white flex items-center gap-2">
-            <i class="fa-regular fa-file-lines text-brand-400"></i>
-            <span>${f.name}</span>
-          </td>
-          <td class="py-3 px-4 text-xs"><span class="px-2 py-0.5 rounded bg-gray-800 text-gray-300">${f.category || 'Documentation'}</span></td>
-          <td class="py-3 px-4 text-xs text-gray-300">${authorObj.name}</td>
-          <td class="py-3 px-4 text-xs font-mono text-gray-400">${f.date}</td>
-          <td class="py-3 px-4 text-right">
-            <a href="${f.url}" target="_blank" class="text-xs text-brand-400 hover:text-brand-300 font-medium"><i class="fa-solid fa-download mr-1"></i> Ouvrir</a>
+          <td class="py-2 px-4 font-medium text-black">${f.name}</td>
+          <td class="py-2 px-4 text-gray-500">${f.category || 'Doc'}</td>
+          <td class="py-2 px-4 text-gray-500">${f.uploader}</td>
+          <td class="py-2 px-4 font-mono text-gray-500">${f.date}</td>
+          <td class="py-2 px-4 text-right">
+            <a href="${f.url}" target="_blank" class="underline text-black font-medium">Ouvrir</a>
           </td>
         `;
         tbody.appendChild(tr);
       });
     }
 
-    // Upload de fichier (Base64 direct vers GitHub uploads/)
-    async function handleFileUpload(e) {
+    async function uploadFile(e) {
       const file = e.target.files[0];
-      if (!file) return;
-
-      if (!state.token) {
-        showToast('Token GitHub requis pour enregistrer des fichiers en ligne', 'error');
-        return;
-      }
-
-      showToast(`Téléversement de ${file.name}...`, 'info');
-      showSyncing(true);
+      if (!file || !state.token) return;
 
       const reader = new FileReader();
       reader.onload = async () => {
-        try {
-          const base64Data = reader.result.split(',')[1];
-          const uploadPath = `uploads/${Date.now()}_${file.name}`;
-          const uploadUrl = `https://api.github.com/repos/${GITHUB_REPO}/contents/${uploadPath}`;
+        const base64Data = reader.result.split(',')[1];
+        const path = `uploads/${Date.now()}_${file.name}`;
+        const url = `https://api.github.com/repos/${GITHUB_REPO}/contents/${path}`;
 
-          const resp = await fetch(uploadUrl, {
-            method: 'PUT',
-            headers: {
-              'Authorization': `token ${state.token}`,
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              message: `Upload fichier ${file.name} par ${state.currentUser}`,
-              content: base64Data,
-              branch: 'main'
-            })
+        const res = await fetch(url, {
+          method: 'PUT',
+          headers: { 'Authorization': `token ${state.token}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            message: `Upload ${file.name} [${state.currentUser}]`,
+            content: base64Data,
+            branch: 'main'
+          })
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          state.db.files.push({
+            name: file.name,
+            url: data.content.html_url,
+            uploader: state.currentUser,
+            date: new Date().toISOString().split('T')[0],
+            category: 'Fichier'
           });
-
-          if (resp.ok) {
-            const data = await resp.json();
-            state.db.files.push({
-              name: file.name,
-              url: data.content.html_url,
-              uploader: state.currentUser,
-              date: new Date().toISOString().split('T')[0],
-              size: `${Math.round(file.size / 1024)} KB`,
-              category: 'Livrable / Code'
-            });
-            renderFiles();
-            await saveDatabaseToGitHub(`Ajout fichier: ${file.name}`);
-            showToast(`${file.name} téléversé avec succès !`, 'success');
-          } else {
-            throw new Error('Erreur upload API');
-          }
-        } catch (err) {
-          console.error(err);
-          showToast('Erreur lors du téléversement du fichier', 'error');
+          renderFiles();
+          await saveDb(`Fichier ajouté: ${file.name}`);
         }
-        showSyncing(false);
       };
       reader.readAsDataURL(file);
     }
 
-    // Génération du Snapshot pour Antigravity
-    function generateAIPrompt() {
+    function generateAuditText() {
       if (!state.db) return;
       const today = new Date().toISOString().split('T')[0];
       const todayLogs = (state.db.journal || []).filter(j => j.date === today);
@@ -969,115 +685,55 @@
       const inProg = tasks.filter(t => t.status === 'in_progress');
       const done = tasks.filter(t => t.status === 'done');
 
-      let summary = `=== SNAPSHOT QUOTIDIEN DU ${today} - SAÉ BUT3 GEII TROYES ===\n`;
-      summary += `PROJET : Véhicule Autonome & Domotique LTG\n`;
-      summary += `MEMBRES : Damou, Diouf, Al Gahzouani, Bouras, Locko\n\n`;
+      let txt = `RAPPORT QUOTIDIEN — ${today}\n`;
+      txt += `PROJET : SAÉ BUT3 GEII Troyes (Véhicule & Domotique)\n`;
+      txt += `ÉQUIPE : Damou, Diouf, Al Gahzouani, Bouras, Locko\n\n`;
+      txt += `TÂCHES : ${tasks.length} total | ${done.length} validées | ${inProg.length} en cours\n`;
+      inProg.forEach(t => { txt += `- [${t.category}] ${t.title} (${t.assignee})\n`; });
 
-      summary += `--- 1. ÉTAT DU KANBAN ---\n`;
-      summary += `Total tâches : ${tasks.length} | Terminées : ${done.length} | En cours : ${inProg.length}\n`;
-      summary += `Tâches actives en cours :\n`;
-      inProg.forEach(t => {
-        summary += ` - [${t.category}] ${t.title} (Assigné: ${t.assignee}, Priorité: ${t.priority})\n`;
-      });
-
-      summary += `\n--- 2. JOURNAL DU JOUR (${today}) ---\n`;
-      if (todayLogs.length === 0) {
-        summary += `Aucune entrée saisie aujourd'hui dans le journal.\n`;
+      txt += `\nENTRÉES DU JOUR :\n`;
+      if (!todayLogs.length) {
+        txt += `Aucune entrée saisie aujourd'hui.\n`;
       } else {
-        todayLogs.forEach(l => {
-          summary += `[${l.author.toUpperCase()}] ${l.title} :\n${l.content}\n\n`;
-        });
+        todayLogs.forEach(l => { txt += `[${l.author}] ${l.title} : ${l.content}\n`; });
       }
 
-      summary += `--- 3. JALONS OFFICIELS WIKI ---\n`;
-      state.db.milestones.forEach(m => {
-        summary += ` - ${m.name} : ${m.date} (${m.done ? 'VALIDÉ' : 'À VENIR'})\n`;
+      const out = document.getElementById('auditText');
+      if (out) out.value = txt;
+    }
+
+    function changeUser(u) {
+      state.currentUser = u;
+      document.getElementById('userSelect').value = u;
+      renderMembers();
+    }
+
+    function switchTab(id) {
+      document.querySelectorAll('main > section').forEach(s => s.classList.add('hidden'));
+      document.querySelectorAll('header button[id^="tab-"]').forEach(b => {
+        b.className = 'py-2.5 hover:text-black transition';
       });
 
-      summary += `\n=== INSTRUCTION POUR ANTIGRAVITIY ===\n`;
-      summary += `Analyse ce compte-rendu quotidien : sors-nous les points forts, les retards potentiels par rapport au Livrable 1 du 6 décembre, et les recommandations techniques pour demain.`;
-
-      const outputEl = document.getElementById('auditSnapshotOutput');
-      if (outputEl) outputEl.value = summary;
+      document.getElementById(`view-${id}`).classList.remove('hidden');
+      document.getElementById(`tab-${id}`).className = 'py-2.5 tab-active transition';
+      if (id === 'audit') generateAuditText();
     }
 
-    function copyAuditText() {
-      const txt = document.getElementById('auditSnapshotOutput');
-      txt.select();
-      navigator.clipboard.writeText(txt.value);
-      showToast('Snapshot copié dans le presse-papier !', 'success');
-    }
-
-    // Gestion de l'utilisateur actif
-    function changeUser(user) {
-      state.currentUser = user;
-      document.getElementById('userSelect').value = user;
-      renderProgress();
-      showToast(`Connecté en tant que ${user}`, 'info');
-    }
-
-    // Changement d'onglet
-    function switchTab(tabId) {
-      document.querySelectorAll('main > section').forEach(sec => sec.classList.add('hidden'));
-      document.querySelectorAll('.nav-tab').forEach(btn => {
-        btn.classList.remove('bg-brand-600', 'text-white');
-        btn.classList.add('text-gray-400');
-      });
-
-      document.getElementById(`view-${tabId}`).classList.remove('hidden');
-      const activeBtn = document.getElementById(`tab-${tabId}`);
-      if (activeBtn) {
-        activeBtn.classList.remove('text-gray-400');
-        activeBtn.classList.add('bg-brand-600', 'text-white');
-      }
-
-      if (tabId === 'audit') generateAIPrompt();
-    }
-
-    // Modals
     function openAddTaskModal() { document.getElementById('taskModal').classList.remove('hidden'); }
     function openConfigModal() {
-      document.getElementById('githubTokenInput').value = state.token;
+      document.getElementById('ghTokenInput').value = state.token;
       document.getElementById('configModal').classList.remove('hidden');
     }
     function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
 
-    function saveGitHubToken() {
-      state.token = document.getElementById('githubTokenInput').value.trim();
+    function saveToken() {
+      state.token = document.getElementById('ghTokenInput').value.trim();
       localStorage.setItem('sae_gh_token', state.token);
       closeModal('configModal');
-      showToast('Clé GitHub enregistrée !', 'success');
-      loadDatabase();
+      loadDb().then(renderAll);
     }
 
-    function syncWithGitHub() {
-      loadDatabase();
-    }
-
-    function showSyncing(isSyncing) {
-      const icon = document.getElementById('syncIcon');
-      if (icon) {
-        if (isSyncing) icon.classList.add('fa-spin');
-        else icon.classList.remove('fa-spin');
-      }
-    }
-
-    function showToast(msg, type = 'info') {
-      const toast = document.getElementById('toast');
-      const msgEl = document.getElementById('toastMessage');
-      const icon = document.getElementById('toastIcon');
-      msgEl.textContent = msg;
-
-      if (type === 'success') icon.className = 'fa-solid fa-circle-check text-emerald-400';
-      else if (type === 'error') icon.className = 'fa-solid fa-circle-exclamation text-rose-400';
-      else if (type === 'warning') icon.className = 'fa-solid fa-triangle-exclamation text-amber-400';
-      else icon.className = 'fa-solid fa-circle-info text-blue-400';
-
-      toast.classList.remove('translate-y-20', 'opacity-0');
-      setTimeout(() => {
-        toast.classList.add('translate-y-20', 'opacity-0');
-      }, 3500);
-    }
+    function syncWithGitHub() { loadDb().then(renderAll); }
   </script>
 </body>
 </html>
