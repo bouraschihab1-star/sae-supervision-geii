@@ -216,6 +216,13 @@
             </div>
 
             <div>
+              <label class="block text-gray-500 mb-1">Tâche liée (optionnel) :</label>
+              <select id="journalTaskSelect" class="w-full border border-gray-300 rounded p-2 outline-none focus:border-black bg-white text-black font-medium cursor-pointer">
+                <option value="">-- Aucune tâche associée --</option>
+              </select>
+            </div>
+
+            <div>
               <label class="block text-gray-500 mb-1">Tags :</label>
               <input type="text" id="journalTags" placeholder="Variateur, L1" class="w-full border border-gray-300 rounded p-2 outline-none focus:border-black bg-white/60" />
             </div>
@@ -395,6 +402,55 @@
           Se connecter
         </button>
       </form>
+    </div>
+  </div>
+
+  <!-- MODAL DÉTAILS DE LA TÂCHE & EFFETS JOURNALIERS -->
+  <div id="taskDetailsModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="glass-card rounded-xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto space-y-4 shadow-2xl bg-white border border-black">
+      
+      <!-- En-tête -->
+      <div class="flex justify-between items-start pb-3 border-b border-zinc-200">
+        <div>
+          <h2 id="tdTaskTitle" class="text-base font-bold text-black"></h2>
+          <div id="tdTaskMeta" class="flex flex-wrap items-center gap-2 mt-2"></div>
+        </div>
+        <button onclick="closeModal('taskDetailsModal')" class="text-zinc-400 hover:text-black font-semibold text-xs ml-4">
+          Fermer ✕
+        </button>
+      </div>
+
+      <!-- Description de la tâche -->
+      <div class="space-y-1">
+        <span class="text-xs font-semibold text-zinc-500 uppercase tracking-wider">Cahier des charges & Objectifs</span>
+        <div id="tdTaskDesc" class="p-3 bg-zinc-50 rounded border border-zinc-200 text-xs text-zinc-700 leading-relaxed whitespace-pre-line"></div>
+      </div>
+
+      <!-- Effets Journaliers / Historique -->
+      <div class="space-y-2 pt-2">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-bold text-black uppercase tracking-wider">Effets journaliers associés</span>
+        </div>
+        <div id="tdTaskLogs" class="space-y-2.5 max-h-60 overflow-y-auto pr-1"></div>
+      </div>
+
+      <!-- Formulaire d'ajout rapide pour cette tâche -->
+      <div class="pt-3 border-t border-zinc-200 space-y-2">
+        <span class="text-xs font-bold text-black uppercase tracking-wider block">+ Ajouter un rapport journalier pour cette tâche</span>
+        <form onsubmit="submitTaskQuickLog(event)" class="space-y-2 text-xs">
+          <input type="hidden" id="tdHiddenTaskId" />
+          <input type="text" id="tdQuickTitle" required placeholder="Titre du rapport (ex: Réglage des gains PID, Schéma validé...)" class="w-full border border-zinc-300 rounded p-2 outline-none focus:border-black" />
+          <textarea id="tdQuickContent" rows="3" required placeholder="Travaux réalisés aujourd'hui, mesures, blocages rencontrés..." class="w-full border border-zinc-300 rounded p-2 outline-none focus:border-black"></textarea>
+          
+          <div class="flex items-center justify-between gap-3">
+            <input type="file" id="tdQuickFile" class="text-[11px] text-zinc-600 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-[11px] file:font-semibold file:bg-zinc-100 file:text-black hover:file:bg-zinc-200 cursor-pointer" />
+            <button type="submit" class="px-3 py-1.5 bg-black text-white rounded font-semibold hover:bg-zinc-800 transition whitespace-nowrap">
+              Publier le rapport
+            </button>
+          </div>
+        </form>
+      </div>
+
     </div>
   </div>
 
@@ -755,18 +811,31 @@
         const col = document.getElementById(`kanban-${task.status}`);
         if (!col) return;
 
+        const taskLogs = (state.db.journal || []).filter(j => j.taskId === task.id);
         const card = document.createElement('div');
-        card.className = 'p-2.5 rounded bg-white/30 hover:bg-white/50 border border-zinc-700 text-xs space-y-1.5 shadow-sm transition';
+        card.className = 'p-2.5 rounded bg-white/30 hover:bg-white/50 border border-zinc-700 text-xs space-y-1.5 shadow-sm transition cursor-pointer';
         card.innerHTML = `
-          <div class="flex justify-between text-[10px] text-zinc-700 font-semibold">
-            <span class="text-black uppercase font-bold">${task.category}</span>
-            <span class="font-mono">${task.milestone}</span>
+          <div onclick="openTaskDetailsModal('${task.id}')">
+            <div class="flex justify-between text-[10px] text-zinc-700 font-semibold mb-1">
+              <span class="text-black uppercase font-bold">${task.category}</span>
+              <span class="font-mono bg-zinc-200/80 px-1 py-0.5 rounded text-[9px]">${task.milestone}</span>
+            </div>
+            <div class="font-semibold text-black leading-snug hover:underline">${task.title}</div>
+            ${task.desc ? `<div class="text-zinc-700 text-[11px] leading-relaxed line-clamp-2 mt-1">${task.desc}</div>` : ''}
+            
+            <div class="mt-2 flex items-center justify-between text-[10px] text-zinc-700 font-medium">
+              <span>${task.assignee}</span>
+              <span class="px-1.5 py-0.5 rounded ${taskLogs.length ? 'bg-black text-white font-semibold' : 'border border-zinc-400 text-zinc-600'}">
+                Journal: ${taskLogs.length}
+              </span>
+            </div>
           </div>
-          <div class="font-semibold text-black leading-snug">${task.title}</div>
-          ${task.desc ? `<div class="text-zinc-700 text-[11px] leading-relaxed">${task.desc}</div>` : ''}
+
           <div class="pt-1.5 border-t border-zinc-300 flex justify-between items-center text-[11px] text-zinc-800 font-medium">
-            <span>${task.assignee}</span>
-            <div class="space-x-1">
+            <button onclick="event.stopPropagation(); openTaskDetailsModal('${task.id}')" class="text-black font-semibold hover:underline text-[10px]">
+              Effets journaliers →
+            </button>
+            <div class="space-x-1" onclick="event.stopPropagation()">
               ${task.status !== 'todo' ? `<button onclick="moveTask('${task.id}', -1)" class="px-1.5 py-0.5 border border-zinc-800 rounded hover:bg-zinc-200">←</button>` : ''}
               ${task.status !== 'done' ? `<button onclick="moveTask('${task.id}', 1)" class="px-1.5 py-0.5 border border-zinc-800 rounded hover:bg-zinc-200">→</button>` : ''}
             </div>
@@ -816,6 +885,15 @@
     }
 
     function renderJournal() {
+      // Mettre à jour la liste des tâches dans le select du formulaire
+      const taskSelect = document.getElementById('journalTaskSelect');
+      if (taskSelect && state.db && state.db.tasks) {
+        const cur = taskSelect.value;
+        taskSelect.innerHTML = '<option value="">-- Aucune tâche associée --</option>' + 
+          state.db.tasks.map(t => `<option value="${t.id}">[${t.id}] ${t.title} (${t.assignee})</option>`).join('');
+        if (cur) taskSelect.value = cur;
+      }
+
       const c = document.getElementById('journalList');
       c.innerHTML = '';
       const list = [...(state.db.journal || [])].reverse();
@@ -838,9 +916,22 @@
           `;
         }
 
+        const linkedTask = j.taskId && state.db.tasks ? state.db.tasks.find(t => t.id === j.taskId) : null;
+        let taskBadge = '';
+        if (linkedTask) {
+          taskBadge = `
+            <button onclick="openTaskDetailsModal('${linkedTask.id}')" class="px-2 py-0.5 text-[10px] font-semibold bg-black text-white rounded hover:bg-zinc-800 transition">
+              Tâche ${linkedTask.id} →
+            </button>
+          `;
+        }
+
         div.innerHTML = `
           <div class="flex justify-between items-center text-[10px] text-gray-400">
-            <span class="font-semibold text-black uppercase">${j.author}</span>
+            <div class="flex items-center space-x-2">
+              <span class="font-semibold text-black uppercase">${j.author}</span>
+              ${taskBadge}
+            </div>
             <span>${j.date}</span>
           </div>
           <div class="font-medium text-black text-sm">${j.title}</div>
@@ -855,6 +946,7 @@
       e.preventDefault();
       const title = document.getElementById('journalTitle').value.trim();
       const content = document.getElementById('journalContent').value.trim();
+      const taskId = document.getElementById('journalTaskSelect') ? document.getElementById('journalTaskSelect').value || null : null;
       const tags = document.getElementById('journalTags').value.split(',').map(s => s.trim()).filter(Boolean);
       const fileInput = document.getElementById('journalFileInput');
       const attachedFile = fileInput && fileInput.files ? fileInput.files[0] : null;
@@ -911,6 +1003,7 @@
         author: state.currentUser,
         title,
         content,
+        taskId,
         tags: tags.length ? tags : ['Avancement'],
         file: fileInfo
       };
@@ -919,8 +1012,131 @@
       state.db.journal.push(entry);
       e.target.reset();
       renderJournal();
+      renderKanban();
       generateAuditText();
       await saveDb(`Journal: ${entry.title}`);
+    }
+
+    // OUVERTURE DE LA VUE DÉTAILLÉE D'UNE TÂCHE ET DE SES EFFETS JOURNALIERS
+    function openTaskDetailsModal(taskId) {
+      const task = (state.db.tasks || []).find(t => t.id === taskId);
+      if (!task) return;
+
+      const modal = document.getElementById('taskDetailsModal');
+      const titleEl = document.getElementById('tdTaskTitle');
+      const metaEl = document.getElementById('tdTaskMeta');
+      const descEl = document.getElementById('tdTaskDesc');
+      const logsEl = document.getElementById('tdTaskLogs');
+      const hiddenInput = document.getElementById('tdHiddenTaskId');
+
+      hiddenInput.value = task.id;
+      titleEl.textContent = `${task.id} : ${task.title}`;
+      
+      const statusLabels = { todo: 'À faire', in_progress: 'En cours', done: 'Validé' };
+      metaEl.innerHTML = `
+        <span class="px-2 py-0.5 rounded text-[11px] font-semibold bg-black text-white uppercase">${task.category}</span>
+        <span class="px-2 py-0.5 rounded text-[11px] font-medium border border-zinc-300">Assigné à : <strong>${task.assignee}</strong></span>
+        <span class="px-2 py-0.5 rounded text-[11px] font-medium border border-zinc-300">Jalon : <strong>${task.milestone}</strong></span>
+        <span class="px-2 py-0.5 rounded text-[11px] font-semibold ${task.status === 'done' ? 'bg-zinc-800 text-white' : 'border border-black'}">${statusLabels[task.status] || task.status}</span>
+      `;
+
+      descEl.textContent = task.desc || 'Aucune description détaillée enregistrée pour cette tâche.';
+
+      // Effets journaliers associés
+      const logs = (state.db.journal || []).filter(j => j.taskId === task.id);
+      logsEl.innerHTML = '';
+      if (!logs.length) {
+        logsEl.innerHTML = `<div class="p-4 text-center text-zinc-400 text-xs italic bg-zinc-50 rounded border border-dashed border-zinc-200">Aucun effet journalier encore associé à cette tâche. Vous pouvez en publier un ci-dessous.</div>`;
+      } else {
+        [...logs].reverse().forEach(log => {
+          const div = document.createElement('div');
+          div.className = 'p-3 rounded border border-zinc-200 bg-white space-y-1.5 text-xs shadow-sm';
+          let fileHtml = '';
+          if (log.file) {
+            fileHtml = `
+              <div class="mt-2 pt-2 border-t border-zinc-100 flex items-center justify-between bg-zinc-50 p-2 rounded text-[11px]">
+                <span class="text-zinc-600 font-medium truncate max-w-xs">${log.file.name}</span>
+                <a href="${log.file.url}" target="_blank" class="text-black font-semibold underline hover:text-zinc-700">Télécharger / Ouvrir</a>
+              </div>
+            `;
+          }
+          div.innerHTML = `
+            <div class="flex justify-between items-center text-[10px] text-zinc-500">
+              <span class="font-bold text-black uppercase">${log.author}</span>
+              <span class="font-mono">${log.date}</span>
+            </div>
+            <div class="font-semibold text-black text-xs">${log.title}</div>
+            <div class="text-zinc-700 whitespace-pre-line leading-relaxed text-[11px]">${log.content}</div>
+            ${fileHtml}
+          `;
+          logsEl.appendChild(div);
+        });
+      }
+
+      modal.classList.remove('hidden');
+    }
+
+    // AJOUT RAPIDE D'UN RAPPORT JOURNALIER DIRECTEMENT LIÉ À LA TÂCHE
+    async function submitTaskQuickLog(e) {
+      e.preventDefault();
+      const taskId = document.getElementById('tdHiddenTaskId').value;
+      const title = document.getElementById('tdQuickTitle').value.trim();
+      const content = document.getElementById('tdQuickContent').value.trim();
+      const fileInput = document.getElementById('tdQuickFile');
+      const attachedFile = fileInput && fileInput.files ? fileInput.files[0] : null;
+
+      let fileInfo = null;
+      if (attachedFile && state.token) {
+        try {
+          const reader = new FileReader();
+          const base64Data = await new Promise((resolve, reject) => {
+            reader.onload = () => resolve(reader.result.split(',')[1]);
+            reader.onerror = reject;
+            reader.readAsDataURL(attachedFile);
+          });
+          const path = `uploads/${Date.now()}_${attachedFile.name}`;
+          const url = `https://api.github.com/repos/${GITHUB_REPO}/contents/${path}`;
+          const res = await fetch(url, {
+            method: 'PUT',
+            headers: { 'Authorization': `token ${state.token}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              message: `Upload ${attachedFile.name} [Task ${taskId}]`,
+              content: base64Data,
+              branch: 'main'
+            })
+          });
+          if (res.ok) {
+            const data = await res.json();
+            fileInfo = { name: attachedFile.name, url: data.content.html_url, size: `${Math.round(attachedFile.size / 1024)} KB` };
+            if (!state.db.files) state.db.files = [];
+            state.db.files.push({ name: attachedFile.name, url: data.content.html_url, uploader: state.currentUser, date: new Date().toISOString().split('T')[0], category: 'Journal' });
+            renderFiles();
+          }
+        } catch (err) {
+          console.error('Erreur upload task quick file:', err);
+        }
+      }
+
+      const entry = {
+        id: 'J' + Date.now().toString().slice(-4),
+        date: new Date().toISOString().split('T')[0],
+        author: state.currentUser,
+        title,
+        content,
+        taskId,
+        tags: [taskId, 'Avancement'],
+        file: fileInfo
+      };
+
+      if (!state.db.journal) state.db.journal = [];
+      state.db.journal.push(entry);
+
+      e.target.reset();
+      renderJournal();
+      renderKanban();
+      generateAuditText();
+      openTaskDetailsModal(taskId); // recharger les entrées dans la vue de la tâche
+      await saveDb(`Journal: [${taskId}] ${entry.title}`);
     }
 
     function renderFiles() {
