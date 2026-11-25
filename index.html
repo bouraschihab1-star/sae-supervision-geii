@@ -19,14 +19,14 @@
       overflow-x: hidden;
     }
 
-    /* Grille de points avec dégradé subtil */
+    /* Grille de points resserrée avec dégradé subtil */
     .dot-pattern {
       position: fixed;
       inset: 0;
-      background-image: radial-gradient(#d4d4d8 1.2px, transparent 1.2px);
-      background-size: 24px 24px;
-      mask-image: radial-gradient(ellipse 70% 60% at 50% 20%, #000 30%, transparent 100%);
-      -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 20%, #000 30%, transparent 100%);
+      background-image: radial-gradient(#d4d4d8 1.1px, transparent 1.1px);
+      background-size: 14px 14px;
+      mask-image: radial-gradient(ellipse 85% 75% at 50% 25%, #000 40%, transparent 100%);
+      -webkit-mask-image: radial-gradient(ellipse 85% 75% at 50% 25%, #000 40%, transparent 100%);
       pointer-events: none;
       z-index: 0;
     }
@@ -71,9 +71,9 @@
 </head>
 <body class="flex flex-col relative">
 
-  <!-- MOTIF DE FOND : GRILLE DE POINTS & HALO NOIR DÉGRADÉ -->
+  <!-- MOTIF DE FOND : GRILLE DE POINTS ET CANVAS DE DENSITÉ ALÉATOIRE -->
   <div class="dot-pattern"></div>
-  <div class="ambient-glow"></div>
+  <canvas id="densityCanvas" class="fixed inset-0 pointer-events-none z-0"></canvas>
 
   <!-- NAVIGATION HAUTE -->
   <header class="border-b border-gray-200/80 bg-white/80 backdrop-blur-md sticky top-0 z-40">
@@ -241,7 +241,12 @@
 
             <div>
               <label class="block text-gray-500 mb-1">Détail :</label>
-              <textarea id="journalContent" rows="5" required placeholder="Travaux réalisés, composants, difficultés..." class="w-full border border-gray-300 rounded p-2 outline-none focus:border-black"></textarea>
+              <textarea id="journalContent" rows="4" required placeholder="Travaux réalisés, composants, difficultés..." class="w-full border border-gray-300 rounded p-2 outline-none focus:border-black"></textarea>
+            </div>
+
+            <div>
+              <label class="block text-gray-500 mb-1">Pièce jointe / Fichier associé :</label>
+              <input type="file" id="journalFileInput" class="w-full text-xs text-gray-500 file:mr-2 file:py-1 file:px-2.5 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-gray-100 file:text-black hover:file:bg-gray-200 cursor-pointer" />
             </div>
 
             <button type="submit" class="w-full py-2 bg-black text-white font-semibold rounded hover:bg-gray-800 transition">
@@ -731,14 +736,25 @@
 
       list.forEach(j => {
         const div = document.createElement('div');
-        div.className = 'py-3 space-y-1 text-xs';
+        div.className = 'py-3.5 space-y-1.5 text-xs';
+        let fileHtml = '';
+        if (j.file) {
+          fileHtml = `
+            <div class="mt-2 pt-2 border-t border-gray-100 flex items-center justify-between bg-gray-50/70 p-2 rounded">
+              <span class="text-gray-600 font-medium truncate max-w-xs">${j.file.name}</span>
+              <a href="${j.file.url}" target="_blank" class="text-black font-semibold underline text-[11px] hover:text-gray-700 shrink-0 ml-2">Télécharger / Ouvrir</a>
+            </div>
+          `;
+        }
+
         div.innerHTML = `
           <div class="flex justify-between items-center text-[10px] text-gray-400">
             <span class="font-semibold text-black uppercase">${j.author}</span>
             <span>${j.date}</span>
           </div>
-          <div class="font-medium text-black">${j.title}</div>
+          <div class="font-medium text-black text-sm">${j.title}</div>
           <div class="text-gray-600 whitespace-pre-line leading-relaxed">${j.content}</div>
+          ${fileHtml}
         `;
         c.appendChild(div);
       });
@@ -746,13 +762,66 @@
 
     async function submitJournal(e) {
       e.preventDefault();
+      const title = document.getElementById('journalTitle').value.trim();
+      const content = document.getElementById('journalContent').value.trim();
+      const tags = document.getElementById('journalTags').value.split(',').map(s => s.trim()).filter(Boolean);
+      const fileInput = document.getElementById('journalFileInput');
+      const attachedFile = fileInput && fileInput.files ? fileInput.files[0] : null;
+
+      let fileInfo = null;
+
+      if (attachedFile && state.token) {
+        try {
+          const reader = new FileReader();
+          const base64Data = await new Promise((resolve, reject) => {
+            reader.onload = () => resolve(reader.result.split(',')[1]);
+            reader.onerror = reject;
+            reader.readAsDataURL(attachedFile);
+          });
+
+          const path = `uploads/${Date.now()}_${attachedFile.name}`;
+          const url = `https://api.github.com/repos/${GITHUB_REPO}/contents/${path}`;
+
+          const res = await fetch(url, {
+            method: 'PUT',
+            headers: { 'Authorization': `token ${state.token}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              message: `Upload ${attachedFile.name} [Journal ${state.currentUser}]`,
+              content: base64Data,
+              branch: 'main'
+            })
+          });
+
+          if (res.ok) {
+            const data = await res.json();
+            fileInfo = {
+              name: attachedFile.name,
+              url: data.content.html_url,
+              size: `${Math.round(attachedFile.size / 1024)} KB`
+            };
+            if (!state.db.files) state.db.files = [];
+            state.db.files.push({
+              name: attachedFile.name,
+              url: data.content.html_url,
+              uploader: state.currentUser,
+              date: new Date().toISOString().split('T')[0],
+              category: 'Journal'
+            });
+            renderFiles();
+          }
+        } catch (err) {
+          console.error('Erreur upload journal file:', err);
+        }
+      }
+
       const entry = {
         id: 'J' + Date.now().toString().slice(-4),
         date: new Date().toISOString().split('T')[0],
         author: state.currentUser,
-        title: document.getElementById('journalTitle').value.trim(),
-        content: document.getElementById('journalContent').value.trim(),
-        tags: document.getElementById('journalTags').value.split(',').map(s => s.trim()).filter(Boolean)
+        title,
+        content,
+        tags: tags.length ? tags : ['Avancement'],
+        file: fileInfo
       };
 
       if (!state.db.journal) state.db.journal = [];
@@ -874,6 +943,96 @@
     }
 
     function syncWithGitHub() { loadDb().then(renderAll); }
+
+    // Animation de zones de densité de points aléatoires
+    (function initDensityCanvas() {
+      const canvas = document.getElementById('densityCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      let w = canvas.width = window.innerWidth;
+      let h = canvas.height = window.innerHeight;
+
+      window.addEventListener('resize', () => {
+        w = canvas.width = window.innerWidth;
+        h = canvas.height = window.innerHeight;
+      });
+
+      function createCluster() {
+        const radius = 130 + Math.random() * 110;
+        const count = 55 + Math.floor(Math.random() * 30);
+        const pts = [];
+        for (let i = 0; i < count; i++) {
+          const angle = Math.random() * Math.PI * 2;
+          const r = Math.pow(Math.random(), 0.65) * radius;
+          pts.push({
+            dx: Math.cos(angle) * r,
+            dy: Math.sin(angle) * r,
+            size: 0.8 + Math.random() * 0.9
+          });
+        }
+        return {
+          x: Math.random() * w,
+          y: Math.random() * h,
+          vx: (Math.random() - 0.5) * 0.25,
+          vy: (Math.random() - 0.5) * 0.25,
+          radius,
+          progress: Math.random(), // étaler les apparitions
+          speed: 0.003 + Math.random() * 0.003,
+          maxAlpha: 0.55 + Math.random() * 0.25,
+          pts
+        };
+      }
+
+      const clusters = [createCluster(), createCluster(), createCluster()];
+
+      function renderFrame() {
+        ctx.clearRect(0, 0, w, h);
+
+        clusters.forEach(c => {
+          c.progress += c.speed;
+          if (c.progress >= 1) {
+            // Réapparition dans un nouvel endroit aléatoire
+            c.x = Math.random() * w;
+            c.y = Math.random() * h;
+            c.progress = 0;
+            c.speed = 0.003 + Math.random() * 0.003;
+            c.radius = 130 + Math.random() * 110;
+          }
+
+          c.x += c.vx;
+          c.y += c.vy;
+
+          // Fondu progressif : apparaît (0->1) puis disparaît (1->0)
+          const currentAlpha = Math.sin(c.progress * Math.PI) * c.maxAlpha;
+
+          if (currentAlpha > 0.01) {
+            // Halo sombre léger en dégradé sous la zone dense
+            const grad = ctx.createRadialGradient(c.x, c.y, 0, c.x, c.y, c.radius);
+            grad.addColorStop(0, `rgba(0, 0, 0, ${currentAlpha * 0.06})`);
+            grad.addColorStop(0.7, `rgba(0, 0, 0, ${currentAlpha * 0.02})`);
+            grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+            ctx.fillStyle = grad;
+            ctx.beginPath();
+            ctx.arc(c.x, c.y, c.radius, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Points denses dans la zone
+            ctx.fillStyle = `rgba(0, 0, 0, ${currentAlpha * 0.65})`;
+            c.pts.forEach(p => {
+              const px = c.x + p.dx;
+              const py = c.y + p.dy;
+              ctx.beginPath();
+              ctx.arc(px, py, p.size, 0, Math.PI * 2);
+              ctx.fill();
+            });
+          }
+        });
+
+        requestAnimationFrame(renderFrame);
+      }
+
+      renderFrame();
+    })();
   </script>
 </body>
 </html>
