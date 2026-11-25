@@ -630,6 +630,13 @@
             state.fileSha = data.sha;
             const remoteDb = JSON.parse(decodeURIComponent(escape(atob(data.content))));
             
+            // Si la base distante a une version supérieure (réinitialisation forcée)
+            if (remoteDb._version && (!localDb || !localDb._version || remoteDb._version > localDb._version)) {
+              state.db = remoteDb;
+              localStorage.setItem('sae_db_cache', JSON.stringify(state.db));
+              return;
+            }
+
             // Si des modifications locales existent et sont plus récentes, on synchronise vers GitHub
             if (localDb && localDb._localModified && (!remoteDb._localModified || localDb._localModified > remoteDb._localModified)) {
               saveDb('Synchronisation des modifications locales');
@@ -641,16 +648,20 @@
           }
         }
 
-        // 3. Si PAS de token GitHub : si on a déjà des modifications locales, NE PAS LES ÉCRASER !
-        if (localDb) {
-          return;
-        }
-
-        // 4. Premier chargement initial depuis le repo public
+        // 3. Premier chargement initial ou réinitialisation depuis le repo public
         const raw = await fetch(`${GITHUB_RAW_URL}?t=${Date.now()}`);
         if (raw.ok) {
-          state.db = await raw.json();
-          localStorage.setItem('sae_db_cache', JSON.stringify(state.db));
+          const rawDb = await raw.json();
+          if (!localDb || (rawDb._version && (!localDb._version || rawDb._version > localDb._version))) {
+            state.db = rawDb;
+            localStorage.setItem('sae_db_cache', JSON.stringify(state.db));
+            return;
+          }
+        }
+
+        // 4. Si PAS de token GitHub : si on a déjà des modifications locales, NE PAS LES ÉCRASER !
+        if (localDb) {
+          return;
         }
       } catch (e) {
         console.warn('Mode hors-ligne / lecture locale:', e);
