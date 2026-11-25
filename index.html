@@ -293,57 +293,90 @@
   </main>
 
   <!-- MODAL NOUVELLE TÂCHE -->
-  <div id="taskModal" class="fixed inset-0 z-50 bg-black/30 backdrop-blur-sm hidden flex items-center justify-center p-4">
-    <div class="bg-white w-full max-w-sm rounded-lg border border-gray-300 p-5 space-y-3 shadow-xl">
-      <div class="flex justify-between items-center pb-2 border-b border-gray-200">
-        <h3 class="font-bold text-sm text-black">Nouvelle Tâche</h3>
-        <button onclick="closeModal('taskModal')" class="text-gray-400 hover:text-black font-semibold text-xs">Fermer</button>
+  <div id="taskModal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="glass-card bg-white w-full max-w-lg rounded-xl border border-black p-6 space-y-4 shadow-2xl">
+      <div class="flex justify-between items-center pb-2 border-b border-zinc-200">
+        <div>
+          <h3 class="font-bold text-sm text-black">Nouvelle Tâche</h3>
+          <p class="text-[11px] text-zinc-500">Planification, attribution d'équipe & isolation de code</p>
+        </div>
+        <button onclick="closeModal('taskModal')" class="text-zinc-400 hover:text-black font-semibold text-xs">Fermer ✕</button>
       </div>
 
-      <form onsubmit="submitTask(event)" class="space-y-3 text-xs">
+      <form onsubmit="submitTask(event)" class="space-y-3.5 text-xs">
         <div>
-          <label class="block text-gray-600 mb-1">Intitulé :</label>
-          <input type="text" id="taskTitle" required class="w-full border border-gray-300 rounded p-2 outline-none focus:border-black" />
-        </div>
-
-        <div>
-          <label class="block text-gray-600 mb-1">Catégorie :</label>
-          <select id="taskCategory" class="w-full border border-gray-300 rounded p-2 outline-none focus:border-black bg-white">
-            <option value="Domotique LTG">Domotique LTG</option>
-            <option value="Véhicule Autonome">Véhicule Autonome</option>
-            <option value="Cadre Commun">Cadre Commun (MQTT/Home Assistant)</option>
-            <option value="Supervision & Comm">Supervision & Comm</option>
-          </select>
+          <label class="block font-semibold text-zinc-700 mb-1">Intitulé de la tâche :</label>
+          <input type="text" id="taskTitle" required placeholder="Ex: Asservissement PID du moteur de traction..." class="w-full border border-zinc-300 rounded p-2 outline-none focus:border-black font-medium" />
         </div>
 
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block text-gray-600 mb-1">Assigné à :</label>
-            <select id="taskAssignee" class="w-full border border-gray-300 rounded p-2 outline-none focus:border-black bg-white">
-              <option value="bouras">Bouras</option>
-              <option value="damou">Damou</option>
-              <option value="diouf">Diouf</option>
-              <option value="elghazouani">Al Gahzouani</option>
-              <option value="locko">Locko</option>
+            <label class="block font-semibold text-zinc-700 mb-1">Catégorie :</label>
+            <select id="taskCategory" class="w-full border border-zinc-300 rounded p-2 outline-none focus:border-black bg-white">
+              <option value="Domotique LTG">Domotique LTG</option>
+              <option value="Véhicule Autonome">Véhicule Autonome</option>
+              <option value="Cadre Commun">Cadre Commun (MQTT/Home Assistant)</option>
+              <option value="Supervision & Comm">Supervision & Comm</option>
             </select>
           </div>
           <div>
-            <label class="block text-gray-600 mb-1">Jalon :</label>
-            <select id="taskMilestone" class="w-full border border-gray-300 rounded p-2 outline-none focus:border-black bg-white">
-              <option value="L1">L1 (6 Déc)</option>
-              <option value="L2">L2 (20 Déc)</option>
-              <option value="L3">L3 (24 Janv)</option>
+            <label class="block font-semibold text-zinc-700 mb-1">Jalon ciblé :</label>
+            <select id="taskMilestone" class="w-full border border-zinc-300 rounded p-2 outline-none focus:border-black bg-white">
+              <option value="L1">L1 (6 Déc) - Analyse & Matériel</option>
+              <option value="L2">L2 (20 Déc) - Chiffrage & Planning</option>
+              <option value="L3">L3 (24 Janv) - Soutenance S5 & Démo</option>
+              <option value="L4">L4 (14 Mars) - Soutenance Finale S6</option>
             </select>
           </div>
         </div>
 
         <div>
-          <label class="block text-gray-600 mb-1">Détails :</label>
-          <textarea id="taskDesc" rows="2" class="w-full border border-gray-300 rounded p-2 outline-none focus:border-black"></textarea>
+          <div class="flex justify-between items-center mb-1.5">
+            <label class="block font-semibold text-zinc-700">Membres assignés (binômes / équipe) :</label>
+            <span class="text-[10px] text-zinc-500">Sélection multiple possible</span>
+          </div>
+          <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 p-2.5 bg-zinc-50 rounded-lg border border-zinc-200" id="taskAssigneesList">
+            <label class="flex items-center space-x-1.5 p-1.5 rounded bg-white border border-zinc-200 hover:border-black cursor-pointer text-xs font-medium">
+              <input type="checkbox" name="taskAssigneeCheckbox" value="bouras" class="rounded text-black focus:ring-black">
+              <span>Bouras</span>
+            </label>
+            <label class="flex items-center space-x-1.5 p-1.5 rounded bg-white border border-zinc-200 hover:border-black cursor-pointer text-xs font-medium">
+              <input type="checkbox" name="taskAssigneeCheckbox" value="damou" class="rounded text-black focus:ring-black">
+              <span>Damou</span>
+            </label>
+            <label class="flex items-center space-x-1.5 p-1.5 rounded bg-white border border-zinc-200 hover:border-black cursor-pointer text-xs font-medium">
+              <input type="checkbox" name="taskAssigneeCheckbox" value="diouf" class="rounded text-black focus:ring-black">
+              <span>Diouf</span>
+            </label>
+            <label class="flex items-center space-x-1.5 p-1.5 rounded bg-white border border-zinc-200 hover:border-black cursor-pointer text-xs font-medium">
+              <input type="checkbox" name="taskAssigneeCheckbox" value="elghazouani" class="rounded text-black focus:ring-black">
+              <span>Al Gahz.</span>
+            </label>
+            <label class="flex items-center space-x-1.5 p-1.5 rounded bg-white border border-zinc-200 hover:border-black cursor-pointer text-xs font-medium">
+              <input type="checkbox" name="taskAssigneeCheckbox" value="locko" class="rounded text-black focus:ring-black">
+              <span>Locko</span>
+            </label>
+          </div>
         </div>
 
-        <button type="submit" class="w-full py-2 bg-black text-white font-semibold rounded hover:bg-gray-800 transition">
-          Ajouter
+        <!-- OPTION BRANCHE GIT DÉDIÉE -->
+        <div class="p-3 bg-zinc-50 rounded-lg border border-zinc-300 space-y-1.5">
+          <label class="flex items-center space-x-2 cursor-pointer">
+            <input type="checkbox" id="taskCreateBranch" checked class="rounded border-zinc-400 text-black focus:ring-black">
+            <span class="font-bold text-black text-xs">Créer une sous-branche Git sur GitHub</span>
+          </label>
+          <p class="text-[11px] text-zinc-600 leading-relaxed">
+            Isole vos codes C++/Python et schémas sur <code class="font-mono bg-zinc-200 px-1 py-0.5 rounded text-black text-[10px]">task/T...-slug</code> sans risquer de casser la branche principale <code class="font-mono text-black font-semibold">main</code>.
+          </p>
+        </div>
+
+        <div>
+          <label class="block font-semibold text-zinc-700 mb-1">Cahier des charges & objectifs :</label>
+          <textarea id="taskDesc" rows="2" placeholder="Spécifications attendues, consignes profs, tolérances..." class="w-full border border-zinc-300 rounded p-2 outline-none focus:border-black"></textarea>
+        </div>
+
+        <button type="submit" class="w-full py-2.5 bg-black text-white font-semibold rounded-lg hover:bg-zinc-800 transition shadow">
+          Créer la tâche
         </button>
       </form>
     </div>
@@ -439,6 +472,9 @@
         <span class="text-xs font-semibold text-zinc-500 uppercase tracking-wider">Cahier des charges & Objectifs</span>
         <div id="tdTaskDesc" class="p-3 bg-zinc-50 rounded border border-zinc-200 text-xs text-zinc-700 leading-relaxed whitespace-pre-line"></div>
       </div>
+
+      <!-- Espace Branche Git & Code -->
+      <div id="tdGitSection" class="p-3 bg-zinc-50 rounded border border-zinc-300 text-xs space-y-2"></div>
 
       <!-- Effets Journaliers / Historique -->
       <div class="space-y-2 pt-2">
@@ -865,13 +901,20 @@
       });
     }
 
+    function getTaskAssignees(task) {
+      if (!task) return [];
+      if (Array.isArray(task.assignees) && task.assignees.length) return task.assignees;
+      if (task.assignee) return [task.assignee];
+      return [];
+    }
+
     function renderMembers() {
       const container = document.getElementById('membersGrid');
       container.innerHTML = '';
       const tasks = state.db.tasks || [];
 
       state.db.members.forEach(m => {
-        const mTasks = tasks.filter(t => t.assignee === m.id);
+        const mTasks = tasks.filter(t => getTaskAssignees(t).includes(m.id));
         const mDone = mTasks.filter(t => t.status === 'done').length;
         const pct = mTasks.length ? Math.round((mDone / mTasks.length) * 100) : 0;
         const isCurrent = m.id === state.currentUser;
@@ -933,6 +976,9 @@
         const canDelete = isAdmin || isCreator;
         const creatorName = (USERS_AUTH[task.creator] && USERS_AUTH[task.creator].name) || task.creator || '';
 
+        const assignees = getTaskAssignees(task);
+        const assigneesNames = assignees.map(u => (USERS_AUTH[u] && USERS_AUTH[u].name) || u).join(', ');
+
         const card = document.createElement('div');
         card.className = 'p-2.5 rounded bg-white/30 hover:bg-white/50 border border-zinc-700 text-xs space-y-1.5 shadow-sm transition cursor-pointer';
         card.innerHTML = `
@@ -950,10 +996,16 @@
             ${task.desc ? `<div class="text-zinc-700 text-[11px] leading-relaxed line-clamp-2 mt-1">${task.desc}</div>` : ''}
             
             <div class="mt-2 flex items-center justify-between text-[10px] text-zinc-700 font-medium">
-              <span>${task.assignee} ${creatorName ? `<span class="text-zinc-400 text-[9px]">(par ${creatorName})</span>` : ''}</span>
-              <span class="px-1.5 py-0.5 rounded ${taskLogs.length ? 'bg-black text-white font-semibold' : 'border border-zinc-400 text-zinc-600'}">
-                Journal: ${taskLogs.length}
-              </span>
+              <div class="flex items-center space-x-1 truncate max-w-[170px]" title="Assigné à : ${assigneesNames}">
+                <span class="font-semibold text-black">${assigneesNames || 'Non assigné'}</span>
+                ${creatorName ? `<span class="text-zinc-400 text-[9px]">(par ${creatorName})</span>` : ''}
+              </div>
+              <div class="flex items-center space-x-1.5 shrink-0">
+                ${task.branch ? `<a href="https://github.com/${GITHUB_REPO}/tree/${task.branch}" target="_blank" onclick="event.stopPropagation()" title="Branche Git : ${task.branch}" class="px-1.5 py-0.5 rounded bg-zinc-200/90 text-zinc-800 font-mono text-[9px] hover:bg-zinc-300 flex items-center space-x-0.5"><span>🌿</span><span>${task.branch.replace('task/', '')}</span></a>` : ''}
+                <span class="px-1.5 py-0.5 rounded ${taskLogs.length ? 'bg-black text-white font-semibold' : 'border border-zinc-400 text-zinc-600'}">
+                  Journal: ${taskLogs.length}
+                </span>
+              </div>
             </div>
           </div>
 
@@ -990,19 +1042,110 @@
       }
     }
 
+    async function createGitHubBranch(branchName) {
+      if (!state.token) {
+        console.warn("Création de branche locale/sans token GitHub.");
+        return false;
+      }
+      try {
+        const refRes = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/git/ref/heads/main`, {
+          headers: {
+            'Authorization': `token ${state.token}`,
+            'Accept': 'application/vnd.github.v3+json'
+          }
+        });
+        if (!refRes.ok) {
+          console.error("Impossible de récupérer la ref de main:", refRes.status);
+          return false;
+        }
+        const refData = await refRes.json();
+        const mainSha = refData.object.sha;
+
+        const createRes = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/git/refs`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `token ${state.token}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/vnd.github.v3+json'
+          },
+          body: JSON.stringify({
+            ref: `refs/heads/${branchName}`,
+            sha: mainSha
+          })
+        });
+
+        if (createRes.ok || createRes.status === 422) {
+          return true;
+        } else {
+          const err = await createRes.json();
+          console.warn("Erreur création ref:", err);
+          return false;
+        }
+      } catch (e) {
+        console.error("Erreur réseau createGitHubBranch:", e);
+        return false;
+      }
+    }
+
+    async function createBranchForExistingTask(taskId) {
+      const task = (state.db.tasks || []).find(t => t.id === taskId);
+      if (!task) return;
+      if (!state.token) {
+        alert("Veuillez d'abord configurer le Personal Access Token GitHub (bouton Config) pour créer des branches distantes.");
+        return;
+      }
+      const cleanSlug = task.title.toLowerCase()
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)/g, '')
+        .slice(0, 30);
+      const branchName = task.branch || `task/${task.id}-${cleanSlug || 'dev'}`;
+      task.branch = branchName;
+      showSaveIndicator('Création de la branche sur GitHub...');
+      const ok = await createGitHubBranch(branchName);
+      if (ok) {
+        await saveDb(`Branche Git créée: ${branchName}`);
+        openTaskDetailsModal(taskId);
+        renderKanban();
+        alert(`Branche Git "${branchName}" créée avec succès sur GitHub !`);
+      } else {
+        alert("Erreur lors de la création de la branche sur GitHub. Vérifiez les droits du token.");
+      }
+    }
+
     async function submitTask(e) {
       e.preventDefault();
+      const checkedBoxes = Array.from(document.querySelectorAll('input[name="taskAssigneeCheckbox"]:checked')).map(cb => cb.value);
+      const assignees = checkedBoxes.length ? checkedBoxes : [state.currentUser];
+
+      const title = document.getElementById('taskTitle').value.trim();
+      const id = 'T' + Date.now().toString().slice(-4);
+      const createBranch = document.getElementById('taskCreateBranch').checked;
+
+      let branchName = '';
+      if (createBranch) {
+        const cleanSlug = title.toLowerCase()
+          .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+          .replace(/[^a-z0-9]+/g, '-')
+          .replace(/(^-|-$)/g, '')
+          .slice(0, 30);
+        branchName = `task/${id}-${cleanSlug || 'dev'}`;
+      }
+
       const newTask = {
-        id: 'T' + Date.now().toString().slice(-4),
-        title: document.getElementById('taskTitle').value.trim(),
+        id,
+        title,
         category: document.getElementById('taskCategory').value,
-        assignee: document.getElementById('taskAssignee').value,
+        assignees,
+        assignee: assignees[0] || 'bouras',
         milestone: document.getElementById('taskMilestone').value,
         desc: document.getElementById('taskDesc').value.trim(),
         status: 'todo',
+        branch: branchName,
         creator: state.currentUser,
         createdAt: new Date().toISOString()
       };
+
       if (!state.db.tasks) state.db.tasks = [];
       state.db.tasks.push(newTask);
       closeModal('taskModal');
@@ -1010,8 +1153,18 @@
       renderKanban();
       renderStats();
       renderChart();
+      renderMembers();
       renderJournal();
-      await saveDb(`Nouvelle tâche: ${newTask.title}`);
+      await saveDb(`Nouvelle tâche [${newTask.id}]: ${newTask.title}`);
+
+      if (branchName && state.token) {
+        createGitHubBranch(branchName).then(ok => {
+          if (ok) {
+            showSaveIndicator(`Branche Git créée : ${branchName}`);
+            renderKanban();
+          }
+        });
+      }
     }
 
     async function deleteTask(taskId) {
@@ -1041,6 +1194,7 @@
       renderKanban();
       renderStats();
       renderChart();
+      renderMembers();
       renderJournal();
       await saveDb(`Tâche supprimée: ${t.title}`);
     }
@@ -1058,7 +1212,7 @@
       if (taskSelect && state.db && state.db.tasks) {
         const cur = taskSelect.value;
         taskSelect.innerHTML = '<option value="">-- Aucune tâche associée --</option>' + 
-          state.db.tasks.map(t => `<option value="${t.id}">[${t.id}] ${t.title} (${t.assignee})</option>`).join('');
+          state.db.tasks.map(t => `<option value="${t.id}">[${t.id}] ${t.title} (${getTaskAssignees(t).map(u => (USERS_AUTH[u]&&USERS_AUTH[u].name)||u).join(', ')})</option>`).join('');
         if (cur) taskSelect.value = cur;
       }
 
@@ -1236,16 +1390,60 @@
           : '';
       }
       
+      const assignees = getTaskAssignees(task);
+      const assigneesBadges = assignees.map(u => `<strong class="text-black">${(USERS_AUTH[u] && USERS_AUTH[u].name) || u}</strong>`).join(', ');
+
       const statusLabels = { todo: 'À faire', in_progress: 'En cours', done: 'Validé' };
       metaEl.innerHTML = `
         <span class="px-2 py-0.5 rounded text-[11px] font-semibold bg-black text-white uppercase">${task.category}</span>
-        <span class="px-2 py-0.5 rounded text-[11px] font-medium border border-zinc-300">Assigné à : <strong>${task.assignee}</strong></span>
+        <span class="px-2 py-0.5 rounded text-[11px] font-medium border border-zinc-300">Assigné à : ${assigneesBadges || 'Non assigné'}</span>
         <span class="px-2 py-0.5 rounded text-[11px] font-medium border border-zinc-300">Créé par : <strong>${creatorName}</strong></span>
         <span class="px-2 py-0.5 rounded text-[11px] font-medium border border-zinc-300">Jalon : <strong>${task.milestone}</strong></span>
         <span class="px-2 py-0.5 rounded text-[11px] font-semibold ${task.status === 'done' ? 'bg-zinc-800 text-white' : 'border border-black'}">${statusLabels[task.status] || task.status}</span>
       `;
 
       descEl.textContent = task.desc || 'Aucune description détaillée enregistrée pour cette tâche.';
+
+      // Espace Branche Git & Code
+      const gitSectionEl = document.getElementById('tdGitSection');
+      if (gitSectionEl) {
+        if (task.branch) {
+          gitSectionEl.innerHTML = `
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div class="flex items-center space-x-2">
+                <span class="font-bold text-black uppercase tracking-wider text-[11px]">Branche Git dédiée :</span>
+                <span class="px-2 py-0.5 rounded bg-zinc-200 text-black font-mono font-bold text-[11px]">🌿 ${task.branch}</span>
+              </div>
+              <div class="flex items-center space-x-2">
+                <a href="https://github.com/${GITHUB_REPO}/tree/${task.branch}" target="_blank" class="px-2.5 py-1 bg-black text-white rounded font-semibold text-[11px] hover:bg-zinc-800 transition">
+                  Ouvrir sur GitHub ↗
+                </a>
+                <a href="https://github.com/${GITHUB_REPO}/compare/main...${task.branch}?expand=1" target="_blank" class="px-2.5 py-1 border border-zinc-300 bg-white text-black rounded font-semibold text-[11px] hover:bg-zinc-100 transition">
+                  Créer Pull Request →
+                </a>
+              </div>
+            </div>
+            <div class="bg-white p-2 rounded border border-zinc-200 flex items-center justify-between font-mono text-[11px]">
+              <span class="text-zinc-700 select-all truncate mr-2">git fetch origin && git checkout ${task.branch}</span>
+              <button type="button" onclick="navigator.clipboard.writeText('git fetch origin && git checkout ${task.branch}'); showSaveIndicator('Commande Git copiée !');" class="px-2 py-0.5 text-[10px] font-sans font-semibold bg-zinc-100 hover:bg-zinc-200 text-black rounded border border-zinc-300 shrink-0">
+                Copier
+              </button>
+            </div>
+          `;
+        } else {
+          gitSectionEl.innerHTML = `
+            <div class="flex items-center justify-between">
+              <div>
+                <div class="font-bold text-black text-xs">Aucune sous-branche Git créée</div>
+                <div class="text-[10px] text-zinc-500">Isolez le code C++, Python ou KiCad de cette tâche pour éviter les conflits sur main.</div>
+              </div>
+              <button type="button" onclick="createBranchForExistingTask('${task.id}')" class="px-3 py-1.5 bg-black text-white rounded font-semibold text-xs hover:bg-zinc-800 transition">
+                + Créer la branche Git sur GitHub
+              </button>
+            </div>
+          `;
+        }
+      }
 
       // Effets journaliers associés
       const logs = (state.db.journal || []).filter(j => j.taskId === task.id);
@@ -1441,7 +1639,11 @@
       txt += `PROJET : SAÉ BUT3 GEII Troyes (Véhicule & Domotique)\n`;
       txt += `ÉQUIPE : Damou, Diouf, Al Gahzouani, Bouras, Locko\n\n`;
       txt += `TÂCHES : ${tasks.length} total | ${done.length} validées | ${inProg.length} en cours\n`;
-      inProg.forEach(t => { txt += `- [${t.category}] ${t.title} (${t.assignee})\n`; });
+      inProg.forEach(t => {
+        const assigneesStr = getTaskAssignees(t).map(u => (USERS_AUTH[u] && USERS_AUTH[u].name) || u).join(' & ');
+        const branchStr = t.branch ? ` [${t.branch}]` : '';
+        txt += `- [${t.category}] ${t.title} (${assigneesStr})${branchStr}\n`;
+      });
 
       txt += `\nENTRÉES DU JOUR :\n`;
       if (!todayLogs.length) {
@@ -1474,7 +1676,13 @@
       if (id === 'audit') generateAuditText();
     }
 
-    function openAddTaskModal() { document.getElementById('taskModal').classList.remove('hidden'); }
+    function openAddTaskModal() {
+      document.getElementById('taskModal').classList.remove('hidden');
+      // Pré-cocher l'utilisateur connecté par défaut
+      document.querySelectorAll('input[name="taskAssigneeCheckbox"]').forEach(cb => {
+        cb.checked = (cb.value === state.currentUser);
+      });
+    }
     function openConfigModal() {
       if (state.role !== 'admin') {
         alert("Accès réservé à l'administrateur (Bouras).");
