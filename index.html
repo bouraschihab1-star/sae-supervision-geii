@@ -952,17 +952,17 @@
         return {
           x: Math.random() * w,
           y: Math.random() * h,
-          vx: (Math.random() - 0.5) * 0.3,
-          vy: (Math.random() - 0.5) * 0.3,
-          radius: 140 + Math.random() * 100,
-          progress: Math.random(), // décalage d'apparition
-          speed: 0.0025 + Math.random() * 0.0015,
-          maxAlpha: 0.45 + Math.random() * 0.15
+          vx: (Math.random() - 0.5) * 0.35,
+          vy: (Math.random() - 0.5) * 0.35,
+          radius: 95 + Math.random() * 65, // Zone resserrée et très concentrée
+          progress: Math.random(), // Décalage temporel
+          speed: 0.0028 + Math.random() * 0.0018,
+          maxAlpha: 0.95 + Math.random() * 0.05 // Vraie intensité noire profonde
         };
       }
 
-      // 2 zones qui se déplacent et apparaissent / disparaissent
-      const zones = [createZone(), createZone()];
+      // 3 zones concentrées qui se déplacent et alternent apparition / disparition
+      const zones = [createZone(), createZone(), createZone()];
 
       function renderFrame() {
         ctx.clearRect(0, 0, w, h);
@@ -974,8 +974,9 @@
             z.x = Math.random() * w;
             z.y = Math.random() * h;
             z.progress = 0;
-            z.speed = 0.003 + Math.random() * 0.002;
-            z.radius = 150 + Math.random() * 120;
+            z.speed = 0.0028 + Math.random() * 0.0018;
+            z.radius = 95 + Math.random() * 65;
+            z.maxAlpha = 0.95 + Math.random() * 0.05;
           }
 
           z.x += z.vx;
@@ -997,13 +998,13 @@
                 const dy = y - z.y;
                 const dist = Math.sqrt(dx * dx + dy * dy);
                 if (dist < z.radius) {
-                  // Dégradé progressif vers les bords (smoothstep)
+                  // Concentration dense au centre avec dégradé vers les bords
                   const ratio = 1 - (dist / z.radius);
-                  const smoothRatio = ratio * ratio * (3 - 2 * ratio);
-                  const ptAlpha = smoothRatio * zoneAlpha * 0.85;
-                  const ptRadius = 0.75 + smoothRatio * 0.55;
+                  const concentration = Math.pow(ratio, 1.4);
+                  const ptAlpha = Math.min(1.0, concentration * zoneAlpha * 1.25);
+                  const ptRadius = 1.0 + concentration * 1.2;
 
-                  ctx.fillStyle = `rgba(9, 9, 11, ${ptAlpha})`;
+                  ctx.fillStyle = `rgba(0, 0, 0, ${ptAlpha})`;
                   ctx.beginPath();
                   ctx.arc(x, y, ptRadius, 0, Math.PI * 2);
                   ctx.fill();
