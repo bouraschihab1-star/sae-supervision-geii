@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html lang="fr" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Supervision SAÉ BUT3 GEII - Véhicule & Domotique</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: { 50: '#eef2ff', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca', 900: '#1e1b4b' },
+            darkbg: '#0b0f19',
+            darkcard: '#111827',
+            darkborder: '#1f2937'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+    body { font-family: 'Inter', sans-serif; background-color: #0b0f19; color: #f3f4f6; }
+    .glass-panel { background: rgba(17, 24, 39, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: #111827; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #374151; border-radius: 3px; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-brand-500 selection:text-white">
+
+  <!-- HEADER NAVIGATION -->
+  <header class="sticky top-0 z-50 glass-panel border-b border-darkborder px-4 lg:px-8 py-3">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+      
+      <!-- Logo & Titre -->
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-400 flex items-center justify-center shadow-lg shadow-brand-500/20 text-white font-bold text-lg">
+          <i class="fa-solid fa-microchip"></i>
+        </div>
+        <div>
+          <div class="flex items-center space-x-2">
+            <h1 class="font-bold text-lg text-white leading-tight">SAÉ BUT3 GEII Troyes</h1>
+            <span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center gap-1.5">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> En Ligne
+            </span>
+          </div>
+          <p class="text-xs text-gray-400">Véhicule Autonome & Domotique LTG • Promo 2025-2026</p>
+        </div>
+      </div>
+
+      <!-- Compte à rebours Livrable 1 -->
+      <div class="hidden md:flex items-center bg-gray-900/80 px-4 py-2 rounded-xl border border-gray-800 space-x-3">
+        <div class="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center font-bold text-sm">
+          <i class="fa-regular fa-clock"></i>
+        </div>
+        <div>
+          <div class="text-xs text-gray-400 font-medium">Prochain Jalon : <span class="text-amber-300 font-semibold">Livrable 1</span></div>
+          <div class="text-xs font-bold text-gray-200" id="countdownText">Vendredi 6 Décembre (J-11)</div>
+        </div>
+      </div>
+
+      <!-- Membres & Sélecteur Actif -->
+      <div class="flex items-center space-x-3">
+        <div class="flex items-center space-x-1.5 bg-gray-900/90 p-1 rounded-xl border border-gray-800 text-xs">
+          <span class="text-gray-400 pl-2 pr-1 font-medium hidden sm:inline">Utilisateur :</span>
+          <select id="userSelect" onchange="changeUser(this.value)" class="bg-gray-800 text-white font-medium px-3 py-1.5 rounded-lg border border-gray-700 outline-none focus:border-brand-500 transition-all cursor-pointer">
+            <option value="bouras">⚡ Bouras (Chihab)</option>
+            <option value="damou">🛠️ Damou</option>
+            <option value="diouf">🔋 Diouf</option>
+            <option value="elghazouani">📡 Al Gahzouani</option>
+            <option value="locko">🚗 Locko</option>
+          </select>
+        </div>
+
+        <!-- Bouton Synchro GitHub -->
+        <button onclick="syncWithGitHub()" id="syncBtn" title="Synchroniser avec GitHub" class="p-2.5 rounded-xl bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white border border-gray-700 transition flex items-center justify-center">
+          <i class="fa-solid fa-rotate" id="syncIcon"></i>
+        </button>
+
+        <!-- Configuration Token -->
+        <button onclick="openConfigModal()" title="Configuration GitHub" class="p-2.5 rounded-xl bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white border border-gray-700 transition">
+          <i class="fa-solid fa-gear"></i>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- TABS NAVIGATION -->
+    <div class="max-w-7xl mx-auto mt-3 pt-2 border-t border-gray-800/80 flex items-center space-x-2 overflow-x-auto custom-scrollbar">
+      <button onclick="switchTab('overview')" id="tab-overview" class="nav-tab px-4 py-2 rounded-lg text-sm font-medium transition flex items-center space-x-2 bg-brand-600 text-white">
+        <i class="fa-solid fa-chart-pie"></i> <span>Vue d'ensemble</span>
+      </button>
+      <button onclick="switchTab('kanban')" id="tab-kanban" class="nav-tab px-4 py-2 rounded-lg text-sm font-medium transition flex items-center space-x-2 text-gray-400 hover:text-gray-200 hover:bg-gray-800/60">
+        <i class="fa-solid fa-list-check"></i> <span>Kanban des Tâches</span>
+      </button>
+      <button onclick="switchTab('journal')" id="tab-journal" class="nav-tab px-4 py-2 rounded-lg text-sm font-medium transition flex items-center space-x-2 text-gray-400 hover:text-gray-200 hover:bg-gray-800/60">
+        <i class="fa-solid fa-book-open"></i> <span>Journal de Bord Quotidien</span>
+      </button>
+      <button onclick="switchTab('files')" id="tab-files" class="nav-tab px-4 py-2 rounded-lg text-sm font-medium transition flex items-center space-x-2 text-gray-400 hover:text-gray-200 hover:bg-gray-800/60">
+        <i class="fa-solid fa-folder-open"></i> <span>Dépôt de Fichiers & CDC</span>
+      </button>
+      <button onclick="switchTab('audit')" id="tab-audit" class="nav-tab px-4 py-2 rounded-lg text-sm font-medium transition flex items-center space-x-2 text-emerald-400 hover:text-emerald-300 hover:bg-emerald-950/30 border border-emerald-500/20">
+        <i class="fa-solid fa-robot"></i> <span>Audit IA du Soir</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- CONTENU PRINCIPAL -->
+  <main class="max-w-7xl mx-auto w-full p-4 lg:p-8 flex-1">
+
+    <!-- ================= TAB 1: OVERVIEW ================= -->
+    <section id="view-overview" class="space-y-6">
+      
+      <!-- BANDEAU STATUS GLOBAL -->
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div class="glass-panel p-5 rounded-2xl border border-darkborder relative overflow-hidden">
+          <div class="flex justify-between items-start mb-2">
+            <span class="text-xs font-semibold uppercase tracking-wider text-gray-400">Avancement Global</span>
+            <span class="p-2 rounded-lg bg-indigo-500/10 text-indigo-400"><i class="fa-solid fa-bullseye"></i></span>
+          </div>
+          <div class="text-3xl font-extrabold text-white" id="statGlobalProgress">25%</div>
+          <div class="w-full bg-gray-800 h-2 rounded-full mt-3 overflow-hidden">
+            <div class="bg-indigo-500 h-full rounded-full transition-all duration-700" id="statProgressBar" style="width: 25%"></div>
+          </div>
+          <div class="text-xs text-gray-400 mt-2 flex justify-between">
+            <span>L0 Validé (25 Nov)</span>
+            <span class="text-indigo-400">Objectif L1 : 6 Déc</span>
+          </div>
+        </div>
+
+        <div class="glass-panel p-5 rounded-2xl border border-darkborder">
+          <div class="flex justify-between items-start mb-2">
+            <span class="text-xs font-semibold uppercase tracking-wider text-gray-400">Tâches Actives</span>
+            <span class="p-2 rounded-lg bg-emerald-500/10 text-emerald-400"><i class="fa-solid fa-bars-progress"></i></span>
+          </div>
+          <div class="text-3xl font-extrabold text-white" id="statActiveTasks">6</div>
+          <p class="text-xs text-gray-400 mt-2">Réparties sur les 5 étudiants de l'équipe</p>
+        </div>
+
+        <div class="glass-panel p-5 rounded-2xl border border-darkborder">
+          <div class="flex justify-between items-start mb-2">
+            <span class="text-xs font-semibold uppercase tracking-wider text-gray-400">Prochain Oral Prof</span>
+            <span class="p-2 rounded-lg bg-amber-500/10 text-amber-400"><i class="fa-solid fa-user-tie"></i></span>
+          </div>
+          <div class="text-2xl font-bold text-amber-400">6 Déc. 2026</div>
+          <p class="text-xs text-gray-400 mt-2">Revue 10 min devant 5 enseignants</p>
+        </div>
+
+        <div class="glass-panel p-5 rounded-2xl border border-darkborder">
+          <div class="flex justify-between items-start mb-2">
+            <span class="text-xs font-semibold uppercase tracking-wider text-gray-400">Banc de Test & MQTT</span>
+            <span class="p-2 rounded-lg bg-purple-500/10 text-purple-400"><i class="fa-solid fa-network-wired"></i></span>
+          </div>
+          <div class="text-2xl font-bold text-purple-300">Home Assistant</div>
+          <p class="text-xs text-gray-400 mt-2">Grafana + MQTT + Zigbee LTG</p>
+        </div>
+      </div>
+
+      <!-- PROGRESSION PAR MEMBRE -->
+      <div class="glass-panel p-6 rounded-2xl border border-darkborder">
+        <h2 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
+          <i class="fa-solid fa-users text-indigo-400"></i> Progression Individuelle des 5 Membres
+        </h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4" id="membersProgressGrid">
+          <!-- Rempli par JavaScript -->
+        </div>
+      </div>
+
+      <!-- JALONS ET DATES DU WIKI -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="glass-panel p-6 rounded-2xl border border-darkborder">
+          <h2 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
+            <i class="fa-solid fa-calendar-check text-emerald-400"></i> Calendrier Officiel des Livrables (Wiki IUT)
+          </h2>
+          <div class="space-y-4" id="milestonesList">
+            <!-- Rempli par JavaScript -->
+          </div>
+        </div>
+
+        <!-- CAHIER DES CHARGES RAPIDE -->
+        <div class="glass-panel p-6 rounded-2xl border border-darkborder flex flex-col justify-between">
+          <div>
+            <h2 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
+              <i class="fa-solid fa-triangle-exclamation text-amber-400"></i> Points Critiques du Cahier des Charges
+            </h2>
+            <div class="space-y-3 text-sm text-gray-300">
+              <div class="p-3 rounded-xl bg-gray-900/60 border border-gray-800">
+                <div class="font-semibold text-amber-300 mb-1"><i class="fa-solid fa-temperature-half"></i> Gestion Thermique Local LTG :</div>
+                <ul class="list-disc list-inside text-xs space-y-1 text-gray-400">
+                  <li>Maintien impératif à <span class="text-emerald-400 font-medium">22°C</span> (équipements Cisco & Dell 20-25°C).</li>
+                  <li>Déclenchement obligatoire de la climatisation à <span class="text-amber-400 font-medium">25°C</span> (pilotage IR).</li>
+                  <li>Mailing d'alerte immédiat déclenché à <span class="text-rose-400 font-medium">28°C</span>.</li>
+                </ul>
+              </div>
+
+              <div class="p-3 rounded-xl bg-gray-900/60 border border-gray-800">
+                <div class="font-semibold text-indigo-300 mb-1"><i class="fa-solid fa-car"></i> Véhicule Autonome & Recharge :</div>
+                <ul class="list-disc list-inside text-xs space-y-1 text-gray-400">
+                  <li>Création de la borne de recharge AC + outil de test dédié.</li>
+                  <li>Conception du variateur de vitesse et pilotage de la direction.</li>
+                </ul>
+              </div>
+
+              <div class="p-3 rounded-xl bg-gray-900/60 border border-gray-800">
+                <div class="font-semibold text-purple-300 mb-1"><i class="fa-solid fa-microchip"></i> Cadre Commun :</div>
+                <p class="text-xs text-gray-400">MQTT, Home Assistant, Grafana et création d'un banc de test associé à chaque système !</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4 pt-3 border-t border-gray-800 flex gap-2">
+            <a href="https://wikigeii.iut-troyes.univ-reims.fr/index.php?title=Cours:SaeS5" target="_blank" class="flex-1 text-center py-2 px-3 rounded-xl bg-gray-800 hover:bg-gray-700 text-xs text-gray-200 font-medium transition">
+              <i class="fa-solid fa-external-link mr-1"></i> Wiki SaeS5
+            </a>
+            <a href="https://wikigeii.iut-troyes.univ-reims.fr/index.php?title=Cours:SaeBUT3_25_26" target="_blank" class="flex-1 text-center py-2 px-3 rounded-xl bg-gray-800 hover:bg-gray-700 text-xs text-gray-200 font-medium transition">
+              <i class="fa-solid fa-external-link mr-1"></i> Wiki BUT3
+            </a>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ================= TAB 2: KANBAN ================= -->
+    <section id="view-kanban" class="space-y-6 hidden">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h2 class="text-xl font-bold text-white">Tableau Kanban des 9 Work Packages</h2>
+          <p class="text-xs text-gray-400">Suivez l'avancement des tâches et des bancs de test en temps réel</p>
+        </div>
+        <button onclick="openAddTaskModal()" class="px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-medium text-sm transition flex items-center gap-2 shadow-lg shadow-brand-600/20">
+          <i class="fa-solid fa-plus"></i> Nouvelle Tâche
+        </button>
+      </div>
+
+      <!-- COLONNES KANBAN -->
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        
+        <!-- À FAIRE -->
+        <div class="glass-panel p-4 rounded-2xl border border-darkborder flex flex-col h-[700px]">
+          <div class="flex justify-between items-center mb-3 pb-2 border-b border-gray-800">
+            <span class="font-bold text-sm text-gray-300 flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-slate-500"></span> À Faire
+            </span>
+            <span class="px-2 py-0.5 rounded-full bg-gray-800 text-xs text-gray-400 font-semibold" id="count-todo">0</span>
+          </div>
+          <div class="space-y-3 overflow-y-auto flex-1 pr-1 custom-scrollbar" id="kanban-todo"></div>
+        </div>
+
+        <!-- EN COURS -->
+        <div class="glass-panel p-4 rounded-2xl border border-darkborder flex flex-col h-[700px]">
+          <div class="flex justify-between items-center mb-3 pb-2 border-b border-gray-800">
+            <span class="font-bold text-sm text-amber-300 flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span> En Cours
+            </span>
+            <span class="px-2 py-0.5 rounded-full bg-amber-500/10 text-xs text-amber-400 font-semibold" id="count-in_progress">0</span>
+          </div>
+          <div class="space-y-3 overflow-y-auto flex-1 pr-1 custom-scrollbar" id="kanban-in_progress"></div>
+        </div>
+
+        <!-- SUR BANC DE TEST -->
+        <div class="glass-panel p-4 rounded-2xl border border-darkborder flex flex-col h-[700px]">
+          <div class="flex justify-between items-center mb-3 pb-2 border-b border-gray-800">
+            <span class="font-bold text-sm text-purple-300 flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-purple-500"></span> Sur Banc de Test
+            </span>
+            <span class="px-2 py-0.5 rounded-full bg-purple-500/10 text-xs text-purple-400 font-semibold" id="count-testing">0</span>
+          </div>
+          <div class="space-y-3 overflow-y-auto flex-1 pr-1 custom-scrollbar" id="kanban-testing"></div>
+        </div>
+
+        <!-- VALIDÉ / TERMINÉ -->
+        <div class="glass-panel p-4 rounded-2xl border border-darkborder flex flex-col h-[700px]">
+          <div class="flex justify-between items-center mb-3 pb-2 border-b border-gray-800">
+            <span class="font-bold text-sm text-emerald-300 flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Validé pour Livrable
+            </span>
+            <span class="px-2 py-0.5 rounded-full bg-emerald-500/10 text-xs text-emerald-400 font-semibold" id="count-done">0</span>
+          </div>
+          <div class="space-y-3 overflow-y-auto flex-1 pr-1 custom-scrollbar" id="kanban-done"></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ================= TAB 3: JOURNAL ================= -->
+    <section id="view-journal" class="space-y-6 hidden">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- FORMULAIRE REDACTION JOURNAL -->
+        <div class="glass-panel p-6 rounded-2xl border border-darkborder h-fit space-y-4">
+          <h2 class="text-lg font-bold text-white flex items-center gap-2">
+            <i class="fa-solid fa-pen-nib text-brand-500"></i> Rédiger l'Avancement du Jour
+          </h2>
+          <p class="text-xs text-gray-400">Chaque membre saisit ici son bilan quotidien. Tout est sauvegardé et audité le soir par Antigravity.</p>
+
+          <form onsubmit="submitJournalEntry(event)" class="space-y-3">
+            <div>
+              <label class="block text-xs font-semibold text-gray-300 mb-1">Titre de la session :</label>
+              <input type="text" id="journalTitle" placeholder="Ex: Schéma du variateur & choix des MOSFETs" required class="w-full bg-gray-900 border border-gray-700 text-white rounded-xl px-3 py-2 text-sm focus:border-brand-500 outline-none" />
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-gray-300 mb-1">Mots-clés / Catégorie :</label>
+              <input type="text" id="journalTags" placeholder="Ex: Variateur, Puissance, L1" class="w-full bg-gray-900 border border-gray-700 text-white rounded-xl px-3 py-2 text-sm focus:border-brand-500 outline-none" />
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-gray-300 mb-1">Détail de l'avancement & Difficultés :</label>
+              <textarea id="journalContent" rows="6" placeholder="Ce que j'ai fait aujourd'hui, les tests réalisés, les composants sélectionnés, et les blocages rencontrés..." required class="w-full bg-gray-900 border border-gray-700 text-white rounded-xl px-3 py-2 text-sm focus:border-brand-500 outline-none"></textarea>
+            </div>
+
+            <button type="submit" class="w-full py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-semibold text-sm transition flex items-center justify-center gap-2 shadow-lg shadow-brand-600/20">
+              <i class="fa-solid fa-floppy-disk"></i> Enregistrer dans le Journal
+            </button>
+          </form>
+        </div>
+
+        <!-- LISTE DES ENTREES -->
+        <div class="lg:col-span-2 glass-panel p-6 rounded-2xl border border-darkborder">
+          <h2 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
+            <i class="fa-solid fa-clock-rotate-left text-gray-400"></i> Historique du Journal de Bord
+          </h2>
+          <div class="space-y-4 overflow-y-auto max-h-[700px] pr-2 custom-scrollbar" id="journalEntriesList">
+            <!-- Rempli par JavaScript -->
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ================= TAB 4: FILES ================= -->
+    <section id="view-files" class="space-y-6 hidden">
+      <div class="glass-panel p-6 rounded-2xl border border-darkborder">
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+          <div>
+            <h2 class="text-xl font-bold text-white">Espace de Dépôt de Fichiers & Livrables</h2>
+            <p class="text-xs text-gray-400">Centralisez vos schémas électriques, datasheets, programmes C/MicroPython et documents de synthèse</p>
+          </div>
+          <button onclick="document.getElementById('fileUploadInput').click()" class="px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-medium text-sm transition flex items-center gap-2">
+            <i class="fa-solid fa-cloud-arrow-up"></i> Déposer un Fichier
+          </button>
+          <input type="file" id="fileUploadInput" onchange="handleFileUpload(event)" class="hidden" />
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm text-gray-300">
+            <thead class="text-xs uppercase bg-gray-900/80 text-gray-400 border-b border-gray-800">
+              <tr>
+                <th class="py-3 px-4">Nom du Fichier</th>
+                <th class="py-3 px-4">Catégorie</th>
+                <th class="py-3 px-4">Déposé par</th>
+                <th class="py-3 px-4">Date</th>
+                <th class="py-3 px-4 text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody id="filesTableBody" class="divide-y divide-gray-800">
+              <!-- Rempli par JavaScript -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= TAB 5: AUDIT IA DU SOIR ================= -->
+    <section id="view-audit" class="space-y-6 hidden">
+      <div class="glass-panel p-6 rounded-2xl border border-emerald-500/20 bg-emerald-950/10">
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+          <div class="flex items-center space-x-3">
+            <div class="w-12 h-12 rounded-2xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-2xl font-bold border border-emerald-500/30">
+              <i class="fa-solid fa-brain"></i>
+            </div>
+            <div>
+              <h2 class="text-xl font-bold text-white">Rapport & Audit Quotidien Antigravity</h2>
+              <p class="text-xs text-emerald-400/90">Compilation automatique des actions du jour pour analyse par l'IA chaque soir</p>
+            </div>
+          </div>
+
+          <button onclick="generateAIPrompt()" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white font-semibold text-sm transition flex items-center gap-2 shadow-lg shadow-emerald-600/30">
+            <i class="fa-solid fa-wand-magic-sparkles"></i> Générer le Snapshot du Soir
+          </button>
+        </div>
+
+        <div class="p-4 rounded-xl bg-gray-900/90 border border-gray-800 space-y-3">
+          <div class="flex justify-between items-center">
+            <span class="text-xs font-semibold text-gray-300 uppercase tracking-wider">Aperçu du Rapport à transmettre à Antigravity :</span>
+            <button onclick="copyAuditText()" id="copyAuditBtn" class="text-xs px-3 py-1 rounded-lg bg-gray-800 hover:bg-gray-700 text-emerald-400 border border-gray-700 transition flex items-center gap-1.5">
+              <i class="fa-regular fa-copy"></i> Copier
+            </button>
+          </div>
+          <textarea id="auditSnapshotOutput" rows="12" readonly class="w-full bg-black/60 text-emerald-300 font-mono text-xs p-3 rounded-lg border border-gray-800 outline-none leading-relaxed"></textarea>
+        </div>
+
+        <div class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-3 text-xs text-gray-400">
+          <div class="p-3 rounded-xl bg-gray-900/60 border border-gray-800 flex items-center gap-2.5">
+            <i class="fa-solid fa-check text-emerald-400 text-base"></i>
+            <span>Vérification automatique des délais jusqu'au 6 décembre.</span>
+          </div>
+          <div class="p-3 rounded-xl bg-gray-900/60 border border-gray-800 flex items-center gap-2.5">
+            <i class="fa-solid fa-scale-balanced text-indigo-400 text-base"></i>
+            <span>Contrôle de l'équilibre du travail entre les 5 membres.</span>
+          </div>
+          <div class="p-3 rounded-xl bg-gray-900/60 border border-gray-800 flex items-center gap-2.5">
+            <i class="fa-solid fa-shield-halved text-amber-400 text-base"></i>
+            <span>Détection précoce des incohérences avec le CDC wiki.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MODAL AJOUT TÂCHE -->
+  <div id="taskModal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="glass-panel w-full max-w-md p-6 rounded-2xl border border-gray-700 space-y-4">
+      <div class="flex justify-between items-center">
+        <h3 class="text-lg font-bold text-white">Ajouter une Tâche</h3>
+        <button onclick="closeModal('taskModal')" class="text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+
+      <form onsubmit="submitNewTask(event)" class="space-y-3">
+        <div>
+          <label class="block text-xs font-semibold text-gray-300 mb-1">Intitulé de la tâche :</label>
+          <input type="text" id="taskTitle" required placeholder="Ex: Schéma de puissance variateur sous KiCad" class="w-full bg-gray-900 border border-gray-700 text-white rounded-xl px-3 py-2 text-sm outline-none focus:border-brand-500" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-gray-300 mb-1">Work Package / Catégorie :</label>
+          <select id="taskCategory" class="w-full bg-gray-900 border border-gray-700 text-white rounded-xl px-3 py-2 text-sm outline-none focus:border-brand-500">
+            <option value="Domotique LTG">Domotique LTG (Température, Clim, Alertes)</option>
+            <option value="Véhicule Autonome">Véhicule Autonome (Variateur, Direction, Borne)</option>
+            <option value="Cadre Commun">Cadre Commun (MQTT, Home Assistant, Grafana)</option>
+            <option value="Banc de Test">Banc de Test Associé</option>
+          </select>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-gray-300 mb-1">Attribué à :</label>
+            <select id="taskAssignee" class="w-full bg-gray-900 border border-gray-700 text-white rounded-xl px-3 py-2 text-sm outline-none focus:border-brand-500">
+              <option value="bouras">Bouras (Chihab)</option>
+              <option value="damou">Damou</option>
+              <option value="diouf">Diouf</option>
+              <option value="elghazouani">Al Gahzouani</option>
+              <option value="locko">Locko</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-gray-300 mb-1">Jalon visé :</label>
+            <select id="taskMilestone" class="w-full bg-gray-900 border border-gray-700 text-white rounded-xl px-3 py-2 text-sm outline-none focus:border-brand-500">
+              <option value="L1">Livrable 1 (6 Déc)</option>
+              <option value="L2">Livrable 2 (20 Déc)</option>
+              <option value="L3">Livrable 3 (24 Janv)</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-gray-300 mb-1">Priorité :</label>
+          <select id="taskPriority" class="w-full bg-gray-900 border border-gray-700 text-white rounded-xl px-3 py-2 text-sm outline-none focus:border-brand-500">
+            <option value="urgent">Urgent / Critique L1</option>
+            <option value="high">Élevée</option>
+            <option value="medium" selected>Normale</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-gray-300 mb-1">Description / Détails :</label>
+          <textarea id="taskDesc" rows="2" class="w-full bg-gray-900 border border-gray-700 text-white rounded-xl px-3 py-2 text-sm outline-none focus:border-brand-500" placeholder="Détails de conception, références composants..."></textarea>
+        </div>
+
+        <button type="submit" class="w-full py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-semibold text-sm transition">
+          Ajouter la Tâche
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL CONFIG GITHUB -->
+  <div id="configModal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="glass-panel w-full max-w-md p-6 rounded-2xl border border-gray-700 space-y-4">
+      <div class="flex justify-between items-center">
+        <h3 class="text-lg font-bold text-white">Paramètres GitHub</h3>
+        <button onclick="closeModal('configModal')" class="text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+
+      <div class="space-y-3 text-xs text-gray-300">
+        <p>Les données sont stockées directement sur le dépôt GitHub : <strong class="text-indigo-400">bouraschihab1-star/sae-supervision-geii</strong></p>
+        
+        <div>
+          <label class="block text-xs font-semibold text-gray-300 mb-1">Token GitHub (sauvegardé dans ce navigateur) :</label>
+          <input type="password" id="githubTokenInput" placeholder="ghp_..." class="w-full bg-gray-900 border border-gray-700 text-white rounded-xl px-3 py-2 text-sm outline-none focus:border-brand-500" />
+          <p class="text-[11px] text-gray-400 mt-1">Ce token permet d'enregistrer vos tâches et votre journal directement dans le dépôt GitHub.</p>
+        </div>
+
+        <button onclick="saveGitHubToken()" class="w-full py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-semibold text-sm transition">
+          Sauvegarder la clé
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- NOTIFICATION TOAST -->
+  <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 bg-gray-900 text-white border border-gray-700 px-4 py-3 rounded-xl shadow-2xl flex items-center space-x-2 text-sm">
+    <i class="fa-solid fa-circle-check text-emerald-400" id="toastIcon"></i>
+    <span id="toastMessage">Message</span>
+  </div>
+
+  <!-- SCRIPT LOGIQUE DASHBOARD -->
+  <script>
+    const GITHUB_REPO = 'bouraschihab1-star/sae-supervision-geii';
+    const GITHUB_RAW_URL = `https://raw.githubusercontent.com/${GITHUB_REPO}/main/data/database.json`;
+    const GITHUB_API_URL = `https://api.github.com/repos/${GITHUB_REPO}/contents/data/database.json`;
+
+    let state = {
+      currentUser: 'bouras',
+      db: null,
+      fileSha: null,
+      token: localStorage.getItem('sae_gh_token') || ''
+    };
+
+    // Auto-récupération du token depuis URL hash (#token=ghp_...)
+    if (window.location.hash.includes('token=')) {
+      const match = window.location.hash.match(/token=([a-zA-Z0-9_]+)/);
+      if (match) {
+        state.token = match[1];
+        localStorage.setItem('sae_gh_token', state.token);
+        history.replaceState(null, null, ' ');
+      }
+    }
+
+    // Initialisation
+    document.addEventListener('DOMContentLoaded', async () => {
+      updateCountdown();
+      await loadDatabase();
+      renderAll();
+    });
+
+    // Compte à rebours vers le 6 décembre 2026
+    function updateCountdown() {
+      const targetDate = new Date('2026-12-06T09:00:00');
+      const now = new Date();
+      const diffTime = targetDate - now;
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      const textEl = document.getElementById('countdownText');
+      if (diffDays > 0) {
+        textEl.textContent = `Vendredi 6 Décembre (J-${diffDays})`;
+      } else if (diffDays === 0) {
+        textEl.textContent = `AUJOURD'HUI ! Revue de projet`;
+        textEl.className = 'text-xs font-bold text-rose-400 animate-pulse';
+      } else {
+        textEl.textContent = `Livrable 1 passé. En route pour L2 !`;
+      }
+    }
+
+    // Chargement de la Base de Données
+    async function loadDatabase() {
+      showSyncing(true);
+      try {
+        // Essayer d'abord via GitHub API si on a un token
+        if (state.token) {
+          const resp = await fetch(GITHUB_API_URL, {
+            headers: { 'Authorization': `token ${state.token}`, 'Accept': 'application/vnd.github.v3+json' }
+          });
+          if (resp.ok) {
+            const data = await resp.json();
+            state.fileSha = data.sha;
+            const decoded = decodeURIComponent(escape(atob(data.content)));
+            state.db = JSON.parse(decoded);
+            localStorage.setItem('sae_db_cache', JSON.stringify(state.db));
+            showToast('Données synchronisées avec GitHub !', 'success');
+            showSyncing(false);
+            return;
+          }
+        }
+
+        // Sinon via Raw URL avec cache buster
+        const rawResp = await fetch(`${GITHUB_RAW_URL}?t=${Date.now()}`);
+        if (rawResp.ok) {
+          state.db = await rawResp.json();
+          localStorage.setItem('sae_db_cache', JSON.stringify(state.db));
+          showToast('Données chargées depuis GitHub Pages', 'info');
+        } else {
+          throw new Error('Erreur de chargement raw');
+        }
+      } catch (err) {
+        console.warn('Utilisation du cache local:', err);
+        const cached = localStorage.getItem('sae_db_cache');
+        if (cached) {
+          state.db = JSON.parse(cached);
+          showToast('Données chargées depuis le cache local', 'warning');
+        } else {
+          showToast('Impossible de charger les données', 'error');
+        }
+      }
+      showSyncing(false);
+    }
+
+    // Sauvegarde vers GitHub
+    async function saveDatabaseToGitHub(commitMsg = 'Mise à jour avancement') {
+      if (!state.db) return;
+      showSyncing(true);
+      localStorage.setItem('sae_db_cache', JSON.stringify(state.db));
+
+      if (!state.token) {
+        showToast('Données sauvées en local. Entrez le token GitHub pour synchroniser en ligne.', 'warning');
+        showSyncing(false);
+        return;
+      }
+
+      try {
+        // Récupérer le dernier sha si absent
+        if (!state.fileSha) {
+          const getResp = await fetch(GITHUB_API_URL, {
+            headers: { 'Authorization': `token ${state.token}` }
+          });
+          if (getResp.ok) {
+            const resData = await getResp.json();
+            state.fileSha = resData.sha;
+          }
+        }
+
+        const contentStr = unescape(encodeURIComponent(JSON.stringify(state.db, null, 2)));
+        const base64Content = btoa(contentStr);
+
+        const putResp = await fetch(GITHUB_API_URL, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `token ${state.token}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/vnd.github.v3+json'
+          },
+          body: JSON.stringify({
+            message: `${commitMsg} par ${state.currentUser}`,
+            content: base64Content,
+            sha: state.fileSha,
+            branch: 'main'
+          })
+        });
+
+        if (putResp.ok) {
+          const putData = await putResp.json();
+          state.fileSha = putData.content.sha;
+          showToast('Sauvegardé et commité sur GitHub ! 🚀', 'success');
+        } else {
+          throw new Error('Erreur PUT GitHub');
+        }
+      } catch (err) {
+        console.error('Erreur save GitHub:', err);
+        showToast('Erreur lors du commit GitHub', 'error');
+      }
+      showSyncing(false);
+    }
+
+    // RENDU GLOBAL
+    function renderAll() {
+      if (!state.db) return;
+      renderProgress();
+      renderMilestones();
+      renderKanban();
+      renderJournal();
+      renderFiles();
+      generateAIPrompt();
+    }
+
+    // Rendu des jauges de progression
+    function renderProgress() {
+      const tasks = state.db.tasks || [];
+      const doneCount = tasks.filter(t => t.status === 'done').length;
+      const progressPercent = tasks.length > 0 ? Math.round((doneCount / tasks.length) * 100) : 25;
+      
+      document.getElementById('statGlobalProgress').textContent = `${progressPercent}%`;
+      document.getElementById('statProgressBar').style.width = `${progressPercent}%`;
+      document.getElementById('statActiveTasks').textContent = tasks.length;
+
+      const grid = document.getElementById('membersProgressGrid');
+      grid.innerHTML = '';
+
+      state.db.members.forEach(m => {
+        const memberTasks = tasks.filter(t => t.assignee === m.id);
+        const memberDone = memberTasks.filter(t => t.status === 'done').length;
+        const memberPct = memberTasks.length > 0 ? Math.round((memberDone / memberTasks.length) * 100) : m.progress;
+        
+        const isCurrent = m.id === state.currentUser;
+        const card = document.createElement('div');
+        card.className = `p-4 rounded-xl border transition-all cursor-pointer ${isCurrent ? 'bg-brand-950/40 border-brand-500 shadow-md shadow-brand-500/10' : 'bg-gray-900/60 border-gray-800 hover:border-gray-700'}`;
+        card.onclick = () => changeUser(m.id);
+
+        card.innerHTML = `
+          <div class="flex items-center space-x-3 mb-2">
+            <span class="text-2xl">${m.avatar}</span>
+            <div>
+              <div class="font-bold text-sm text-white">${m.name}</div>
+              <div class="text-[11px] text-gray-400">${memberTasks.length} tâches assignées</div>
+            </div>
+          </div>
+          <div class="flex justify-between items-center text-xs mt-3 mb-1">
+            <span class="text-gray-400">Avancement</span>
+            <span class="font-bold text-brand-400">${memberPct}%</span>
+          </div>
+          <div class="w-full bg-gray-800 h-1.5 rounded-full overflow-hidden">
+            <div class="bg-brand-500 h-full rounded-full" style="width: ${memberPct}%"></div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    // Rendu des Jalons
+    function renderMilestones() {
+      const container = document.getElementById('milestonesList');
+      container.innerHTML = '';
+      state.db.milestones.forEach(ms => {
+        const el = document.createElement('div');
+        el.className = `p-3 rounded-xl border flex items-start justify-between gap-3 ${ms.done ? 'bg-emerald-950/20 border-emerald-500/30' : 'bg-gray-900/60 border-gray-800'}`;
+        el.innerHTML = `
+          <div class="space-y-1">
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-sm ${ms.done ? 'text-emerald-400' : 'text-gray-200'}">${ms.name}</span>
+              ${ms.done ? '<span class="px-2 py-0.2 rounded-full bg-emerald-500/10 text-emerald-400 text-[10px] font-semibold border border-emerald-500/20">Validé</span>' : ''}
+            </div>
+            <p class="text-xs text-gray-400">${ms.desc}</p>
+          </div>
+          <div class="text-right shrink-0">
+            <span class="text-xs font-mono font-bold ${ms.done ? 'text-emerald-400' : 'text-amber-400'}">${ms.date}</span>
+          </div>
+        `;
+        container.appendChild(el);
+      });
+    }
+
+    // Rendu du Kanban
+    function renderKanban() {
+      const statuses = ['todo', 'in_progress', 'testing', 'done'];
+      statuses.forEach(s => {
+        document.getElementById(`kanban-${s}`).innerHTML = '';
+        document.getElementById(`count-${s}`).textContent = '0';
+      });
+
+      const tasks = state.db.tasks || [];
+      const counts = { todo: 0, in_progress: 0, testing: 0, done: 0 };
+
+      tasks.forEach(task => {
+        counts[task.status] = (counts[task.status] || 0) + 1;
+        const col = document.getElementById(`kanban-${task.status}`);
+        if (!col) return;
+
+        const assigneeObj = state.db.members.find(m => m.id === task.assignee) || { name: task.assignee, avatar: '👤' };
+        const priorityColors = {
+          urgent: 'bg-rose-500/10 text-rose-400 border-rose-500/20',
+          high: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
+          medium: 'bg-blue-500/10 text-blue-400 border-blue-500/20'
+        };
+
+        const card = document.createElement('div');
+        card.className = 'p-3.5 rounded-xl bg-gray-900/90 border border-gray-800 hover:border-gray-700 space-y-2.5 transition shadow-sm';
+        card.innerHTML = `
+          <div class="flex justify-between items-start gap-2">
+            <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full border ${priorityColors[task.priority] || priorityColors.medium}">${task.category}</span>
+            <span class="text-[10px] font-mono text-gray-400 font-bold">${task.milestone}</span>
+          </div>
+          <div class="font-medium text-sm text-gray-200 leading-snug">${task.title}</div>
+          ${task.desc ? `<p class="text-xs text-gray-400 leading-relaxed">${task.desc}</p>` : ''}
+          <div class="pt-2 border-t border-gray-800/80 flex items-center justify-between">
+            <div class="flex items-center space-x-1.5 text-xs text-gray-300 font-medium">
+              <span>${assigneeObj.avatar}</span>
+              <span>${assigneeObj.name}</span>
+            </div>
+            <div class="flex items-center space-x-1">
+              ${task.status !== 'todo' ? `<button onclick="moveTask('${task.id}', -1)" title="Reculer" class="w-6 h-6 rounded bg-gray-800 hover:bg-gray-700 text-gray-300 flex items-center justify-center text-xs"><i class="fa-solid fa-chevron-left"></i></button>` : ''}
+              ${task.status !== 'done' ? `<button onclick="moveTask('${task.id}', 1)" title="Avancer" class="w-6 h-6 rounded bg-gray-800 hover:bg-gray-700 text-gray-300 flex items-center justify-center text-xs"><i class="fa-solid fa-chevron-right"></i></button>` : ''}
+            </div>
+          </div>
+        `;
+        col.appendChild(card);
+      });
+
+      statuses.forEach(s => {
+        document.getElementById(`count-${s}`).textContent = counts[s] || 0;
+      });
+    }
+
+    // Déplacer une tâche dans le Kanban
+    async function moveTask(taskId, direction) {
+      const steps = ['todo', 'in_progress', 'testing', 'done'];
+      const task = state.db.tasks.find(t => t.id === taskId);
+      if (!task) return;
+      const curIdx = steps.indexOf(task.status);
+      const newIdx = curIdx + direction;
+      if (newIdx >= 0 && newIdx < steps.length) {
+        task.status = steps[newIdx];
+        renderKanban();
+        renderProgress();
+        await saveDatabaseToGitHub(`Changement statut tâche: ${task.title}`);
+      }
+    }
+
+    // Ajouter une nouvelle tâche
+    async function submitNewTask(e) {
+      e.preventDefault();
+      const newTask = {
+        id: 'T' + Date.now().toString().slice(-4),
+        title: document.getElementById('taskTitle').value.trim(),
+        category: document.getElementById('taskCategory').value,
+        assignee: document.getElementById('taskAssignee').value,
+        milestone: document.getElementById('taskMilestone').value,
+        priority: document.getElementById('taskPriority').value,
+        desc: document.getElementById('taskDesc').value.trim(),
+        status: 'todo'
+      };
+      state.db.tasks.push(newTask);
+      closeModal('taskModal');
+      e.target.reset();
+      renderKanban();
+      renderProgress();
+      await saveDatabaseToGitHub(`Nouvelle tâche: ${newTask.title}`);
+    }
+
+    // Rendu du Journal de bord
+    function renderJournal() {
+      const container = document.getElementById('journalEntriesList');
+      container.innerHTML = '';
+      const list = [...(state.db.journal || [])].reverse();
+
+      if (list.length === 0) {
+        container.innerHTML = `<div class="text-center text-gray-500 py-8 text-sm">Aucune entrée pour le moment. Remplissez le formulaire à gauche !</div>`;
+        return;
+      }
+
+      list.forEach(item => {
+        const authorObj = state.db.members.find(m => m.id === item.author) || { name: item.author, avatar: '👤' };
+        const el = document.createElement('div');
+        el.className = 'p-4 rounded-xl bg-gray-900/80 border border-gray-800 space-y-2';
+        el.innerHTML = `
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div class="flex items-center space-x-2">
+              <span class="text-lg">${authorObj.avatar}</span>
+              <span class="font-bold text-sm text-white">${authorObj.name}</span>
+              <span class="text-xs text-gray-400 font-mono">• ${item.date}</span>
+            </div>
+            <div class="flex gap-1.5">
+              ${(item.tags || []).map(t => `<span class="px-2 py-0.5 rounded-full bg-brand-500/10 text-brand-400 text-[10px] font-semibold">#${t}</span>`).join('')}
+            </div>
+          </div>
+          <h4 class="font-semibold text-sm text-gray-200">${item.title}</h4>
+          <p class="text-xs text-gray-300 whitespace-pre-line leading-relaxed">${item.content}</p>
+        `;
+        container.appendChild(el);
+      });
+    }
+
+    // Soumission entrée de journal
+    async function submitJournalEntry(e) {
+      e.preventDefault();
+      const title = document.getElementById('journalTitle').value.trim();
+      const content = document.getElementById('journalContent').value.trim();
+      const tags = document.getElementById('journalTags').value.split(',').map(s => s.trim()).filter(Boolean);
+
+      const entry = {
+        id: 'J' + Date.now().toString().slice(-4),
+        date: new Date().toISOString().split('T')[0],
+        author: state.currentUser,
+        title,
+        content,
+        tags: tags.length ? tags : ['Avancement']
+      };
+
+      if (!state.db.journal) state.db.journal = [];
+      state.db.journal.push(entry);
+
+      e.target.reset();
+      renderJournal();
+      generateAIPrompt();
+      await saveDatabaseToGitHub(`Journal: ${title}`);
+    }
+
+    // Rendu des fichiers
+    function renderFiles() {
+      const tbody = document.getElementById('filesTableBody');
+      tbody.innerHTML = '';
+      (state.db.files || []).forEach(f => {
+        const authorObj = state.db.members.find(m => m.id === f.uploader) || { name: f.uploader };
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-gray-800/40 transition';
+        tr.innerHTML = `
+          <td class="py-3 px-4 font-medium text-white flex items-center gap-2">
+            <i class="fa-regular fa-file-lines text-brand-400"></i>
+            <span>${f.name}</span>
+          </td>
+          <td class="py-3 px-4 text-xs"><span class="px-2 py-0.5 rounded bg-gray-800 text-gray-300">${f.category || 'Documentation'}</span></td>
+          <td class="py-3 px-4 text-xs text-gray-300">${authorObj.name}</td>
+          <td class="py-3 px-4 text-xs font-mono text-gray-400">${f.date}</td>
+          <td class="py-3 px-4 text-right">
+            <a href="${f.url}" target="_blank" class="text-xs text-brand-400 hover:text-brand-300 font-medium"><i class="fa-solid fa-download mr-1"></i> Ouvrir</a>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Upload de fichier (Base64 direct vers GitHub uploads/)
+    async function handleFileUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      if (!state.token) {
+        showToast('Token GitHub requis pour enregistrer des fichiers en ligne', 'error');
+        return;
+      }
+
+      showToast(`Téléversement de ${file.name}...`, 'info');
+      showSyncing(true);
+
+      const reader = new FileReader();
+      reader.onload = async () => {
+        try {
+          const base64Data = reader.result.split(',')[1];
+          const uploadPath = `uploads/${Date.now()}_${file.name}`;
+          const uploadUrl = `https://api.github.com/repos/${GITHUB_REPO}/contents/${uploadPath}`;
+
+          const resp = await fetch(uploadUrl, {
+            method: 'PUT',
+            headers: {
+              'Authorization': `token ${state.token}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              message: `Upload fichier ${file.name} par ${state.currentUser}`,
+              content: base64Data,
+              branch: 'main'
+            })
+          });
+
+          if (resp.ok) {
+            const data = await resp.json();
+            state.db.files.push({
+              name: file.name,
+              url: data.content.html_url,
+              uploader: state.currentUser,
+              date: new Date().toISOString().split('T')[0],
+              size: `${Math.round(file.size / 1024)} KB`,
+              category: 'Livrable / Code'
+            });
+            renderFiles();
+            await saveDatabaseToGitHub(`Ajout fichier: ${file.name}`);
+            showToast(`${file.name} téléversé avec succès !`, 'success');
+          } else {
+            throw new Error('Erreur upload API');
+          }
+        } catch (err) {
+          console.error(err);
+          showToast('Erreur lors du téléversement du fichier', 'error');
+        }
+        showSyncing(false);
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // Génération du Snapshot pour Antigravity
+    function generateAIPrompt() {
+      if (!state.db) return;
+      const today = new Date().toISOString().split('T')[0];
+      const todayLogs = (state.db.journal || []).filter(j => j.date === today);
+      const tasks = state.db.tasks || [];
+      const inProg = tasks.filter(t => t.status === 'in_progress');
+      const done = tasks.filter(t => t.status === 'done');
+
+      let summary = `=== SNAPSHOT QUOTIDIEN DU ${today} - SAÉ BUT3 GEII TROYES ===\n`;
+      summary += `PROJET : Véhicule Autonome & Domotique LTG\n`;
+      summary += `MEMBRES : Damou, Diouf, Al Gahzouani, Bouras, Locko\n\n`;
+
+      summary += `--- 1. ÉTAT DU KANBAN ---\n`;
+      summary += `Total tâches : ${tasks.length} | Terminées : ${done.length} | En cours : ${inProg.length}\n`;
+      summary += `Tâches actives en cours :\n`;
+      inProg.forEach(t => {
+        summary += ` - [${t.category}] ${t.title} (Assigné: ${t.assignee}, Priorité: ${t.priority})\n`;
+      });
+
+      summary += `\n--- 2. JOURNAL DU JOUR (${today}) ---\n`;
+      if (todayLogs.length === 0) {
+        summary += `Aucune entrée saisie aujourd'hui dans le journal.\n`;
+      } else {
+        todayLogs.forEach(l => {
+          summary += `[${l.author.toUpperCase()}] ${l.title} :\n${l.content}\n\n`;
+        });
+      }
+
+      summary += `--- 3. JALONS OFFICIELS WIKI ---\n`;
+      state.db.milestones.forEach(m => {
+        summary += ` - ${m.name} : ${m.date} (${m.done ? 'VALIDÉ' : 'À VENIR'})\n`;
+      });
+
+      summary += `\n=== INSTRUCTION POUR ANTIGRAVITIY ===\n`;
+      summary += `Analyse ce compte-rendu quotidien : sors-nous les points forts, les retards potentiels par rapport au Livrable 1 du 6 décembre, et les recommandations techniques pour demain.`;
+
+      const outputEl = document.getElementById('auditSnapshotOutput');
+      if (outputEl) outputEl.value = summary;
+    }
+
+    function copyAuditText() {
+      const txt = document.getElementById('auditSnapshotOutput');
+      txt.select();
+      navigator.clipboard.writeText(txt.value);
+      showToast('Snapshot copié dans le presse-papier !', 'success');
+    }
+
+    // Gestion de l'utilisateur actif
+    function changeUser(user) {
+      state.currentUser = user;
+      document.getElementById('userSelect').value = user;
+      renderProgress();
+      showToast(`Connecté en tant que ${user}`, 'info');
+    }
+
+    // Changement d'onglet
+    function switchTab(tabId) {
+      document.querySelectorAll('main > section').forEach(sec => sec.classList.add('hidden'));
+      document.querySelectorAll('.nav-tab').forEach(btn => {
+        btn.classList.remove('bg-brand-600', 'text-white');
+        btn.classList.add('text-gray-400');
+      });
+
+      document.getElementById(`view-${tabId}`).classList.remove('hidden');
+      const activeBtn = document.getElementById(`tab-${tabId}`);
+      if (activeBtn) {
+        activeBtn.classList.remove('text-gray-400');
+        activeBtn.classList.add('bg-brand-600', 'text-white');
+      }
+
+      if (tabId === 'audit') generateAIPrompt();
+    }
+
+    // Modals
+    function openAddTaskModal() { document.getElementById('taskModal').classList.remove('hidden'); }
+    function openConfigModal() {
+      document.getElementById('githubTokenInput').value = state.token;
+      document.getElementById('configModal').classList.remove('hidden');
+    }
+    function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+    function saveGitHubToken() {
+      state.token = document.getElementById('githubTokenInput').value.trim();
+      localStorage.setItem('sae_gh_token', state.token);
+      closeModal('configModal');
+      showToast('Clé GitHub enregistrée !', 'success');
+      loadDatabase();
+    }
+
+    function syncWithGitHub() {
+      loadDatabase();
+    }
+
+    function showSyncing(isSyncing) {
+      const icon = document.getElementById('syncIcon');
+      if (icon) {
+        if (isSyncing) icon.classList.add('fa-spin');
+        else icon.classList.remove('fa-spin');
+      }
+    }
+
+    function showToast(msg, type = 'info') {
+      const toast = document.getElementById('toast');
+      const msgEl = document.getElementById('toastMessage');
+      const icon = document.getElementById('toastIcon');
+      msgEl.textContent = msg;
+
+      if (type === 'success') icon.className = 'fa-solid fa-circle-check text-emerald-400';
+      else if (type === 'error') icon.className = 'fa-solid fa-circle-exclamation text-rose-400';
+      else if (type === 'warning') icon.className = 'fa-solid fa-triangle-exclamation text-amber-400';
+      else icon.className = 'fa-solid fa-circle-info text-blue-400';
+
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0');
+      }, 3500);
+    }
+  </script>
+</body>
+</html>
