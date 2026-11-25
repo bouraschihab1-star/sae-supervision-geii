@@ -19,29 +19,25 @@
       overflow-x: hidden;
     }
 
-    /* Grille de points de base ultra-resserrée (6px) visible et nette sur fond blanc pur */
+    /* Grille de points de base ultra-resserrée (6px) parfaitement équilibrée sur blanc pur */
     .dot-pattern {
       position: fixed;
       inset: 0;
-      background-image: radial-gradient(#e4e4e7 0.75px, transparent 0.75px);
+      background-image: radial-gradient(#ededf0 0.7px, transparent 0.7px);
       background-size: 6px 6px;
       background-position: 0 0;
       pointer-events: none;
       z-index: 0;
     }
 
-    /* Verre transparent avec légere opacité (20%) pour laisser traverser la trame */
+    /* Verre transparent authentique : aucun flou pour que les points traversent les cadres à 100% */
     .glass-card {
-      background: rgba(255, 255, 255, 0.20);
-      backdrop-filter: blur(2px);
-      -webkit-backdrop-filter: blur(2px);
+      background: rgba(255, 255, 255, 0.18);
       border: 1.5px solid #18181b;
       box-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.04);
     }
     .glass-card-subtle {
-      background: rgba(255, 255, 255, 0.12);
-      backdrop-filter: blur(2px);
-      -webkit-backdrop-filter: blur(2px);
+      background: rgba(255, 255, 255, 0.10);
       border: 1.5px solid #27272a;
     }
 
@@ -1004,10 +1000,10 @@
                   // Dégradé progressif vers les bords (smoothstep)
                   const ratio = 1 - (dist / z.radius);
                   const smoothRatio = ratio * ratio * (3 - 2 * ratio);
-                  const ptAlpha = smoothRatio * zoneAlpha * 0.75;
-                  const ptRadius = 0.65 + smoothRatio * 0.5;
+                  const ptAlpha = smoothRatio * zoneAlpha * 0.6;
+                  const ptRadius = 0.6 + smoothRatio * 0.45;
 
-                  ctx.fillStyle = `rgba(9, 9, 11, ${ptAlpha})`;
+                  ctx.fillStyle = `rgba(18, 18, 20, ${ptAlpha})`;
                   ctx.beginPath();
                   ctx.arc(x, y, ptRadius, 0, Math.PI * 2);
                   ctx.fill();
