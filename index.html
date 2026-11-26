@@ -671,58 +671,11 @@
       }
     }
 
-    function mergeDatabases(base, incoming) {
-      if (!base && !incoming) return null;
-      if (!base) return incoming;
-      if (!incoming) return base;
-
-      // Fusion intelligente du Journal par identifiant unique (aucune entrée écrasée)
-      const journalMap = new Map();
-      (base.journal || []).forEach(j => { if (j && j.id) journalMap.set(j.id, j); });
-      (incoming.journal || []).forEach(j => { if (j && j.id) journalMap.set(j.id, j); });
-      const mergedJournal = Array.from(journalMap.values());
-      // Tri chronologique inversé (plus récent en premier)
-      mergedJournal.sort((a, b) => (b.date || '').localeCompare(a.date || '') || (b.id || '').localeCompare(a.id || ''));
-
-      // Fusion des Tâches par ID
-      const taskMap = new Map();
-      (base.tasks || []).forEach(t => { if (t && t.id) taskMap.set(t.id, t); });
-      (incoming.tasks || []).forEach(t => {
-        if (t && t.id) {
-          taskMap.set(t.id, t);
-        }
-      });
-      const mergedTasks = Array.from(taskMap.values());
-
-      // Fusion des Fichiers par nom/url
-      const fileMap = new Map();
-      (base.files || []).forEach(f => { if (f && (f.url || f.name)) fileMap.set(f.name || f.url, f); });
-      (incoming.files || []).forEach(f => { if (f && (f.url || f.name)) fileMap.set(f.name || f.url, f); });
-      const mergedFiles = Array.from(fileMap.values());
-
-      return {
-        ...base,
-        ...incoming,
-        _version: Math.max(base._version || 1, incoming._version || 1),
-        _localModified: Math.max(base._localModified || 0, incoming._localModified || 0),
-        journal: mergedJournal,
-        tasks: mergedTasks,
-        files: mergedFiles
-      };
-    }
-
     async function loadDb() {
-      // 1. Charger immédiatement le cache local
-      const localData = localStorage.getItem('sae_db_cache');
-      let localDb = null;
-      if (localData) {
-        try { localDb = JSON.parse(localData); state.db = localDb; } catch (e) {}
-      }
-
       if (!state.token) state.token = DEFAULT_GH_TOKEN;
 
       try {
-        // 2. Toujours synchroniser avec l'API GitHub centrale en temps réel
+        // 1. Synchroniser en priorité absolue avec l'API GitHub centrale en temps réel
         const resp = await fetch(GITHUB_API_URL, {
           headers: {
             'Authorization': `token ${state.token}`,
@@ -736,33 +689,33 @@
           state.fileSha = data.sha;
           const remoteDb = JSON.parse(decodeURIComponent(escape(atob(data.content))));
           
-          // Fusion centrale des données distantes et locales
-          const merged = mergeDatabases(remoteDb, localDb);
-          state.db = merged;
-          localStorage.setItem('sae_db_cache', JSON.stringify(state.db));
-
-          // Si le cache local avait des entrées orphelines (ex: saisies hors-ligne), synchroniser automatiquement vers GitHub
-          const localEntriesCount = (localDb && localDb.journal) ? localDb.journal.length : 0;
-          const remoteEntriesCount = (remoteDb && remoteDb.journal) ? remoteDb.journal.length : 0;
-          if (localEntriesCount > remoteEntriesCount) {
-            console.log('Synchronisation automatique des entrées locales orphelines vers GitHub...');
-            saveDb('Synchronisation automatique entrées locales');
-          }
+          // La base distante GitHub fait foi : elle écrase le cache local obsolète
+          state.db = remoteDb;
+          localStorage.setItem('sae_db_cache', JSON.stringify(remoteDb));
           return;
         }
       } catch (e) {
         console.warn('Mode hors-ligne / lecture cache:', e);
       }
 
-      // 3. Repli automatique sur le fichier brut public si l'API est temporairement indisponible
+      // 2. Repli sur le fichier brut GitHub si l'API est temporairement inaccessible
       try {
         const raw = await fetch(`${GITHUB_RAW_URL}?t=${Date.now()}`, { cache: 'no-store' });
         if (raw.ok) {
           const rawDb = await raw.json();
-          state.db = mergeDatabases(rawDb, localDb);
-          localStorage.setItem('sae_db_cache', JSON.stringify(state.db));
+          state.db = rawDb;
+          localStorage.setItem('sae_db_cache', JSON.stringify(rawDb));
+          return;
         }
       } catch (e) {}
+
+      // 3. Dernier recours : cache local uniquement si aucune connexion
+      if (!state.db) {
+        const localData = localStorage.getItem('sae_db_cache');
+        if (localData) {
+          try { state.db = JSON.parse(localData); } catch (e) {}
+        }
+      }
     }
 
     async function saveDb(commitMsg) {
@@ -776,7 +729,7 @@
       showSaveIndicator('Synchronisation GitHub...');
 
       try {
-        // 1. Récupérer la dernière version distante pour fusionner proprement (zéro écrasement)
+        // 1. Récupérer le SHA distant actuel
         const getRes = await fetch(GITHUB_API_URL, {
           headers: { 'Authorization': `token ${state.token}`, 'Accept': 'application/vnd.github.v3+json' },
           cache: 'no-store'
@@ -786,10 +739,6 @@
         if (getRes.ok) {
           const getJson = await getRes.json();
           targetSha = getJson.sha;
-          try {
-            const remoteDb = JSON.parse(decodeURIComponent(escape(atob(getJson.content))));
-            state.db = mergeDatabases(remoteDb, state.db);
-          } catch (e) {}
         }
 
         const content = btoa(unescape(encodeURIComponent(JSON.stringify(state.db, null, 2))));
@@ -811,14 +760,12 @@
           const resData = await res.json();
           state.fileSha = resData.content ? resData.content.sha : targetSha;
           localStorage.setItem('sae_db_cache', JSON.stringify(state.db));
-          showSaveIndicator('✓ Centralisé pour toute l\'équipe');
+          showSaveIndicator('✓ Enregistré sur GitHub');
         } else if (res.status === 409) {
-          // Conflit de concurrence : refetch et retry automatique
+          // Conflit : récupérer le nouveau SHA et ré-essayer
           const retryGet = await fetch(GITHUB_API_URL, { headers: { 'Authorization': `token ${state.token}` }, cache: 'no-store' });
           if (retryGet.ok) {
             const retryJson = await retryGet.json();
-            const freshRemote = JSON.parse(decodeURIComponent(escape(atob(retryJson.content))));
-            state.db = mergeDatabases(freshRemote, state.db);
             const retryContent = btoa(unescape(encodeURIComponent(JSON.stringify(state.db, null, 2))));
             const retryRes = await fetch(GITHUB_API_URL, {
               method: 'PUT',
@@ -829,7 +776,7 @@
               const resData2 = await retryRes.json();
               state.fileSha = resData2.content ? resData2.content.sha : retryJson.sha;
               localStorage.setItem('sae_db_cache', JSON.stringify(state.db));
-              showSaveIndicator('✓ Centralisé pour toute l\'équipe');
+              showSaveIndicator('✓ Enregistré sur GitHub');
             }
           }
         }
