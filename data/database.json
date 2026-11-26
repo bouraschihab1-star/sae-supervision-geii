@@ -1,6 +1,6 @@
 {
-  "_version": 28,
-  "_localModified": 1795715928843,
+  "_version": 29,
+  "_localModified": 1795715930449,
   "project": {
     "title": "SAÉ BUT3 GEII Troyes - Supervision & Avancement",
     "sub_title": "Véhicule Autonome et Domotique (Promo 2025-2026)",
@@ -83,20 +83,6 @@
     }
   ],
   "tasks": [
-    {
-      "id": "T5",
-      "title": "Tableau de bord & IHM embarquée",
-      "desc": "EF-MOB-05 : Affichage vitesse, état de charge (SoC), statut PRND et surveillance des défauts d'isolement/température.",
-      "category": "Véhicule Autonome",
-      "status": "in_progress",
-      "assignees": [
-        "locko",
-        "bouras"
-      ],
-      "creator": "bouras",
-      "milestone": "L1",
-      "branch": "feature/t5-ihm-embarquee"
-    },
     {
       "id": "T7",
       "title": "Régulation d'ambiance & contrôle d'accès salle 3D",
