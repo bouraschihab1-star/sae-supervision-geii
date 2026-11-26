@@ -1,6 +1,6 @@
 {
-  "_version": 18,
-  "_localModified": 1795715226612,
+  "_version": 22,
+  "_localModified": 1795715234662,
   "project": {
     "title": "SAÉ BUT3 GEII Troyes - Supervision & Avancement",
     "sub_title": "Véhicule Autonome et Domotique (Promo 2025-2026)",
@@ -84,34 +84,6 @@
   ],
   "tasks": [
     {
-      "id": "T1",
-      "title": "Variateur de vitesse & régulation de couple",
-      "desc": "EF-MOB-01 : Commande continue de la consigne pédale, filtrage anti-jerk, coupure instantanée au freinage (< 50ms) et sélection manœuvre (6 km/h) / nominal (15 km/h).",
-      "category": "Véhicule Autonome",
-      "status": "in_progress",
-      "assignees": [
-        "damou",
-        "locko"
-      ],
-      "creator": "bouras",
-      "milestone": "L1",
-      "branch": "feature/t1-variateur-couple"
-    },
-    {
-      "id": "T4",
-      "title": "Borne de recharge communicante",
-      "desc": "EF-MOB-04 : Détection de raccordement, verrouillage mécanique, coupure automatique de fin de charge et télémesure énergétique en direct vers MQTT.",
-      "category": "Véhicule Autonome",
-      "status": "todo",
-      "assignees": [
-        "diouf",
-        "damou"
-      ],
-      "creator": "bouras",
-      "milestone": "L1",
-      "branch": "feature/t4-borne-recharge"
-    },
-    {
       "id": "T5",
       "title": "Tableau de bord & IHM embarquée",
       "desc": "EF-MOB-05 : Affichage vitesse, état de charge (SoC), statut PRND et surveillance des défauts d'isolement/température.",
@@ -126,20 +98,6 @@
       "branch": "feature/t5-ihm-embarquee"
     },
     {
-      "id": "T6",
-      "title": "Arrosage raisonné des espaces verts",
-      "desc": "EF-DOM-01 : Asservissement à l'humidité capacitive du sol, inhibition vent fort et pluie, économie d'eau minimale > 35%.",
-      "category": "Domotique",
-      "status": "todo",
-      "assignees": [
-        "elghazouani",
-        "diouf"
-      ],
-      "creator": "bouras",
-      "milestone": "L1",
-      "branch": "feature/t6-arrosage-espace-vert"
-    },
-    {
       "id": "T7",
       "title": "Régulation d'ambiance & contrôle d'accès salle 3D",
       "desc": "EF-DOM-02 & EF-DOM-03 : Déshumidification continue sous 35% HR pour préserver les filaments polymères, badge RFID nominatif et coup de poing vert de secours.",
@@ -152,20 +110,6 @@
       "creator": "bouras",
       "milestone": "L1",
       "branch": "feature/t7-salle-impression-3d"
-    },
-    {
-      "id": "T8",
-      "title": "Valorisation thermique et sécurité Local Serveurs (LTG)",
-      "desc": "EF-DOM-04 à 06 : Dérivation des calories fatales vers les salles de cours en hiver, surventilation nocturne d'été et triptyque thermique constructeur (22°C nominal, 25°C secours, 28°C alarme).",
-      "category": "Domotique",
-      "status": "todo",
-      "assignees": [
-        "bouras",
-        "elghazouani"
-      ],
-      "creator": "bouras",
-      "milestone": "L1",
-      "branch": "feature/t8-ltg-recup-chaleur"
     },
     {
       "id": "T9",
@@ -208,7 +152,7 @@
       "author": "elghazouani",
       "title": "Sélection des capteurs capacitifs d'humidité et vannes thermostatiques",
       "content": "Comparatif technique des sondes capacitives anti-corrosion pour l'arrosage raisonné et dimensionnement des servomoteurs pour les registres d'air du LTG.",
-      "taskId": "T6",
+      "taskId": "",
       "tags": [
         "T6",
         "Capteurs",
@@ -221,7 +165,7 @@
       "author": "diouf",
       "title": "Structure des trames JSON sur le bus MQTT",
       "content": "Définition des topics MQTT standardisés pour la télémesure de la borne (EF-MOB-04) et le monitoring thermique du LTG (EF-DOM-04).",
-      "taskId": "T4",
+      "taskId": "",
       "tags": [
         "T4",
         "MQTT",
@@ -247,7 +191,7 @@
       "author": "damou",
       "title": "Vérification des asservissements de couple et boucle de sécurité freinage",
       "content": "Étude de la coupure d'urgence < 50ms sur appui pédale de frein selon l'exigence EF-MOB-01. Définition du schéma de câblage avec protection différentielle TBTS.",
-      "taskId": "T1",
+      "taskId": "",
       "tags": [
         "T1",
         "Freinage",
@@ -260,7 +204,7 @@
       "author": "locko",
       "title": "Étude préliminaire des capteurs de fin de course et commande variateur",
       "content": "Analyse des spécifications du variateur de vitesse (T1) et du protocole de régulation d'ambiance pour la salle 3D (T7). Prise en compte de la consigne pédale et de l'interfaçage des capteurs d'humidité.",
-      "taskId": "T1",
+      "taskId": "",
       "tags": [
         "T1",
         "Variateur",
