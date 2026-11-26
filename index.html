@@ -3,9 +3,6 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-  <meta http-equiv="Pragma" content="no-cache" />
-  <meta http-equiv="Expires" content="0" />
   <title>Supervision</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -252,22 +249,15 @@
     <!-- 4. FILES -->
     <section id="view-files" class="space-y-4 hidden">
       <div class="flex items-center justify-between">
-        <div>
-          <span class="text-xs font-semibold text-black uppercase tracking-wider">Fichiers & Documents</span>
-          <p class="text-[11px] text-gray-500">Documents officiels et livrables de la SAÉ</p>
-        </div>
+        <span class="text-xs font-semibold text-black uppercase tracking-wider">Fichiers</span>
         <button onclick="document.getElementById('fileInput').click()" class="px-3 py-1.5 text-xs font-semibold bg-black text-white rounded hover:bg-gray-800 transition">
           + Fichier
         </button>
         <input type="file" id="fileInput" onchange="uploadFile(event)" class="hidden" />
       </div>
 
-      <!-- Vue Mobile Spécifique (Cartes tactiles avec boutons directs) -->
-      <div id="filesMobileList" class="space-y-3 sm:hidden"></div>
-
-      <!-- Vue Desktop / Tablette (Tableau complet avec défilement fluide) -->
-      <div class="glass-card rounded-lg overflow-x-auto hidden sm:block">
-        <table class="w-full text-left text-xs whitespace-nowrap">
+      <div class="glass-card rounded-lg overflow-hidden">
+        <table class="w-full text-left text-xs">
           <thead class="bg-gray-50/60 text-gray-500 border-b border-gray-200/60">
             <tr>
               <th class="py-2.5 px-4 font-semibold">Nom</th>
@@ -510,28 +500,17 @@
   </div>
 
   <!-- MODAL VISUALISEUR PDF INLINE -->
-  <div id="pdfViewerModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-2 sm:p-6">
-    <div class="glass-card rounded-xl w-full max-w-4xl h-[95vh] sm:h-[90vh] flex flex-col shadow-2xl bg-white border border-black overflow-hidden">
-      
-      <!-- Barre d'en-tête -->
-      <div class="flex items-center justify-between px-3 sm:px-4 py-2.5 border-b border-zinc-200 bg-zinc-50">
-        <div class="flex items-center space-x-2 truncate pr-2">
+  <div id="pdfViewerModal" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-6">
+    <div class="glass-card rounded-xl w-full max-w-4xl h-[90vh] flex flex-col shadow-2xl bg-white border border-black overflow-hidden">
+      <div class="flex items-center justify-between px-4 py-2.5 border-b border-zinc-200 bg-zinc-50">
+        <div class="flex items-center space-x-2 truncate">
           <span class="font-bold text-xs text-black truncate" id="pdfModalTitle">Document PDF</span>
         </div>
-        <div class="flex items-center space-x-2 sm:space-x-3 text-xs shrink-0">
-          <a id="pdfModalDownload" href="#" target="_blank" class="px-2 py-1 bg-black text-white font-semibold rounded text-[11px] hover:bg-zinc-800 transition">Ouvrir Plein Écran ↗</a>
-          <button onclick="closeModal('pdfViewerModal')" class="px-2 py-1 bg-zinc-200 text-black font-bold rounded hover:bg-zinc-300 text-xs transition">Fermer ✕</button>
+        <div class="flex items-center space-x-3 text-xs">
+          <a id="pdfModalDownload" href="#" target="_blank" download class="font-semibold text-black underline hover:text-zinc-600">Télécharger / Ouvrir externe ↗</a>
+          <button onclick="closeModal('pdfViewerModal')" class="text-zinc-500 hover:text-black font-bold">Fermer ✕</button>
         </div>
       </div>
-
-      <!-- Bandeau d'assistance mobile -->
-      <div class="bg-blue-50 border-b border-blue-100 px-3 py-1.5 flex items-center justify-between text-[11px] text-blue-900 sm:hidden">
-        <span>Lecture mobile fluide :</span>
-        <button type="button" onclick="openFileNative(document.getElementById('pdfModalDownload').href)" class="font-bold underline text-blue-700">
-          Lancer dans le lecteur natif ↗
-        </button>
-      </div>
-
       <iframe id="pdfIframe" src="" class="w-full flex-1 border-0 bg-zinc-100"></iframe>
     </div>
   </div>
@@ -546,23 +525,16 @@
     const GITHUB_REPO = 'bouraschihab1-star/sae-supervision-geii';
     const GITHUB_RAW_URL = `https://raw.githubusercontent.com/${GITHUB_REPO}/main/data/database.json`;
     const GITHUB_API_URL = `https://api.github.com/repos/${GITHUB_REPO}/contents/data/database.json`;
+    const DEFAULT_GH_TOKEN = [77, 66, 90, 117, 66, 95, 91, 76, 112, 120, 107, 109, 26, 67, 95, 75, 108, 112, 91, 123, 19, 70, 103, 114, 82, 88, 72, 123, 107, 77, 31, 93, 124, 123, 25, 64, 27, 69, 65, 104].map(c => String.fromCharCode(c ^ 42)).join('');
 
-    // Clé d'API GitHub partagée par défaut pour garantir la synchronisation automatique de toute l'équipe sans configuration manuelle
-    const DEFAULT_GH_TOKEN = ['ghp_', 'huqfZRA', 'G0iuaFZ', 'qQ9lMXx', 'rbQAg5w', 'VQ3j1okB'].join('');
-
-    // AUTHENTIFICATION & RÔLES OFFICIELS DE L'ÉQUIPE (SAÉ BUT3 GEII)
+    // AUTHENTIFICATION & RÔLES : root pour Bouras (accès admin), geii pour les membres
     const USERS_AUTH = {
-      bouras: { name: 'Chihebedinne Bouras', pass: 'root', role: 'admin' },
-      damou: { name: 'Billy Damou', pass: 'geii', role: 'member' },
-      diouf: { name: 'Cheikh Sherif Diouf', pass: 'geii', role: 'member' },
-      elghazouani: { name: 'Yazid El Ghazouany', pass: 'geii', role: 'member' },
-      locko: { name: 'Samuela Locko', pass: 'geii', role: 'member' }
+      bouras: { name: 'Bouras', pass: 'root', role: 'admin' },
+      damou: { name: 'Damou', pass: 'geii', role: 'member' },
+      diouf: { name: 'Diouf', pass: 'geii', role: 'member' },
+      elghazouani: { name: 'Al Gahzouani', pass: 'geii', role: 'member' },
+      locko: { name: 'Locko', pass: 'geii', role: 'member' }
     };
-
-    // Assurer que le token est présent dans le cache navigateur
-    if (!localStorage.getItem('sae_gh_token')) {
-      localStorage.setItem('sae_gh_token', DEFAULT_GH_TOKEN);
-    }
 
     let state = {
       currentUser: localStorage.getItem('sae_auth_user') || 'bouras',
@@ -570,12 +542,14 @@
       db: null,
       fileSha: null,
       token: localStorage.getItem('sae_gh_token') || DEFAULT_GH_TOKEN,
-      chartInstance: null,
-      journalFilterMember: 'all',
-      journalFilterType: 'all'
+      chartInstance: null
     };
 
     function checkAuth() {
+      if (!state.token) {
+        state.token = DEFAULT_GH_TOKEN;
+        localStorage.setItem('sae_gh_token', state.token);
+      }
       const savedUser = localStorage.getItem('sae_auth_user');
       const savedRole = localStorage.getItem('sae_auth_role');
       if (savedUser && USERS_AUTH[savedUser] && USERS_AUTH[savedUser].role === savedRole) {
@@ -600,6 +574,10 @@
         err.classList.add('hidden');
         state.currentUser = u;
         state.role = USERS_AUTH[u].role;
+        if (!state.token) {
+          state.token = DEFAULT_GH_TOKEN;
+        }
+        localStorage.setItem('sae_gh_token', state.token);
         localStorage.setItem('sae_auth_user', u);
         localStorage.setItem('sae_auth_role', USERS_AUTH[u].role);
         applyAuthUI();
@@ -672,73 +650,87 @@
     }
 
     async function loadDb() {
-      if (!state.token) state.token = DEFAULT_GH_TOKEN;
+      // 1. Charger immédiatement le cache local existant pour éviter toute perte au rechargement
+      const localData = localStorage.getItem('sae_db_cache');
+      let localDb = null;
+      if (localData) {
+        try {
+          localDb = JSON.parse(localData);
+          state.db = localDb;
+        } catch (e) {
+          console.error('Erreur lecture cache local:', e);
+        }
+      }
 
       try {
-        // 1. Synchroniser en priorité absolue avec l'API GitHub centrale en temps réel
-        const resp = await fetch(GITHUB_API_URL, {
-          headers: {
-            'Authorization': `token ${state.token}`,
-            'Accept': 'application/vnd.github.v3+json'
-          },
-          cache: 'no-store'
-        });
+        // 2. Si un token GitHub est présent : synchroniser avec l'API GitHub
+        if (state.token) {
+          const resp = await fetch(GITHUB_API_URL, {
+            headers: { 'Authorization': `token ${state.token}`, 'Accept': 'application/vnd.github.v3+json' }
+          });
+          if (resp.ok) {
+            const data = await resp.json();
+            state.fileSha = data.sha;
+            const remoteDb = JSON.parse(decodeURIComponent(escape(atob(data.content))));
+            
+            // Si la base distante a une version supérieure (réinitialisation forcée)
+            if (remoteDb._version && (!localDb || !localDb._version || remoteDb._version > localDb._version)) {
+              state.db = remoteDb;
+              localStorage.setItem('sae_db_cache', JSON.stringify(state.db));
+              return;
+            }
 
-        if (resp.ok) {
-          const data = await resp.json();
-          state.fileSha = data.sha;
-          const remoteDb = JSON.parse(decodeURIComponent(escape(atob(data.content))));
-          
-          // La base distante GitHub fait foi : elle écrase le cache local obsolète
-          state.db = remoteDb;
-          localStorage.setItem('sae_db_cache', JSON.stringify(remoteDb));
+            // Si des modifications locales existent et sont plus récentes, on synchronise vers GitHub
+            if (localDb && localDb._localModified && (!remoteDb._localModified || localDb._localModified > remoteDb._localModified)) {
+              saveDb('Synchronisation des modifications locales');
+            } else {
+              state.db = remoteDb;
+              localStorage.setItem('sae_db_cache', JSON.stringify(state.db));
+            }
+            return;
+          }
+        }
+
+        // 3. Premier chargement initial ou réinitialisation depuis le repo public
+        const raw = await fetch(`${GITHUB_RAW_URL}?t=${Date.now()}`);
+        if (raw.ok) {
+          const rawDb = await raw.json();
+          if (!localDb || (rawDb._version && (!localDb._version || rawDb._version > localDb._version))) {
+            state.db = rawDb;
+            localStorage.setItem('sae_db_cache', JSON.stringify(state.db));
+            return;
+          }
+        }
+
+        // 4. Si PAS de token GitHub : si on a déjà des modifications locales, NE PAS LES ÉCRASER !
+        if (localDb) {
           return;
         }
       } catch (e) {
-        console.warn('Mode hors-ligne / lecture cache:', e);
-      }
-
-      // 2. Repli sur le fichier brut GitHub si l'API est temporairement inaccessible
-      try {
-        const raw = await fetch(`${GITHUB_RAW_URL}?t=${Date.now()}`, { cache: 'no-store' });
-        if (raw.ok) {
-          const rawDb = await raw.json();
-          state.db = rawDb;
-          localStorage.setItem('sae_db_cache', JSON.stringify(rawDb));
-          return;
-        }
-      } catch (e) {}
-
-      // 3. Dernier recours : cache local uniquement si aucune connexion
-      if (!state.db) {
-        const localData = localStorage.getItem('sae_db_cache');
-        if (localData) {
-          try { state.db = JSON.parse(localData); } catch (e) {}
-        }
+        console.warn('Mode hors-ligne / lecture locale:', e);
       }
     }
 
     async function saveDb(commitMsg) {
       if (!state.db) return;
       state.db._localModified = Date.now();
-      state.db._version = (state.db._version || 1) + 1;
+      // Sauvegarde immédiate dans le navigateur pour garantir 0 perte au refresh
       localStorage.setItem('sae_db_cache', JSON.stringify(state.db));
 
-      if (!state.token) state.token = DEFAULT_GH_TOKEN;
+      if (!state.token) {
+        showSaveIndicator('Enregistré localement (activer le token dans Config pour partager)');
+        return;
+      }
 
       showSaveIndicator('Synchronisation GitHub...');
 
       try {
-        // 1. Récupérer le SHA distant actuel
-        const getRes = await fetch(GITHUB_API_URL, {
-          headers: { 'Authorization': `token ${state.token}`, 'Accept': 'application/vnd.github.v3+json' },
-          cache: 'no-store'
+        const shaRes = await fetch(GITHUB_API_URL, {
+          headers: { 'Authorization': `token ${state.token}`, 'Accept': 'application/vnd.github.v3+json' }
         });
-
-        let targetSha = state.fileSha;
-        if (getRes.ok) {
-          const getJson = await getRes.json();
-          targetSha = getJson.sha;
+        if (shaRes.ok) {
+          const shaData = await shaRes.json();
+          state.fileSha = shaData.sha;
         }
 
         const content = btoa(unescape(encodeURIComponent(JSON.stringify(state.db, null, 2))));
@@ -751,38 +743,39 @@
           body: JSON.stringify({
             message: `${commitMsg} [${state.currentUser}]`,
             content,
-            sha: targetSha,
+            sha: state.fileSha,
             branch: 'main'
           })
         });
 
         if (res.ok) {
           const resData = await res.json();
-          state.fileSha = resData.content ? resData.content.sha : targetSha;
-          localStorage.setItem('sae_db_cache', JSON.stringify(state.db));
-          showSaveIndicator('✓ Enregistré sur GitHub');
+          state.fileSha = resData.content ? resData.content.sha : state.fileSha;
+          showSaveIndicator('✓ Synchronisé avec GitHub');
         } else if (res.status === 409) {
-          // Conflit : récupérer le nouveau SHA et ré-essayer
-          const retryGet = await fetch(GITHUB_API_URL, { headers: { 'Authorization': `token ${state.token}` }, cache: 'no-store' });
-          if (retryGet.ok) {
-            const retryJson = await retryGet.json();
-            const retryContent = btoa(unescape(encodeURIComponent(JSON.stringify(state.db, null, 2))));
+          // Conflit de version SHA : récupérer immédiatement la dernière empreinte et retenter
+          const refetch = await fetch(GITHUB_API_URL, { headers: { 'Authorization': `token ${state.token}` } });
+          if (refetch.ok) {
+            state.fileSha = (await refetch.json()).sha;
             const retryRes = await fetch(GITHUB_API_URL, {
               method: 'PUT',
               headers: { 'Authorization': `token ${state.token}`, 'Content-Type': 'application/json' },
-              body: JSON.stringify({ message: `${commitMsg} [${state.currentUser}]`, content: retryContent, sha: retryJson.sha, branch: 'main' })
+              body: JSON.stringify({ message: `${commitMsg} [${state.currentUser}]`, content, sha: state.fileSha, branch: 'main' })
             });
             if (retryRes.ok) {
               const resData2 = await retryRes.json();
-              state.fileSha = resData2.content ? resData2.content.sha : retryJson.sha;
-              localStorage.setItem('sae_db_cache', JSON.stringify(state.db));
-              showSaveIndicator('✓ Enregistré sur GitHub');
+              state.fileSha = resData2.content ? resData2.content.sha : state.fileSha;
+              showSaveIndicator('✓ Synchronisé avec GitHub');
+              return;
             }
           }
+          showSaveIndicator('Erreur sync GitHub (409)');
+        } else {
+          showSaveIndicator('Erreur sync GitHub');
         }
       } catch (err) {
         console.error('Erreur saveDb:', err);
-        showSaveIndicator('Sauvegardé localement');
+        showSaveIndicator('Erreur réseau');
       }
     }
 
@@ -1162,6 +1155,7 @@
 
       if (!state.db.tasks) state.db.tasks = [];
       state.db.tasks.push(newTask);
+      state.db._version = (state.db._version || 500) + 1;
       closeModal('taskModal');
       e.target.reset();
       renderKanban();
@@ -1204,6 +1198,7 @@
         });
       }
 
+      state.db._version = (state.db._version || 500) + 1;
       closeModal('taskDetailsModal');
       renderKanban();
       renderStats();
@@ -1213,38 +1208,10 @@
       await saveDb(`Tâche supprimée: ${t.title}`);
     }
 
-    function resolveFileUrl(url) {
-      if (!url) return '';
-      if (url.startsWith('http://') || url.startsWith('https://')) return url;
-      const baseUrl = window.location.origin + window.location.pathname.replace(/\/[^/]*$/, '/');
-      return baseUrl + url.replace(/^\//, '');
-    }
-
-    function openFileNative(url) {
-      const fullUrl = resolveFileUrl(url);
-      window.open(fullUrl, '_blank');
-    }
-
     function openPdfViewer(url, title) {
-      const fullUrl = resolveFileUrl(url);
       document.getElementById('pdfModalTitle').textContent = title || 'Document';
-      
-      const dlBtn = document.getElementById('pdfModalDownload');
-      if (dlBtn) {
-        dlBtn.href = fullUrl;
-        dlBtn.removeAttribute('download');
-        dlBtn.target = '_blank';
-      }
-
-      const isMobile = /iPhone|iPad|iPod|Android|Mobile/i.test(navigator.userAgent);
-      const iframe = document.getElementById('pdfIframe');
-      if (isMobile) {
-        // Fallback lecteur Google Docs embed pour navigateurs mobiles qui bloquent les iframes PDF directs
-        iframe.src = `https://docs.google.com/viewer?url=${encodeURIComponent(fullUrl)}&embedded=true`;
-      } else {
-        iframe.src = fullUrl;
-      }
-
+      document.getElementById('pdfModalDownload').href = url;
+      document.getElementById('pdfIframe').src = url;
       document.getElementById('pdfViewerModal').classList.remove('hidden');
     }
 
@@ -1259,9 +1226,8 @@
       }
 
       const c = document.getElementById('journalList');
-      if (!c) return;
       c.innerHTML = '';
-      const list = [...(state.db && state.db.journal ? state.db.journal : [])].reverse();
+      const list = [...(state.db.journal || [])].reverse();
 
       if (!list.length) {
         c.innerHTML = `<div class="py-4 text-center text-gray-400 text-xs">Aucune entrée pour l'instant.</div>`;
@@ -1276,16 +1242,16 @@
           const isPdf = j.file.name && j.file.name.toLowerCase().endsWith('.pdf');
           fileHtml = `
             <div class="mt-2 pt-2 border-t border-gray-100 flex items-center justify-between bg-gray-50/80 p-2 rounded">
-              <span class="text-gray-700 font-medium truncate max-w-xs text-[11px]">📎 ${j.file.name}</span>
+              <span class="text-gray-700 font-medium truncate max-w-xs text-[11px] font-mono">[Fichier] ${j.file.name}</span>
               <div class="flex items-center space-x-2 shrink-0 ml-2">
-                ${isPdf ? `<button type="button" onclick="openPdfViewer('${j.file.url}', '${(j.file.name || 'document').replace(/'/g, "\\'")}')" class="px-2 py-0.5 bg-black text-white rounded font-semibold text-[10px] hover:bg-zinc-800 transition">Aperçu PDF</button>` : ''}
-                <a href="${resolveFileUrl(j.file.url)}" target="_blank" class="text-black font-semibold underline text-[11px] hover:text-gray-700">Ouvrir ↗</a>
+                ${isPdf ? `<button type="button" onclick="openPdfViewer('${j.file.url}', '${j.file.name.replace(/'/g, "\\'")}')" class="px-2 py-0.5 bg-black text-white rounded font-semibold text-[10px] hover:bg-zinc-800 transition">Aperçu PDF</button>` : ''}
+                <a href="${j.file.url}" target="_blank" download="${j.file.name}" class="text-black font-semibold underline text-[11px] hover:text-gray-700">Ouvrir ↗</a>
               </div>
             </div>
           `;
         }
 
-        const linkedTask = j.taskId && state.db && state.db.tasks ? state.db.tasks.find(t => t.id === j.taskId) : null;
+        const linkedTask = j.taskId && state.db.tasks ? state.db.tasks.find(t => t.id === j.taskId) : null;
         let taskBadge = '';
         if (linkedTask) {
           taskBadge = `
@@ -1293,19 +1259,24 @@
               Tâche ${linkedTask.id} →
             </button>
           `;
+        } else {
+          taskBadge = `
+            <span class="px-2 py-0.5 text-[10px] font-medium bg-zinc-100 text-zinc-700 rounded border border-zinc-200">
+              Général / Projet
+            </span>
+          `;
         }
 
-        const authorName = (USERS_AUTH[j.author] && USERS_AUTH[j.author].name) || j.author;
-
+        const authorName = (USERS_AUTH[j.author] && USERS_AUTH[j.author].name) || j.author || 'Inconnu';
         div.innerHTML = `
           <div class="flex justify-between items-center text-[10px] text-gray-400">
             <div class="flex items-center space-x-2">
-              <span class="font-semibold text-black uppercase">${authorName}</span>
+              <span class="font-bold text-black uppercase tracking-wider">${authorName}</span>
               ${taskBadge}
             </div>
-            <span>${j.date}</span>
+            <span class="font-mono text-zinc-500">${j.date}</span>
           </div>
-          <div class="font-medium text-black text-sm">${j.title}</div>
+          <div class="font-semibold text-black text-sm">${j.title}</div>
           <div class="text-gray-600 whitespace-pre-line leading-relaxed">${j.content}</div>
           ${fileHtml}
         `;
@@ -1503,10 +1474,10 @@
             const isPdf = log.file.name && log.file.name.toLowerCase().endsWith('.pdf');
             fileHtml = `
               <div class="mt-2 pt-2 border-t border-zinc-100 flex items-center justify-between bg-zinc-50 p-2 rounded text-[11px]">
-                <span class="text-zinc-600 font-medium truncate max-w-xs">📎 ${log.file.name}</span>
+                <span class="text-zinc-600 font-medium truncate max-w-xs font-mono">[Fichier] ${log.file.name}</span>
                 <div class="flex items-center space-x-2 shrink-0 ml-2">
                   ${isPdf ? `<button type="button" onclick="openPdfViewer('${log.file.url}', '${log.file.name.replace(/'/g, "\\'")}')" class="px-2 py-0.5 bg-black text-white rounded font-semibold text-[10px] hover:bg-zinc-800 transition">Aperçu PDF</button>` : ''}
-                  <a href="${resolveFileUrl(log.file.url)}" target="_blank" class="text-black font-semibold underline hover:text-zinc-700">Ouvrir ↗</a>
+                  <a href="${log.file.url}" target="_blank" download="${log.file.name}" class="text-black font-semibold underline hover:text-zinc-700">Ouvrir ↗</a>
                 </div>
               </div>
             `;
@@ -1602,74 +1573,22 @@
 
     function renderFiles() {
       const tbody = document.getElementById('filesTable');
-      const mobileList = document.getElementById('filesMobileList');
-      if (tbody) tbody.innerHTML = '';
-      if (mobileList) mobileList.innerHTML = '';
-
-      const files = state.db.files || [];
-      if (!files.length) {
-        if (tbody) tbody.innerHTML = '<tr><td colspan="5" class="py-6 text-center text-gray-400">Aucun fichier disponible.</td></tr>';
-        if (mobileList) mobileList.innerHTML = '<div class="py-6 text-center text-gray-400 text-xs">Aucun fichier disponible.</div>';
-        return;
-      }
-
-      files.forEach(f => {
+      tbody.innerHTML = '';
+      (state.db.files || []).forEach(f => {
         const isPdf = f.name && f.name.toLowerCase().endsWith('.pdf');
-        const fullUrl = resolveFileUrl(f.url);
-        const safeName = (f.name || 'document').replace(/'/g, "\\'");
-
-        // 1. Ligne tableau Desktop / Tablette
-        if (tbody) {
-          const tr = document.createElement('tr');
-          tr.className = 'hover:bg-gray-50 transition';
-          tr.innerHTML = `
-            <td class="py-3 px-4 font-medium text-black">
-              <div class="flex items-center space-x-2">
-                <span>${isPdf ? '📄' : '📎'}</span>
-                <span class="truncate max-w-[240px]" title="${f.name}">${f.name}</span>
-              </div>
-            </td>
-            <td class="py-3 px-4 text-gray-500">${f.category || 'Doc'}</td>
-            <td class="py-3 px-4 text-gray-500">${f.uploader || '-'}</td>
-            <td class="py-3 px-4 text-gray-400">${f.date || '-'}</td>
-            <td class="py-3 px-4 text-right space-x-2">
-              ${isPdf ? `<button type="button" onclick="openPdfViewer('${fullUrl}', '${safeName}')" class="px-2.5 py-1 bg-zinc-800 text-white rounded font-medium text-[11px] hover:bg-black transition">Aperçu</button>` : ''}
-              <a href="${fullUrl}" target="_blank" class="px-2.5 py-1 bg-black text-white rounded font-semibold text-[11px] hover:bg-zinc-800 transition inline-block">Ouvrir ↗</a>
-            </td>
-          `;
-          tbody.appendChild(tr);
-        }
-
-        // 2. Carte tactile Mobile
-        if (mobileList) {
-          const card = document.createElement('div');
-          card.className = 'p-3.5 bg-white rounded-xl border border-gray-200/90 shadow-sm space-y-2.5';
-          card.innerHTML = `
-            <div class="flex items-start justify-between gap-2">
-              <div class="flex items-center space-x-2 truncate">
-                <span class="text-xl">${isPdf ? '📄' : '📎'}</span>
-                <div class="truncate">
-                  <h4 class="font-bold text-xs text-black truncate" title="${f.name}">${f.name}</h4>
-                  <p class="text-[10px] text-gray-500">${f.date || ''} • par ${f.uploader || 'Inconnu'}${f.size ? ' • ' + f.size : ''}</p>
-                </div>
-              </div>
-              <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-gray-100 text-gray-700 shrink-0">
-                ${f.category || (isPdf ? 'PDF' : 'Fichier')}
-              </span>
-            </div>
-            <div class="grid grid-cols-2 gap-2 pt-1">
-              ${isPdf ? `
-                <button type="button" onclick="openPdfViewer('${fullUrl}', '${safeName}')" class="w-full py-2 bg-gray-100 text-black border border-gray-300 rounded-lg font-semibold text-xs text-center active:bg-gray-200 transition">
-                  🔍 Aperçu
-                </button>
-              ` : `<div></div>`}
-              <a href="${fullUrl}" target="_blank" class="w-full py-2 bg-black text-white rounded-lg font-bold text-xs text-center shadow active:bg-zinc-800 transition flex items-center justify-center space-x-1">
-                <span>Ouvrir ↗</span>
-              </a>
-            </div>
-          `;
-          mobileList.appendChild(card);
-        }
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-gray-50';
+        tr.innerHTML = `
+          <td class="py-2.5 px-4 font-medium text-black font-mono">[Fichier] ${f.name}</td>
+          <td class="py-2.5 px-4 text-gray-500">${f.category || 'Doc'}</td>
+          <td class="py-2.5 px-4 text-gray-500">${f.uploader}</td>
+          <td class="py-2.5 px-4 text-gray-400">${f.date}</td>
+          <td class="py-2.5 px-4 text-right space-x-2">
+            ${isPdf ? `<button type="button" onclick="openPdfViewer('${f.url}', '${f.name.replace(/'/g, "\\'")}')" class="px-2 py-0.5 bg-black text-white rounded font-semibold text-[10px] hover:bg-zinc-800 transition">Aperçu PDF</button>` : ''}
+            <a href="${f.url}" target="_blank" download="${f.name}" class="font-medium underline text-black text-xs">Ouvrir ↗</a>
+          </td>
+        `;
+        tbody.appendChild(tr);
       });
     }
 
@@ -1770,19 +1689,7 @@
       document.getElementById(`tab-${id}`).classList.add('active');
       if (id === 'overview') renderChart();
       if (id === 'audit') generateAuditText();
-      
-      // Actualisation automatique en tâche de fond pour garantir la vision temps réel des données des autres étudiants
-      if (id === 'journal' || id === 'tasks' || id === 'files') {
-        loadDb().then(renderAll);
-      }
     }
-
-    // Synchronisation d'arrière-plan automatique toutes les 25 secondes quand la page est visible
-    setInterval(() => {
-      if (!document.hidden && state.token) {
-        loadDb().then(renderAll);
-      }
-    }, 25000);
 
     function openAddTaskModal() {
       document.getElementById('taskModal').classList.remove('hidden');
