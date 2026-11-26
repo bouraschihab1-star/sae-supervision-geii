@@ -1,6 +1,6 @@
 {
-  "_version": 24,
-  "_localModified": 1795715920271,
+  "_version": 26,
+  "_localModified": 1795715924654,
   "project": {
     "title": "SAÉ BUT3 GEII Troyes - Supervision & Avancement",
     "sub_title": "Véhicule Autonome et Domotique (Promo 2025-2026)",
@@ -143,34 +143,6 @@
       "branch": "feature/t1-variateur-couple"
     },
     {
-      "id": "T6",
-      "title": "Arrosage raisonné des espaces verts",
-      "desc": "EF-DOM-01 : Asservissement à l'humidité capacitive du sol, inhibition vent fort et pluie, économie d'eau minimale > 35%.",
-      "category": "Domotique",
-      "status": "todo",
-      "assignees": [
-        "elghazouani",
-        "diouf"
-      ],
-      "creator": "bouras",
-      "milestone": "L1",
-      "branch": "feature/t6-arrosage-espace-vert"
-    },
-    {
-      "id": "T8",
-      "title": "Valorisation thermique et sécurité Local Serveurs (LTG)",
-      "desc": "EF-DOM-04 à 06 : Dérivation des calories fatales vers les salles de cours en hiver, surventilation nocturne d'été et triptyque thermique constructeur (22°C nominal, 25°C secours, 28°C alarme).",
-      "category": "Domotique",
-      "status": "todo",
-      "assignees": [
-        "bouras",
-        "elghazouani"
-      ],
-      "creator": "bouras",
-      "milestone": "L1",
-      "branch": "feature/t8-ltg-recup-chaleur"
-    },
-    {
       "id": "T2",
       "title": "Système de maintien de voie (Lane Keeping)",
       "desc": "EF-MOB-02 : Détection des marquages contrastés au sol, calcul de l'écart latéral (tolérance ±10 cm) et asservissement de l'angle de direction avec débrayage immédiat au freinage.",
@@ -222,7 +194,7 @@
       "author": "elghazouani",
       "title": "Sélection des capteurs capacitifs d'humidité et vannes thermostatiques",
       "content": "Comparatif technique des sondes capacitives anti-corrosion pour l'arrosage raisonné et dimensionnement des servomoteurs pour les registres d'air du LTG.",
-      "taskId": "T6",
+      "taskId": "",
       "tags": [
         "T6",
         "Capteurs",
