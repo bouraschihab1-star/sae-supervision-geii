@@ -1,6 +1,6 @@
 {
-  "_version": 31,
-  "_localModified": 1795715933636,
+  "_version": 32,
+  "_localModified": 1795715936545,
   "project": {
     "title": "SAÉ BUT3 GEII Troyes - Supervision & Avancement",
     "sub_title": "Véhicule Autonome et Domotique (Promo 2025-2026)",
@@ -82,22 +82,7 @@
       "done": false
     }
   ],
-  "tasks": [
-    {
-      "id": "T1",
-      "title": "Variateur de vitesse & régulation de couple",
-      "desc": "EF-MOB-01 : Commande continue de la consigne pédale, filtrage anti-jerk, coupure instantanée au freinage (< 50ms) et sélection manœuvre (6 km/h) / nominal (15 km/h).",
-      "category": "Véhicule Autonome",
-      "status": "in_progress",
-      "assignees": [
-        "damou",
-        "locko"
-      ],
-      "creator": "bouras",
-      "milestone": "L1",
-      "branch": "feature/t1-variateur-couple"
-    }
-  ],
+  "tasks": [],
   "journal": [
     {
       "id": "J3064",
@@ -160,7 +145,7 @@
       "author": "damou",
       "title": "Vérification des asservissements de couple et boucle de sécurité freinage",
       "content": "Étude de la coupure d'urgence < 50ms sur appui pédale de frein selon l'exigence EF-MOB-01. Définition du schéma de câblage avec protection différentielle TBTS.",
-      "taskId": "T1",
+      "taskId": "",
       "tags": [
         "T1",
         "Freinage",
@@ -173,7 +158,7 @@
       "author": "locko",
       "title": "Étude préliminaire des capteurs de fin de course et commande variateur",
       "content": "Analyse des spécifications du variateur de vitesse (T1) et du protocole de régulation d'ambiance pour la salle 3D (T7). Prise en compte de la consigne pédale et de l'interfaçage des capteurs d'humidité.",
-      "taskId": "T1",
+      "taskId": "",
       "tags": [
         "T1",
         "Variateur",
