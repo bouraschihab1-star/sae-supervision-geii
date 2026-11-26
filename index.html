@@ -223,11 +223,6 @@
             </div>
 
             <div>
-              <label class="block text-gray-500 mb-1">Tags :</label>
-              <input type="text" id="journalTags" placeholder="Variateur, L1" class="w-full border border-gray-300 rounded p-2 outline-none focus:border-black bg-white/60" />
-            </div>
-
-            <div>
               <label class="block text-gray-500 mb-1">Détail :</label>
               <textarea id="journalContent" rows="4" required placeholder="Travaux réalisés, composants, difficultés..." class="w-full border border-gray-300 rounded p-2 outline-none focus:border-black bg-white/60"></textarea>
             </div>
@@ -1273,7 +1268,6 @@
       const title = document.getElementById('journalTitle').value.trim();
       const content = document.getElementById('journalContent').value.trim();
       const taskId = document.getElementById('journalTaskSelect') ? document.getElementById('journalTaskSelect').value || null : null;
-      const tags = document.getElementById('journalTags').value.split(',').map(s => s.trim()).filter(Boolean);
       const fileInput = document.getElementById('journalFileInput');
       const attachedFile = fileInput && fileInput.files ? fileInput.files[0] : null;
 
@@ -1350,7 +1344,7 @@
         title,
         content,
         taskId,
-        tags: tags.length ? tags : ['Avancement'],
+        tags: ['Avancement'],
         file: fileInfo
       };
 
