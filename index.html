@@ -499,16 +499,21 @@
     </div>
   </div>
 
-  <!-- MODAL VISUALISEUR PDF INLINE -->
+  <!-- MODAL VISUALISEUR DE DOCUMENTS INLINE (PDF, WORD, EXCEL, IMAGES...) -->
   <div id="pdfViewerModal" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-6">
     <div class="glass-card rounded-xl w-full max-w-4xl h-[90vh] flex flex-col shadow-2xl bg-white border border-black overflow-hidden">
       <div class="flex items-center justify-between px-4 py-2.5 border-b border-zinc-200 bg-zinc-50">
         <div class="flex items-center space-x-2 truncate">
-          <span class="font-bold text-xs text-black truncate" id="pdfModalTitle">Document PDF</span>
+          <span class="font-bold text-xs text-black truncate" id="pdfModalTitle">Visualiseur de Document</span>
         </div>
-        <div class="flex items-center space-x-3 text-xs">
-          <a id="pdfModalDownload" href="#" target="_blank" download class="font-semibold text-black underline hover:text-zinc-600">Télécharger / Ouvrir externe ↗</a>
-          <button onclick="closeModal('pdfViewerModal')" class="text-zinc-500 hover:text-black font-bold">Fermer ✕</button>
+        <div class="flex items-center space-x-2 text-xs">
+          <button id="pdfModalDownloadBtn" class="px-2.5 py-1 bg-black text-white rounded font-semibold text-[11px] hover:bg-zinc-800 transition">
+            Télécharger le fichier ↓
+          </button>
+          <a id="pdfModalDownload" href="#" target="_blank" class="font-semibold text-black underline hover:text-zinc-600 text-[11px]">
+            Ouvrir dans un onglet ↗
+          </a>
+          <button onclick="closeModal('pdfViewerModal')" class="text-zinc-500 hover:text-black font-bold ml-2">Fermer ✕</button>
         </div>
       </div>
       <iframe id="pdfIframe" src="" class="w-full flex-1 border-0 bg-zinc-100"></iframe>
@@ -1208,11 +1213,98 @@
       await saveDb(`Tâche supprimée: ${t.title}`);
     }
 
+    let currentViewerUrl = '';
+    let currentViewerTitle = '';
+
+    function openDocumentViewer(url, title) {
+      currentViewerUrl = url;
+      currentViewerTitle = title || 'Document';
+
+      const modal = document.getElementById('pdfViewerModal');
+      const titleEl = document.getElementById('pdfModalTitle');
+      const dlBtn = document.getElementById('pdfModalDownloadBtn');
+      const extLink = document.getElementById('pdfModalDownload');
+      const iframe = document.getElementById('pdfIframe');
+
+      titleEl.textContent = title || 'Document';
+      extLink.href = url;
+      if (dlBtn) {
+        dlBtn.onclick = () => downloadFile(url, currentViewerTitle);
+      }
+
+      const lower = (title || url).toLowerCase();
+      const isPdf = lower.endsWith('.pdf');
+      const isOffice = lower.endsWith('.docx') || lower.endsWith('.doc') || lower.endsWith('.xlsx') || lower.endsWith('.xls') || lower.endsWith('.pptx') || lower.endsWith('.ppt');
+      const isImg = lower.endsWith('.png') || lower.endsWith('.jpg') || lower.endsWith('.jpeg') || lower.endsWith('.svg') || lower.endsWith('.webp');
+
+      if (isPdf) {
+        iframe.src = url;
+      } else if (isOffice) {
+        // Visualisation Word / Excel / PowerPoint via Microsoft Office Online Viewer
+        iframe.src = `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(url)}`;
+      } else if (isImg) {
+        iframe.src = url;
+      } else {
+        iframe.src = url;
+      }
+
+      modal.classList.remove('hidden');
+    }
+
     function openPdfViewer(url, title) {
-      document.getElementById('pdfModalTitle').textContent = title || 'Document';
-      document.getElementById('pdfModalDownload').href = url;
-      document.getElementById('pdfIframe').src = url;
-      document.getElementById('pdfViewerModal').classList.remove('hidden');
+      openDocumentViewer(url, title);
+    }
+
+    async function downloadFile(url, filename) {
+      try {
+        showSaveIndicator(`Téléchargement de ${filename}...`);
+        if (url.startsWith('data:')) {
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = filename;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          showSaveIndicator(`✓ ${filename} prêt`);
+          return;
+        }
+
+        const res = await fetch(url);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const blob = await res.blob();
+        const blobUrl = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = blobUrl;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(blobUrl), 2000);
+        showSaveIndicator(`✓ ${filename} téléchargé`);
+      } catch (e) {
+        console.error('Erreur downloadFile:', e);
+        const w = window.open(url, '_blank');
+        if (!w) {
+          location.href = url;
+        }
+      }
+    }
+
+    function getFileBadge(filename) {
+      if (!filename) return '[DOC]';
+      const ext = filename.split('.').pop() || '';
+      return `[${ext.toUpperCase().slice(0, 5)}]`;
+    }
+
+    function isPreviewable(filename) {
+      if (!filename) return false;
+      const lower = filename.toLowerCase();
+      return lower.endsWith('.pdf') || 
+             lower.endsWith('.docx') || lower.endsWith('.doc') || 
+             lower.endsWith('.xlsx') || lower.endsWith('.xls') || 
+             lower.endsWith('.pptx') || lower.endsWith('.ppt') ||
+             lower.endsWith('.png') || lower.endsWith('.jpg') || lower.endsWith('.jpeg') || lower.endsWith('.svg') ||
+             lower.endsWith('.txt') || lower.endsWith('.md');
     }
 
     async function uploadSingleFileToGitHub(file, category = 'Journal') {
@@ -1295,13 +1387,18 @@
       return `
         <div class="mt-2 pt-2 border-t border-zinc-100 space-y-1.5">
           ${fileItems.map(f => {
-            const isPdf = f.name && f.name.toLowerCase().endsWith('.pdf');
+            const canPreview = isPreviewable(f.name);
+            const escapedName = (f.name || 'document').replace(/'/g, "\\'");
             return `
               <div class="flex items-center justify-between bg-zinc-50 p-2 rounded text-[11px] border border-zinc-200">
-                <span class="text-zinc-700 font-medium truncate max-w-xs font-mono">[Fichier] ${f.name} <span class="text-zinc-400 text-[10px]">(${f.size || ''})</span></span>
-                <div class="flex items-center space-x-2 shrink-0 ml-2">
-                  ${isPdf ? `<button type="button" onclick="openPdfViewer('${f.url}', '${f.name.replace(/'/g, "\\'")}')" class="px-2 py-0.5 bg-black text-white rounded font-semibold text-[10px] hover:bg-zinc-800 transition">Aperçu PDF</button>` : ''}
-                  <a href="${f.url}" target="_blank" download="${f.name}" class="text-black font-semibold underline hover:text-zinc-700">Ouvrir ↗</a>
+                <div class="flex items-center space-x-1.5 truncate mr-2">
+                  <span class="font-mono font-bold text-black text-[10px] bg-zinc-200 px-1 py-0.5 rounded shrink-0">${getFileBadge(f.name)}</span>
+                  <span class="text-zinc-800 font-medium truncate font-mono" title="${f.name}">${f.name}</span>
+                  <span class="text-zinc-400 text-[10px] shrink-0">(${f.size || ''})</span>
+                </div>
+                <div class="flex items-center space-x-1.5 shrink-0 ml-2">
+                  ${canPreview ? `<button type="button" onclick="openDocumentViewer('${f.url}', '${escapedName}')" class="px-2 py-0.5 bg-black text-white rounded font-semibold text-[10px] hover:bg-zinc-800 transition">Aperçu</button>` : ''}
+                  <button type="button" onclick="downloadFile('${f.url}', '${escapedName}')" class="px-2 py-0.5 border border-zinc-400 bg-white text-black rounded font-semibold text-[10px] hover:bg-zinc-100 transition">Télécharger ↓</button>
                 </div>
               </div>
             `;
@@ -1560,17 +1657,21 @@
       const tbody = document.getElementById('filesTable');
       tbody.innerHTML = '';
       (state.db.files || []).forEach(f => {
-        const isPdf = f.name && f.name.toLowerCase().endsWith('.pdf');
+        const canPreview = isPreviewable(f.name);
+        const escapedName = (f.name || 'document').replace(/'/g, "\\'");
         const tr = document.createElement('tr');
         tr.className = 'hover:bg-gray-50';
         tr.innerHTML = `
-          <td class="py-2.5 px-4 font-medium text-black font-mono">[Fichier] ${f.name}</td>
+          <td class="py-2.5 px-4 font-medium text-black font-mono">
+            <span class="font-bold text-[10px] bg-zinc-200 px-1 py-0.5 rounded mr-1.5">${getFileBadge(f.name)}</span>
+            ${f.name}
+          </td>
           <td class="py-2.5 px-4 text-gray-500">${f.category || 'Doc'}</td>
           <td class="py-2.5 px-4 text-gray-500">${f.uploader}</td>
           <td class="py-2.5 px-4 text-gray-400">${f.date}</td>
-          <td class="py-2.5 px-4 text-right space-x-2">
-            ${isPdf ? `<button type="button" onclick="openPdfViewer('${f.url}', '${f.name.replace(/'/g, "\\'")}')" class="px-2 py-0.5 bg-black text-white rounded font-semibold text-[10px] hover:bg-zinc-800 transition">Aperçu PDF</button>` : ''}
-            <a href="${f.url}" target="_blank" download="${f.name}" class="font-medium underline text-black text-xs">Ouvrir ↗</a>
+          <td class="py-2.5 px-4 text-right space-x-1.5 whitespace-nowrap">
+            ${canPreview ? `<button type="button" onclick="openDocumentViewer('${f.url}', '${escapedName}')" class="px-2 py-0.5 bg-black text-white rounded font-semibold text-[10px] hover:bg-zinc-800 transition">Aperçu</button>` : ''}
+            <button type="button" onclick="downloadFile('${f.url}', '${escapedName}')" class="px-2 py-0.5 border border-zinc-400 bg-white text-black rounded font-semibold text-[10px] hover:bg-zinc-100 transition">Télécharger ↓</button>
           </td>
         `;
         tbody.appendChild(tr);
