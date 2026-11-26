@@ -22,7 +22,7 @@ Lien d'accès à l'application de supervision :
 
 ## Installation du Raccourci et de l'Icône sur le Bureau
 
-### 1. Sur Linux (Ubuntu / Postes IUT)
+### 1. Sur Linux 
 
 Exécutez la commande suivante dans un terminal :
 
