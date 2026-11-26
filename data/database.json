@@ -1,6 +1,6 @@
 {
-  "_version": 10,
-  "_localModified": 1795648072451,
+  "_version": 11,
+  "_localModified": 1795688378810,
   "project": {
     "title": "SAÉ BUT3 GEII Troyes - Supervision & Avancement",
     "sub_title": "Véhicule Autonome et Domotique (Promo 2025-2026)",
@@ -14,7 +14,7 @@
     {
       "id": "bouras",
       "name": "Bouras",
-      "fullName": "Chihabedinne Bouras",
+      "fullName": "Chihebedinne Bouras",
       "role": "Membre",
       "avatar": "BO",
       "progress": 0
@@ -22,7 +22,7 @@
     {
       "id": "damou",
       "name": "Damou",
-      "fullName": "Damou",
+      "fullName": "Billy Damou",
       "role": "Membre",
       "avatar": "DA",
       "progress": 0
@@ -30,7 +30,7 @@
     {
       "id": "diouf",
       "name": "Diouf",
-      "fullName": "Diouf",
+      "fullName": "Cheikh Sherif Diouf",
       "role": "Membre",
       "avatar": "DI",
       "progress": 0
@@ -38,7 +38,7 @@
     {
       "id": "elghazouani",
       "name": "El Ghazouani",
-      "fullName": "Al Gahzouani",
+      "fullName": "Yazid El Ghazouany",
       "role": "Membre",
       "avatar": "EL",
       "progress": 0
@@ -46,7 +46,7 @@
     {
       "id": "locko",
       "name": "Locko",
-      "fullName": "Locko",
+      "fullName": "Samuela Locko",
       "role": "Membre",
       "avatar": "LO",
       "progress": 0
@@ -55,43 +55,44 @@
   "milestones": [
     {
       "id": "L0",
-      "name": "Livrable 0 - Présentation CDC",
-      "date": "2026-11-25",
-      "desc": "Présentation du CDC par les enseignants",
+      "name": "Livrable 0 - Cadrage & CdCF",
+      "date": "2026-11-27",
+      "desc": "Cadrage général et validation du Cahier des Charges Fonctionnel (CdCF).",
       "done": true
     },
     {
       "id": "L1",
-      "name": "Livrable 1 - Analyse préliminaire & Matériel",
-      "date": "2026-12-06",
-      "desc": "Document support + discussion. Début analyse fonctionnelle, choix matériel comparatif/justification.",
+      "name": "Livrable 1 - Analyse Fonctionnelle",
+      "date": "2026-12-07",
+      "desc": "Analyse fonctionnelle finalisée, architecture par blocs et étude des sous-systèmes.",
       "done": false
     },
     {
       "id": "L2",
-      "name": "Livrable 2 - Chiffrage & Planning final",
-      "date": "2026-12-20",
-      "desc": "Analyse fonctionnelle finale, chiffrage, disponibilité, préparation commande, planning & répartition.",
+      "name": "Livrable 2 - Soutenance & Démonstrations",
+      "date": "2027-01-24",
+      "desc": "Soutenance orale, démonstrations en conditions réelles et bancs de test associés.",
       "done": false
     },
     {
       "id": "L3",
-      "name": "Livrable 3 - Soutenance S5 & Démo",
-      "date": "2027-01-24",
-      "desc": "Oral (5 min global + 5 min/pers + 10 min Q/pers) + Démonstration l'après-midi sur banc de test.",
-      "done": false
-    },
-    {
-      "id": "L4",
-      "name": "Livrable 4 - Soutenance Finale S6",
+      "name": "Livrable 3 - Clôture & Maintenance",
       "date": "2027-03-14",
-      "desc": "Oral, démonstration et dossier finalisé.",
+      "desc": "Validation globale de maintenance, dossier technique de synthèse et clôture SAÉ.",
       "done": false
     }
   ],
   "tasks": [],
   "journal": [],
   "files": [
+    {
+      "name": "Cahier_des_Charges_SAE_BUT3_GEII.pdf",
+      "url": "files/Cahier_des_Charges_SAE_BUT3_GEII.pdf",
+      "uploader": "bouras",
+      "date": "2026-11-26",
+      "size": "293 Ko (8 pages)",
+      "category": "Cahier des Charges"
+    },
     {
       "name": "cahier_des_charges_geii_s5.pdf",
       "url": "https://wikigeii.iut-troyes.univ-reims.fr/index.php?title=Cours:SaeS5",
