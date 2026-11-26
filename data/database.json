@@ -1,6 +1,6 @@
 {
-  "_version": 23,
-  "_localModified": 1795715242077,
+  "_version": 24,
+  "_localModified": 1795715920271,
   "project": {
     "title": "SAÉ BUT3 GEII Troyes - Supervision & Avancement",
     "sub_title": "Véhicule Autonome et Domotique (Promo 2025-2026)",
@@ -143,20 +143,6 @@
       "branch": "feature/t1-variateur-couple"
     },
     {
-      "id": "T4",
-      "title": "Borne de recharge communicante",
-      "desc": "EF-MOB-04 : Détection de raccordement, verrouillage mécanique, coupure automatique de fin de charge et télémesure énergétique en direct vers MQTT.",
-      "category": "Véhicule Autonome",
-      "status": "todo",
-      "assignees": [
-        "diouf",
-        "damou"
-      ],
-      "creator": "bouras",
-      "milestone": "L1",
-      "branch": "feature/t4-borne-recharge"
-    },
-    {
       "id": "T6",
       "title": "Arrosage raisonné des espaces verts",
       "desc": "EF-DOM-01 : Asservissement à l'humidité capacitive du sol, inhibition vent fort et pluie, économie d'eau minimale > 35%.",
@@ -249,7 +235,7 @@
       "author": "diouf",
       "title": "Structure des trames JSON sur le bus MQTT",
       "content": "Définition des topics MQTT standardisés pour la télémesure de la borne (EF-MOB-04) et le monitoring thermique du LTG (EF-DOM-04).",
-      "taskId": "T4",
+      "taskId": "",
       "tags": [
         "T4",
         "MQTT",
