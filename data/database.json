@@ -1,6 +1,6 @@
 {
-  "_version": 16,
-  "_localModified": 1795704955967,
+  "_version": 18,
+  "_localModified": 1795715226612,
   "project": {
     "title": "SAÉ BUT3 GEII Troyes - Supervision & Avancement",
     "sub_title": "Véhicule Autonome et Domotique (Promo 2025-2026)",
@@ -96,34 +96,6 @@
       "creator": "bouras",
       "milestone": "L1",
       "branch": "feature/t1-variateur-couple"
-    },
-    {
-      "id": "T2",
-      "title": "Système de maintien de voie (Lane Keeping)",
-      "desc": "EF-MOB-02 : Détection des marquages contrastés au sol, calcul de l'écart latéral (tolérance ±10 cm) et asservissement de l'angle de direction avec débrayage immédiat au freinage.",
-      "category": "Véhicule Autonome",
-      "status": "todo",
-      "assignees": [
-        "bouras",
-        "diouf"
-      ],
-      "creator": "bouras",
-      "milestone": "L1",
-      "branch": "feature/t2-maintien-voie"
-    },
-    {
-      "id": "T3",
-      "title": "Stationnement autonome (Park Assist)",
-      "desc": "EF-MOB-03 : Reconnaissance de place (créneau ou épi), manœuvre en marche arrière lente (< 2 km/h) et arrêt d'urgence obstacle à 30 cm.",
-      "category": "Véhicule Autonome",
-      "status": "todo",
-      "assignees": [
-        "bouras",
-        "elghazouani"
-      ],
-      "creator": "bouras",
-      "milestone": "L2",
-      "branch": "feature/t3-park-assist"
     },
     {
       "id": "T4",
