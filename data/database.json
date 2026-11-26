@@ -1,6 +1,6 @@
 {
-  "_version": 29,
-  "_localModified": 1795715930449,
+  "_version": 31,
+  "_localModified": 1795715933636,
   "project": {
     "title": "SAÉ BUT3 GEII Troyes - Supervision & Avancement",
     "sub_title": "Véhicule Autonome et Domotique (Promo 2025-2026)",
@@ -84,37 +84,6 @@
   ],
   "tasks": [
     {
-      "id": "T7",
-      "title": "Régulation d'ambiance & contrôle d'accès salle 3D",
-      "desc": "EF-DOM-02 & EF-DOM-03 : Déshumidification continue sous 35% HR pour préserver les filaments polymères, badge RFID nominatif et coup de poing vert de secours.",
-      "category": "Domotique",
-      "status": "in_progress",
-      "assignees": [
-        "damou",
-        "locko"
-      ],
-      "creator": "bouras",
-      "milestone": "L1",
-      "branch": "feature/t7-salle-impression-3d"
-    },
-    {
-      "id": "T9",
-      "title": "Supervision unifiée (MQTT / Home Assistant / Grafana)",
-      "desc": "EF-SUP-01 : Bus MQTT unifié, trames JSON horodatées, cartographie interactive Home Assistant et tableau de bord métrologique Grafana.",
-      "category": "Supervision",
-      "status": "in_progress",
-      "assignees": [
-        "bouras",
-        "damou",
-        "diouf",
-        "elghazouani",
-        "locko"
-      ],
-      "creator": "bouras",
-      "milestone": "L0",
-      "branch": "feature/t9-supervision-mqtt-ha"
-    },
-    {
       "id": "T1",
       "title": "Variateur de vitesse & régulation de couple",
       "desc": "EF-MOB-01 : Commande continue de la consigne pédale, filtrage anti-jerk, coupure instantanée au freinage (< 50ms) et sélection manœuvre (6 km/h) / nominal (15 km/h).",
@@ -178,7 +147,7 @@
       "author": "bouras",
       "title": "Validation du CdCF v2.1 & mise en place du Journal Centralisé",
       "content": "Validation formelle du Cahier des Charges Fonctionnel avec intégration des normes environnementales (ISO 14001, RoHS, DEEE) et du jalon Livrable 0. Déploiement de la synchronisation d'équipe centralisée sur GitHub Pages.",
-      "taskId": "T9",
+      "taskId": "",
       "tags": [
         "T9",
         "CdCF",
