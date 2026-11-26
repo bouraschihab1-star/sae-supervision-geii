@@ -249,15 +249,22 @@
     <!-- 4. FILES -->
     <section id="view-files" class="space-y-4 hidden">
       <div class="flex items-center justify-between">
-        <span class="text-xs font-semibold text-black uppercase tracking-wider">Fichiers</span>
+        <div>
+          <span class="text-xs font-semibold text-black uppercase tracking-wider">Fichiers & Documents</span>
+          <p class="text-[11px] text-gray-500">Documents officiels et livrables de la SAÉ</p>
+        </div>
         <button onclick="document.getElementById('fileInput').click()" class="px-3 py-1.5 text-xs font-semibold bg-black text-white rounded hover:bg-gray-800 transition">
           + Fichier
         </button>
         <input type="file" id="fileInput" onchange="uploadFile(event)" class="hidden" />
       </div>
 
-      <div class="glass-card rounded-lg overflow-hidden">
-        <table class="w-full text-left text-xs">
+      <!-- Vue Mobile Spécifique (Cartes tactiles avec boutons directs) -->
+      <div id="filesMobileList" class="space-y-3 sm:hidden"></div>
+
+      <!-- Vue Desktop / Tablette (Tableau complet avec défilement fluide) -->
+      <div class="glass-card rounded-lg overflow-x-auto hidden sm:block">
+        <table class="w-full text-left text-xs whitespace-nowrap">
           <thead class="bg-gray-50/60 text-gray-500 border-b border-gray-200/60">
             <tr>
               <th class="py-2.5 px-4 font-semibold">Nom</th>
@@ -500,17 +507,28 @@
   </div>
 
   <!-- MODAL VISUALISEUR PDF INLINE -->
-  <div id="pdfViewerModal" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-6">
-    <div class="glass-card rounded-xl w-full max-w-4xl h-[90vh] flex flex-col shadow-2xl bg-white border border-black overflow-hidden">
-      <div class="flex items-center justify-between px-4 py-2.5 border-b border-zinc-200 bg-zinc-50">
-        <div class="flex items-center space-x-2 truncate">
+  <div id="pdfViewerModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-2 sm:p-6">
+    <div class="glass-card rounded-xl w-full max-w-4xl h-[95vh] sm:h-[90vh] flex flex-col shadow-2xl bg-white border border-black overflow-hidden">
+      
+      <!-- Barre d'en-tête -->
+      <div class="flex items-center justify-between px-3 sm:px-4 py-2.5 border-b border-zinc-200 bg-zinc-50">
+        <div class="flex items-center space-x-2 truncate pr-2">
           <span class="font-bold text-xs text-black truncate" id="pdfModalTitle">Document PDF</span>
         </div>
-        <div class="flex items-center space-x-3 text-xs">
-          <a id="pdfModalDownload" href="#" target="_blank" download class="font-semibold text-black underline hover:text-zinc-600">Télécharger / Ouvrir externe ↗</a>
-          <button onclick="closeModal('pdfViewerModal')" class="text-zinc-500 hover:text-black font-bold">Fermer ✕</button>
+        <div class="flex items-center space-x-2 sm:space-x-3 text-xs shrink-0">
+          <a id="pdfModalDownload" href="#" target="_blank" class="px-2 py-1 bg-black text-white font-semibold rounded text-[11px] hover:bg-zinc-800 transition">Ouvrir Plein Écran ↗</a>
+          <button onclick="closeModal('pdfViewerModal')" class="px-2 py-1 bg-zinc-200 text-black font-bold rounded hover:bg-zinc-300 text-xs transition">Fermer ✕</button>
         </div>
       </div>
+
+      <!-- Bandeau d'assistance mobile -->
+      <div class="bg-blue-50 border-b border-blue-100 px-3 py-1.5 flex items-center justify-between text-[11px] text-blue-900 sm:hidden">
+        <span>Lecture mobile fluide :</span>
+        <button type="button" onclick="openFileNative(document.getElementById('pdfModalDownload').href)" class="font-bold underline text-blue-700">
+          Lancer dans le lecteur natif ↗
+        </button>
+      </div>
+
       <iframe id="pdfIframe" src="" class="w-full flex-1 border-0 bg-zinc-100"></iframe>
     </div>
   </div>
@@ -1194,10 +1212,38 @@
       await saveDb(`Tâche supprimée: ${t.title}`);
     }
 
+    function resolveFileUrl(url) {
+      if (!url) return '';
+      if (url.startsWith('http://') || url.startsWith('https://')) return url;
+      const baseUrl = window.location.origin + window.location.pathname.replace(/\/[^/]*$/, '/');
+      return baseUrl + url.replace(/^\//, '');
+    }
+
+    function openFileNative(url) {
+      const fullUrl = resolveFileUrl(url);
+      window.open(fullUrl, '_blank');
+    }
+
     function openPdfViewer(url, title) {
+      const fullUrl = resolveFileUrl(url);
       document.getElementById('pdfModalTitle').textContent = title || 'Document';
-      document.getElementById('pdfModalDownload').href = url;
-      document.getElementById('pdfIframe').src = url;
+      
+      const dlBtn = document.getElementById('pdfModalDownload');
+      if (dlBtn) {
+        dlBtn.href = fullUrl;
+        dlBtn.removeAttribute('download');
+        dlBtn.target = '_blank';
+      }
+
+      const isMobile = /iPhone|iPad|iPod|Android|Mobile/i.test(navigator.userAgent);
+      const iframe = document.getElementById('pdfIframe');
+      if (isMobile) {
+        // Fallback lecteur Google Docs embed pour navigateurs mobiles qui bloquent les iframes PDF directs
+        iframe.src = `https://docs.google.com/viewer?url=${encodeURIComponent(fullUrl)}&embedded=true`;
+      } else {
+        iframe.src = fullUrl;
+      }
+
       document.getElementById('pdfViewerModal').classList.remove('hidden');
     }
 
@@ -1231,7 +1277,7 @@
               <span class="text-gray-700 font-medium truncate max-w-xs text-[11px]">📎 ${j.file.name}</span>
               <div class="flex items-center space-x-2 shrink-0 ml-2">
                 ${isPdf ? `<button type="button" onclick="openPdfViewer('${j.file.url}', '${j.file.name.replace(/'/g, "\\'")}')" class="px-2 py-0.5 bg-black text-white rounded font-semibold text-[10px] hover:bg-zinc-800 transition">Aperçu PDF</button>` : ''}
-                <a href="${j.file.url}" target="_blank" download="${j.file.name}" class="text-black font-semibold underline text-[11px] hover:text-gray-700">Ouvrir ↗</a>
+                <a href="${resolveFileUrl(j.file.url)}" target="_blank" class="text-black font-semibold underline text-[11px] hover:text-gray-700">Ouvrir ↗</a>
               </div>
             </div>
           `;
@@ -1456,7 +1502,7 @@
                 <span class="text-zinc-600 font-medium truncate max-w-xs">📎 ${log.file.name}</span>
                 <div class="flex items-center space-x-2 shrink-0 ml-2">
                   ${isPdf ? `<button type="button" onclick="openPdfViewer('${log.file.url}', '${log.file.name.replace(/'/g, "\\'")}')" class="px-2 py-0.5 bg-black text-white rounded font-semibold text-[10px] hover:bg-zinc-800 transition">Aperçu PDF</button>` : ''}
-                  <a href="${log.file.url}" target="_blank" download="${log.file.name}" class="text-black font-semibold underline hover:text-zinc-700">Ouvrir ↗</a>
+                  <a href="${resolveFileUrl(log.file.url)}" target="_blank" class="text-black font-semibold underline hover:text-zinc-700">Ouvrir ↗</a>
                 </div>
               </div>
             `;
@@ -1552,22 +1598,74 @@
 
     function renderFiles() {
       const tbody = document.getElementById('filesTable');
-      tbody.innerHTML = '';
-      (state.db.files || []).forEach(f => {
+      const mobileList = document.getElementById('filesMobileList');
+      if (tbody) tbody.innerHTML = '';
+      if (mobileList) mobileList.innerHTML = '';
+
+      const files = state.db.files || [];
+      if (!files.length) {
+        if (tbody) tbody.innerHTML = '<tr><td colspan="5" class="py-6 text-center text-gray-400">Aucun fichier disponible.</td></tr>';
+        if (mobileList) mobileList.innerHTML = '<div class="py-6 text-center text-gray-400 text-xs">Aucun fichier disponible.</div>';
+        return;
+      }
+
+      files.forEach(f => {
         const isPdf = f.name && f.name.toLowerCase().endsWith('.pdf');
-        const tr = document.createElement('tr');
-        tr.className = 'hover:bg-gray-50';
-        tr.innerHTML = `
-          <td class="py-2.5 px-4 font-medium text-black">📎 ${f.name}</td>
-          <td class="py-2.5 px-4 text-gray-500">${f.category || 'Doc'}</td>
-          <td class="py-2.5 px-4 text-gray-500">${f.uploader}</td>
-          <td class="py-2.5 px-4 text-gray-400">${f.date}</td>
-          <td class="py-2.5 px-4 text-right space-x-2">
-            ${isPdf ? `<button type="button" onclick="openPdfViewer('${f.url}', '${f.name.replace(/'/g, "\\'")}')" class="px-2 py-0.5 bg-black text-white rounded font-semibold text-[10px] hover:bg-zinc-800 transition">Aperçu PDF</button>` : ''}
-            <a href="${f.url}" target="_blank" download="${f.name}" class="font-medium underline text-black text-xs">Ouvrir ↗</a>
-          </td>
-        `;
-        tbody.appendChild(tr);
+        const fullUrl = resolveFileUrl(f.url);
+        const safeName = (f.name || 'document').replace(/'/g, "\\'");
+
+        // 1. Ligne tableau Desktop / Tablette
+        if (tbody) {
+          const tr = document.createElement('tr');
+          tr.className = 'hover:bg-gray-50 transition';
+          tr.innerHTML = `
+            <td class="py-3 px-4 font-medium text-black">
+              <div class="flex items-center space-x-2">
+                <span>${isPdf ? '📄' : '📎'}</span>
+                <span class="truncate max-w-[240px]" title="${f.name}">${f.name}</span>
+              </div>
+            </td>
+            <td class="py-3 px-4 text-gray-500">${f.category || 'Doc'}</td>
+            <td class="py-3 px-4 text-gray-500">${f.uploader || '-'}</td>
+            <td class="py-3 px-4 text-gray-400">${f.date || '-'}</td>
+            <td class="py-3 px-4 text-right space-x-2">
+              ${isPdf ? `<button type="button" onclick="openPdfViewer('${fullUrl}', '${safeName}')" class="px-2.5 py-1 bg-zinc-800 text-white rounded font-medium text-[11px] hover:bg-black transition">Aperçu</button>` : ''}
+              <a href="${fullUrl}" target="_blank" class="px-2.5 py-1 bg-black text-white rounded font-semibold text-[11px] hover:bg-zinc-800 transition inline-block">Ouvrir ↗</a>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        }
+
+        // 2. Carte tactile Mobile
+        if (mobileList) {
+          const card = document.createElement('div');
+          card.className = 'p-3.5 bg-white rounded-xl border border-gray-200/90 shadow-sm space-y-2.5';
+          card.innerHTML = `
+            <div class="flex items-start justify-between gap-2">
+              <div class="flex items-center space-x-2 truncate">
+                <span class="text-xl">${isPdf ? '📄' : '📎'}</span>
+                <div class="truncate">
+                  <h4 class="font-bold text-xs text-black truncate" title="${f.name}">${f.name}</h4>
+                  <p class="text-[10px] text-gray-500">${f.date || ''} • par ${f.uploader || 'Inconnu'}${f.size ? ' • ' + f.size : ''}</p>
+                </div>
+              </div>
+              <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-gray-100 text-gray-700 shrink-0">
+                ${f.category || (isPdf ? 'PDF' : 'Fichier')}
+              </span>
+            </div>
+            <div class="grid grid-cols-2 gap-2 pt-1">
+              ${isPdf ? `
+                <button type="button" onclick="openPdfViewer('${fullUrl}', '${safeName}')" class="w-full py-2 bg-gray-100 text-black border border-gray-300 rounded-lg font-semibold text-xs text-center active:bg-gray-200 transition">
+                  🔍 Aperçu
+                </button>
+              ` : `<div></div>`}
+              <a href="${fullUrl}" target="_blank" class="w-full py-2 bg-black text-white rounded-lg font-bold text-xs text-center shadow active:bg-zinc-800 transition flex items-center justify-center space-x-1">
+                <span>Ouvrir ↗</span>
+              </a>
+            </div>
+          `;
+          mobileList.appendChild(card);
+        }
       });
     }
 
