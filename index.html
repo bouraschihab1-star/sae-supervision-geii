@@ -1146,17 +1146,25 @@
             <div class="font-semibold text-black leading-snug hover:underline">${task.title}</div>
             ${task.desc ? `<div class="text-zinc-700 text-[11px] leading-relaxed line-clamp-2 mt-1">${task.desc}</div>` : ''}
             
-            <div class="mt-2 flex items-center justify-between text-[10px] text-zinc-700 font-medium">
-              <div class="flex items-center space-x-1 truncate max-w-[170px]" title="Assigné à : ${assigneesNames}">
-                <span class="font-semibold text-black">${assigneesNames || 'Non assigné'}</span>
-                ${creatorName ? `<span class="text-zinc-400 text-[9px]">(par ${creatorName})</span>` : ''}
-              </div>
-              <div class="flex items-center space-x-1.5 shrink-0">
-                ${task.branch ? `<a href="https://github.com/${GITHUB_REPO}/tree/${task.branch}" target="_blank" onclick="event.stopPropagation()" title="Branche Git : ${task.branch}" class="px-1.5 py-0.5 rounded bg-zinc-200/90 text-zinc-800 font-mono text-[9px] hover:bg-zinc-300 flex items-center space-x-1 font-semibold"><span>git:</span><span>${task.branch.replace('task/', '')}</span></a>` : ''}
-                <span class="px-1.5 py-0.5 rounded ${taskLogs.length ? 'bg-black text-white font-semibold' : 'border border-zinc-400 text-zinc-600'}">
+            <div class="mt-2.5 pt-1.5 border-t border-zinc-200/70 space-y-1.5">
+              <div class="flex items-center justify-between text-[11px]">
+                <div class="flex items-center space-x-1.5 font-bold text-black truncate pr-2" title="Assigné à : ${assigneesNames}">
+                  <span class="text-zinc-400 text-xs">👤</span>
+                  <span class="text-black font-bold tracking-tight text-xs">${assigneesNames || 'Non assigné'}</span>
+                </div>
+                <span class="px-1.5 py-0.5 rounded text-[10px] font-mono shrink-0 ${taskLogs.length ? 'bg-black text-white font-bold' : 'border border-zinc-300 text-zinc-600 bg-white/70'}">
                   Journal: ${taskLogs.length}
                 </span>
               </div>
+              ${task.branch ? `
+                <div class="flex items-center">
+                  <a href="https://github.com/${GITHUB_REPO}/tree/${task.branch}" target="_blank" onclick="event.stopPropagation()" title="Branche Git : ${task.branch}" class="inline-flex items-center space-x-1 px-1.5 py-0.5 rounded bg-zinc-100 hover:bg-zinc-200 border border-zinc-300/80 text-zinc-700 font-mono text-[9px] max-w-full truncate transition">
+                    <span class="text-zinc-400 font-sans">🌿</span>
+                    <span class="text-zinc-500 font-semibold">git:</span>
+                    <span class="truncate font-semibold text-black">${task.branch.replace('task/', '')}</span>
+                  </a>
+                </div>
+              ` : ''}
             </div>
           </div>
 
