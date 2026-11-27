@@ -1,6 +1,6 @@
 {
   "_version": 501,
-  "_localModified": 1795770143585,
+  "_localModified": 1795770919488,
   "project": {
     "title": "SAÉ BUT3 GEII Troyes - Supervision & Avancement",
     "sub_title": "Véhicule Autonome et Domotique (Promo 2025-2026)",
@@ -99,6 +99,29 @@
         "url": "https://raw.githubusercontent.com/bouraschihab1-star/sae-supervision-geii/main/uploads/1795715240573_Cahier_des_Charges_SAE_GEII__1_.docx",
         "size": "Document Word"
       }
+    },
+    {
+      "id": "J9488",
+      "date": "2026-11-27",
+      "author": "bouras",
+      "title": "cahier des charges avancement",
+      "content": "donnée sur chaque tache  et format amelioré\n\nA faire : verifié chaque parti du fichiers pour ce mettre d'accord sur le fichier fini ; commencer à penser la repartition",
+      "taskId": null,
+      "tags": [
+        "Avancement"
+      ],
+      "file": {
+        "name": "Cahier_des_Charges_SAE_GEII_Damou_LinkedInStyle.pdf",
+        "url": "https://raw.githubusercontent.com/bouraschihab1-star/sae-supervision-geii/main/uploads/1795770917840_Cahier_des_Charges_SAE_GEII_Damou_LinkedInStyle.pdf",
+        "size": "294 KB"
+      },
+      "files": [
+        {
+          "name": "Cahier_des_Charges_SAE_GEII_Damou_LinkedInStyle.pdf",
+          "url": "https://raw.githubusercontent.com/bouraschihab1-star/sae-supervision-geii/main/uploads/1795770917840_Cahier_des_Charges_SAE_GEII_Damou_LinkedInStyle.pdf",
+          "size": "294 KB"
+        }
+      ]
     }
   ],
   "files": [
@@ -174,6 +197,13 @@
       "uploader": "bouras",
       "date": "2026-11-27",
       "category": "Fichier"
+    },
+    {
+      "name": "Cahier_des_Charges_SAE_GEII_Damou_LinkedInStyle.pdf",
+      "url": "https://raw.githubusercontent.com/bouraschihab1-star/sae-supervision-geii/main/uploads/1795770917840_Cahier_des_Charges_SAE_GEII_Damou_LinkedInStyle.pdf",
+      "uploader": "bouras",
+      "date": "2026-11-27",
+      "category": "Journal"
     }
   ]
 }
