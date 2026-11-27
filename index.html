@@ -1810,7 +1810,7 @@
     function getFolders() {
       if (!state.db) return [];
       if (!Array.isArray(state.db.folders)) {
-        state.db.folders = ['Cahier des Charges', 'Photos & Schémas', 'Documentation', 'Livrables', 'Codes & Sources'];
+        state.db.folders = ['Cahier des charges fini', 'Cahier des Charges', 'Photos & Schémas', 'Documentation', 'Livrables', 'Codes & Sources'];
       }
       // Toujours exclure Corbeille de la liste des dossiers réguliers
       state.db.folders = state.db.folders.filter(f => f !== 'Corbeille');
