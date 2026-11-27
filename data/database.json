@@ -1,6 +1,6 @@
 {
-  "_version": 526,
-  "_localModified": 1795774246993,
+  "_version": 531,
+  "_localModified": 1795775000111,
   "project": {
     "title": "SAÉ BUT3 GEII Troyes - Supervision & Avancement",
     "sub_title": "Véhicule Autonome et Domotique (Promo 2025-2026)",
@@ -37,7 +37,7 @@
     },
     {
       "id": "elghazouani",
-      "name": "El Ghazouani",
+      "name": "Al Gahzouany",
       "fullName": "Yazid El Ghazouany",
       "role": "Membre",
       "avatar": "EL",
