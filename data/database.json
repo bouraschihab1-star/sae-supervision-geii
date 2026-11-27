@@ -1,6 +1,6 @@
 {
   "_version": 531,
-  "_localModified": 1795785029417,
+  "_localModified": 1795785042305,
   "project": {
     "title": "SAÉ BUT3 GEII Troyes - Supervision & Avancement",
     "sub_title": "Véhicule Autonome et Domotique (Promo 2025-2026)",
@@ -123,7 +123,7 @@
       "assignee": "bouras",
       "milestone": "L1",
       "desc": "Volet 1 : Kart — Maintien de voie.\n\nDescription synthétique : Détection de marquage au sol par caméra/optique (1-5 m, écart <= 15 cm à 10 km/h).\n\nSpécifications clés : Portée 1-5 m, écart latéral <= 15 cm, vitesse 10-15 km/h.\nNiveau de difficulté : 9.0/10 (Élevée).\nJustification : Forte charge en recherche et développement : traitement d'image/signal, asservissement directionnel temps réel et calibration sur piste.",
-      "status": "done",
+      "status": "in_progress",
       "branch": "task/t103-f13-maintien-voie",
       "creator": "damou",
       "createdAt": "2026-11-27T10:55:00.000Z"
