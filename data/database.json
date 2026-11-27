@@ -372,7 +372,10 @@
       "uploader": "bouras",
       "date": "2026-11-27 10:02",
       "category": "Fichier",
-      "folder": "Cahier des Charges"
+      "folder": "Corbeille",
+      "_previousFolder": "Cahier des Charges",
+      "deletedAt": "2026-11-27 11:56",
+      "deletedBy": "bouras"
     },
     {
       "name": "Cahier_des_Charges_SAE_GEII_Damou_LinkedInStyle.pdf",
@@ -380,7 +383,10 @@
       "uploader": "bouras",
       "date": "2026-11-27 10:15",
       "category": "Journal",
-      "folder": "Cahier des Charges"
+      "folder": "Corbeille",
+      "_previousFolder": "Cahier des Charges",
+      "deletedAt": "2026-11-27 11:56",
+      "deletedBy": "bouras"
     },
     {
       "name": "Analyse_Fonctions_Difficulte_SAE_GEII.xlsx",
