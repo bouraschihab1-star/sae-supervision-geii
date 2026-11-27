@@ -1,6 +1,6 @@
 {
-  "_version": 521,
-  "_localModified": 1795773603667,
+  "_version": 526,
+  "_localModified": 1795774246993,
   "project": {
     "title": "SAÉ BUT3 GEII Troyes - Supervision & Avancement",
     "sub_title": "Véhicule Autonome et Domotique (Promo 2025-2026)",
@@ -142,6 +142,21 @@
       "branch": "task/t104-f14-stationnement-auto",
       "creator": "damou",
       "createdAt": "2026-11-27T10:55:00.000Z"
+    },
+    {
+      "id": "T111",
+      "title": "[F1.5] Supervision du Kart via l'écran (IHM Embarquée)",
+      "category": "Véhicule Autonome",
+      "assignees": [
+        "bouras"
+      ],
+      "assignee": "bouras",
+      "milestone": "L1",
+      "desc": "Volet 1 : Kart — Supervision embarquée sur écran tactile / interface pilote.\n\nDescription synthétique : Affichage et contrôle en temps réel des paramètres du kart (tension pack 48V, consommation courant, vitesse, télémétrie capteurs ultrasons/LiDAR, commutation des modes autonome / manuel, alertes de sécurité et diagnostic).\n\nSpécifications clés : Écran tactile embarqué, temps de rafraîchissement < 500 ms, communication bus série / CAN / Modbus avec le contrôleur moteur et l'électronique de bord.\nNiveau de difficulté : 7.0/10 (Moyenne à Élevée).\nJustification : Conception de l'interface graphique (GUI), intégration matérielle ergonomique sur le tableau de bord du kart et gestion des flux de télémétrie temps réel.",
+      "status": "todo",
+      "branch": "task/t111-supervision-kart-ecran",
+      "creator": "bouras",
+      "createdAt": "2026-11-27T11:08:00.000Z"
     },
     {
       "id": "T105",
