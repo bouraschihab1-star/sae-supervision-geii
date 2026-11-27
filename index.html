@@ -67,7 +67,7 @@
 
   <!-- NAVIGATION HAUTE -->
   <header class="border-b border-gray-200/80 bg-white/80 backdrop-blur-md sticky top-0 z-40">
-    <div class="max-w-5xl mx-auto px-5 py-3 flex items-center justify-between gap-4">
+    <div class="max-w-6xl mx-auto px-5 py-3 flex items-center justify-between gap-4">
       
       <!-- Onglets renommés -->
       <nav class="flex space-x-1">
@@ -104,7 +104,7 @@
   </header>
 
   <!-- CONTENU PRINCIPAL -->
-  <main class="max-w-5xl mx-auto w-full px-5 py-6 flex-1 relative z-10 space-y-6">
+  <main class="max-w-6xl mx-auto w-full px-5 py-6 flex-1 relative z-10 space-y-6">
 
     <!-- 1. GÉNÉRAL (AVEC GRAPHIQUE) -->
     <section id="view-overview" class="space-y-6">
@@ -290,19 +290,21 @@
           </div>
           <div id="filesFolderFilterNotice" class="text-zinc-500 text-[11px]"></div>
         </div>
-        <table class="w-full text-left text-xs">
-          <thead class="bg-gray-50/60 text-gray-500 border-b border-gray-200/60">
-            <tr>
-              <th class="py-2.5 px-4 font-semibold">Nom du fichier</th>
-              <th class="py-2.5 px-4 font-semibold">Dossier</th>
-              <th class="py-2.5 px-4 font-semibold">Catégorie</th>
-              <th class="py-2.5 px-4 font-semibold">Auteur</th>
-              <th class="py-2.5 px-4 font-semibold whitespace-nowrap">Date & Heure</th>
-              <th class="py-2.5 px-4 text-right font-semibold">Actions</th>
-            </tr>
-          </thead>
-          <tbody id="filesTable" class="divide-y divide-gray-100"></tbody>
-        </table>
+        <div class="overflow-x-auto w-full">
+          <table class="w-full text-left text-xs min-w-[780px]">
+            <thead class="bg-gray-50/60 text-gray-500 border-b border-gray-200/60">
+              <tr>
+                <th class="py-2.5 px-4 font-semibold min-w-[200px]">Nom du fichier</th>
+                <th class="py-2.5 px-4 font-semibold whitespace-nowrap">Dossier</th>
+                <th class="py-2.5 px-4 font-semibold whitespace-nowrap">Catégorie</th>
+                <th class="py-2.5 px-4 font-semibold whitespace-nowrap">Auteur</th>
+                <th class="py-2.5 px-4 font-semibold whitespace-nowrap">Date & Heure</th>
+                <th class="py-2.5 px-4 text-right font-semibold whitespace-nowrap min-w-[280px]">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="filesTable" class="divide-y divide-gray-100"></tbody>
+          </table>
+        </div>
       </div>
     </section>
 
@@ -2142,14 +2144,16 @@
         tr.className = 'hover:bg-gray-50';
         tr.innerHTML = `
           <td class="py-2.5 px-4 font-medium text-black font-mono">
-            <span class="font-bold text-[10px] bg-zinc-200 px-1 py-0.5 rounded mr-1.5">${getFileBadge(f.name)}</span>
-            ${f.name}
+            <div class="flex items-center space-x-1.5 min-w-0">
+              <span class="font-bold text-[10px] bg-zinc-200 px-1 py-0.5 rounded shrink-0">${getFileBadge(f.name)}</span>
+              <span class="truncate max-w-[220px] sm:max-w-xs md:max-w-sm block" title="${escapedName}">${f.name}</span>
+            </div>
           </td>
-          <td class="py-2.5 px-4">${folderDisplay}</td>
-          <td class="py-2.5 px-4 text-gray-500">${f.category || 'Doc'}</td>
-          <td class="py-2.5 px-4 text-gray-500">${f.uploader}</td>
+          <td class="py-2.5 px-4 whitespace-nowrap">${folderDisplay}</td>
+          <td class="py-2.5 px-4 text-gray-500 whitespace-nowrap">${f.category || 'Doc'}</td>
+          <td class="py-2.5 px-4 text-gray-500 whitespace-nowrap">${f.uploader}</td>
           <td class="py-2.5 px-4 text-zinc-600 font-mono text-[11px] whitespace-nowrap font-medium">${formatFileDateDisplay(f)}</td>
-          <td class="py-2.5 px-4 text-right space-x-1.5 whitespace-nowrap">
+          <td class="py-2.5 px-4 text-right space-x-1 whitespace-nowrap min-w-[280px]">
             ${canPreview ? `<button type="button" onclick="openDocumentViewer('${f.url}', '${escapedName}')" class="px-2 py-0.5 bg-black text-white rounded font-semibold text-[10px] hover:bg-zinc-800 transition">Aperçu</button>` : ''}
             <button type="button" onclick="downloadFile('${f.url}', '${escapedName}')" class="px-2 py-0.5 border border-zinc-400 bg-white text-black rounded font-semibold text-[10px] hover:bg-zinc-100 transition">Télécharger ↓</button>
             ${f.folder === 'Corbeille' 
