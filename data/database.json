@@ -1,6 +1,6 @@
 {
   "_version": 531,
-  "_localModified": 1795784917035,
+  "_localModified": 1795785012728,
   "project": {
     "title": "SAÉ BUT3 GEII Troyes - Supervision & Avancement",
     "sub_title": "Véhicule Autonome et Domotique (Promo 2025-2026)",
@@ -213,7 +213,7 @@
       "assignee": "elghazouani",
       "milestone": "L1",
       "desc": "Volet 2 : GTB — Accès & Sécurité (Salle 3D).\n\nDescription synthétique : Badge RFID/digicode journalisé, détection COV/fumée, coupure puissance à 30 °C.\n\nSpécifications clés : RFID/digicode, T 18-25 °C, COV/fumée, disjonction >= 30 °C.\nNiveau de difficulté : 6.0/10 (Moyenne).\nJustification : Gestion de base de données badges, sécurité incendie/thermique avec disjonction relais sur imprimantes 3D.",
-      "status": "todo",
+      "status": "in_progress",
       "branch": "task/t108-f24-acces-securite-3d",
       "creator": "damou",
       "createdAt": "2026-11-27T10:55:00.000Z"
