@@ -1,6 +1,6 @@
 {
   "_version": 541,
-  "_localModified": 1795789403757,
+  "_localModified": 1795790999327,
   "project": {
     "title": "SAÉ BUT3 GEII Troyes - Supervision & Avancement",
     "sub_title": "Véhicule Autonome et Domotique (Promo 2025-2026)",
@@ -262,6 +262,32 @@
   ],
   "journal": [
     {
+      "id": "J8882",
+      "date": "2026-11-27 15:49",
+      "author": "bouras",
+      "title": "debut de raisonnement fonction et analyse composant debut de raisonnement fonction et analyse composant",
+      "content": "composant listé \nfonction listé \na faire , developper les fonctions + pcb",
+      "taskId": "T103",
+      "tags": [
+        "T103",
+        "Avancement"
+      ],
+      "file": {
+        "name": "Rapport_Ingenierie_Systeme_Bouras.pdf",
+        "url": "https://raw.githubusercontent.com/bouraschihab1-star/sae-supervision-geii/main/uploads/1795790997449_Rapport_Ingenierie_Systeme_Bouras.pdf",
+        "size": "194 KB",
+        "folder": null
+      },
+      "files": [
+        {
+          "name": "Rapport_Ingenierie_Systeme_Bouras.pdf",
+          "url": "https://raw.githubusercontent.com/bouraschihab1-star/sae-supervision-geii/main/uploads/1795790997449_Rapport_Ingenierie_Systeme_Bouras.pdf",
+          "size": "194 KB",
+          "folder": null
+        }
+      ]
+    },
+    {
       "id": "J9525",
       "title": "Shema",
       "author": "damou",
@@ -270,22 +296,6 @@
       "category": "Technique",
       "status": "in_progress",
       "taskId": "T102"
-    },
-    {
-      "id": "J3064",
-      "date": "2026-11-26 18:47",
-      "author": "locko",
-      "title": "Cahier des charges avancement",
-      "content": "Rédaction du cahier des charges, avancement 70%\nA faire : vérifier chaque points clés, ajustement, approfondissement (optionnel)",
-      "taskId": null,
-      "tags": [
-        "Avancement"
-      ],
-      "file": {
-        "name": "Cahier_des_Charges_SAE_GEII (1).docx",
-        "url": "https://raw.githubusercontent.com/bouraschihab1-star/sae-supervision-geii/main/uploads/1795715240573_Cahier_des_Charges_SAE_GEII__1_.docx",
-        "size": "Document Word"
-      }
     },
     {
       "id": "J9488",
@@ -309,6 +319,22 @@
           "size": "294 KB"
         }
       ]
+    },
+    {
+      "id": "J3064",
+      "date": "2026-11-26 18:47",
+      "author": "locko",
+      "title": "Cahier des charges avancement",
+      "content": "Rédaction du cahier des charges, avancement 70%\nA faire : vérifier chaque points clés, ajustement, approfondissement (optionnel)",
+      "taskId": null,
+      "tags": [
+        "Avancement"
+      ],
+      "file": {
+        "name": "Cahier_des_Charges_SAE_GEII (1).docx",
+        "url": "https://raw.githubusercontent.com/bouraschihab1-star/sae-supervision-geii/main/uploads/1795715240573_Cahier_des_Charges_SAE_GEII__1_.docx",
+        "size": "Document Word"
+      }
     }
   ],
   "files": [
@@ -432,6 +458,14 @@
       "date": "2026-11-27 15:17",
       "category": "Fichier",
       "folder": "Cahier des charges fini"
+    },
+    {
+      "name": "Rapport_Ingenierie_Systeme_Bouras.pdf",
+      "url": "https://raw.githubusercontent.com/bouraschihab1-star/sae-supervision-geii/main/uploads/1795790997449_Rapport_Ingenierie_Systeme_Bouras.pdf",
+      "uploader": "bouras",
+      "date": "2026-11-27 15:49",
+      "category": "Journal",
+      "folder": null
     }
   ],
   "folders": [
