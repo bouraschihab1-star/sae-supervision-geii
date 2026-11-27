@@ -635,6 +635,34 @@
       renderAll();
     });
 
+    function getNowFormattedMinute() {
+      const now = new Date();
+      const y = now.getFullYear();
+      const m = String(now.getMonth() + 1).padStart(2, '0');
+      const d = String(now.getDate()).padStart(2, '0');
+      const h = String(now.getHours()).padStart(2, '0');
+      const min = String(now.getMinutes()).padStart(2, '0');
+      return `${y}-${m}-${d} ${h}:${min}`;
+    }
+
+    function formatJournalDateDisplay(dateStr) {
+      if (!dateStr) return '';
+      const str = String(dateStr).trim();
+      const mWithTime = str.match(/^(\d{4})-(\d{2})-(\d{2})[T ](\d{2}):(\d{2})/);
+      if (mWithTime) {
+        return `${mWithTime[3]}/${mWithTime[2]}/${mWithTime[1]} à ${mWithTime[4]}:${mWithTime[5]}`;
+      }
+      const mFrWithTime = str.match(/^(\d{2})\/(\d{2})\/(\d{4})(?: à|)? (\d{2}):(\d{2})/);
+      if (mFrWithTime) {
+        return `${mFrWithTime[1]}/${mFrWithTime[2]}/${mFrWithTime[3]} à ${mFrWithTime[4]}:${mFrWithTime[5]}`;
+      }
+      const mDateOnly = str.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+      if (mDateOnly) {
+        return `${mDateOnly[3]}/${mDateOnly[2]}/${mDateOnly[1]}`;
+      }
+      return str;
+    }
+
     function updateCountdown() {
       const diff = new Date('2026-12-06T09:00:00') - new Date();
       const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
@@ -1342,7 +1370,7 @@
                   name: file.name,
                   url: rawUrl,
                   uploader: state.currentUser,
-                  date: new Date().toISOString().split('T')[0],
+                  date: getNowFormattedMinute(),
                   category
                 });
                 resolve(fileInfo);
@@ -1361,7 +1389,7 @@
               name: file.name,
               url: dataUrl,
               uploader: state.currentUser,
-              date: new Date().toISOString().split('T')[0],
+              date: getNowFormattedMinute(),
               category: `${category} (Local)`
             });
             resolve(fileInfo);
@@ -1454,7 +1482,7 @@
               <span class="font-bold text-black uppercase tracking-wider">${authorName}</span>
               ${taskBadge}
             </div>
-            <span class="font-mono text-zinc-500">${j.date}</span>
+            <span class="font-mono text-zinc-500 font-semibold">${formatJournalDateDisplay(j.date)}</span>
           </div>
           <div class="font-semibold text-black text-sm">${j.title}</div>
           <div class="text-gray-600 whitespace-pre-line leading-relaxed">${j.content}</div>
@@ -1484,7 +1512,7 @@
 
       const entry = {
         id: 'J' + Date.now().toString().slice(-4),
-        date: new Date().toISOString().split('T')[0],
+        date: getNowFormattedMinute(),
         author: state.currentUser,
         title,
         content,
@@ -1598,7 +1626,7 @@
           div.innerHTML = `
             <div class="flex justify-between items-center text-[10px] text-zinc-500">
               <span class="font-bold text-black uppercase">${log.author}</span>
-              <span class="font-mono">${log.date}</span>
+              <span class="font-mono font-semibold">${formatJournalDateDisplay(log.date)}</span>
             </div>
             <div class="font-semibold text-black text-xs">${log.title}</div>
             <div class="text-zinc-700 whitespace-pre-line leading-relaxed text-[11px]">${log.content}</div>
@@ -1632,7 +1660,7 @@
 
       const entry = {
         id: 'J' + Date.now().toString().slice(-4),
-        date: new Date().toISOString().split('T')[0],
+        date: getNowFormattedMinute(),
         author: state.currentUser,
         title,
         content,
@@ -1668,7 +1696,7 @@
           </td>
           <td class="py-2.5 px-4 text-gray-500">${f.category || 'Doc'}</td>
           <td class="py-2.5 px-4 text-gray-500">${f.uploader}</td>
-          <td class="py-2.5 px-4 text-gray-400">${f.date}</td>
+          <td class="py-2.5 px-4 text-gray-400 font-mono text-[11px]">${formatJournalDateDisplay(f.date)}</td>
           <td class="py-2.5 px-4 text-right space-x-1.5 whitespace-nowrap">
             ${canPreview ? `<button type="button" onclick="openDocumentViewer('${f.url}', '${escapedName}')" class="px-2 py-0.5 bg-black text-white rounded font-semibold text-[10px] hover:bg-zinc-800 transition">Aperçu</button>` : ''}
             <button type="button" onclick="downloadFile('${f.url}', '${escapedName}')" class="px-2 py-0.5 border border-zinc-400 bg-white text-black rounded font-semibold text-[10px] hover:bg-zinc-100 transition">Télécharger ↓</button>
@@ -1694,7 +1722,7 @@
     function generateAuditText() {
       if (!state.db) return;
       const today = new Date().toISOString().split('T')[0];
-      const todayLogs = (state.db.journal || []).filter(j => j.date === today);
+      const todayLogs = (state.db.journal || []).filter(j => j.date && j.date.startsWith(today));
       const tasks = state.db.tasks || [];
       const inProg = tasks.filter(t => t.status === 'in_progress');
       const done = tasks.filter(t => t.status === 'done');
