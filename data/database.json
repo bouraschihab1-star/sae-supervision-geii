@@ -1,6 +1,6 @@
 {
   "_version": 531,
-  "_localModified": 1795784907354,
+  "_localModified": 1795784917035,
   "project": {
     "title": "SAÉ BUT3 GEII Troyes - Supervision & Avancement",
     "sub_title": "Véhicule Autonome et Domotique (Promo 2025-2026)",
@@ -108,7 +108,7 @@
       "assignee": "damou",
       "milestone": "L1",
       "desc": "Volet 1 : Kart — Recharge Solaire & Borne.\n\nDescription synthétique : 8 panneaux PV (2000 Wc, 4S2P), régulateur MPPT, batterie tampon 50 Ah (< 6 h).\n\nSpécifications clés : 2000 Wc, MPPT 250V/50A, tampon 50 Ah, rendement > 85%.\nNiveau de difficulté : 6.0/10 (Moyenne).\nJustification : Dimensionnement électrotechnique, relevés I(V), interconnexion sécurisée borne/kart (NF EN 61851) et protections AC/DC.",
-      "status": "in_progress",
+      "status": "todo",
       "branch": "task/t102-f12-recharge-solaire",
       "creator": "damou",
       "createdAt": "2026-11-27T10:55:00.000Z"
@@ -123,7 +123,7 @@
       "assignee": "bouras",
       "milestone": "L1",
       "desc": "Volet 1 : Kart — Maintien de voie.\n\nDescription synthétique : Détection de marquage au sol par caméra/optique (1-5 m, écart <= 15 cm à 10 km/h).\n\nSpécifications clés : Portée 1-5 m, écart latéral <= 15 cm, vitesse 10-15 km/h.\nNiveau de difficulté : 9.0/10 (Élevée).\nJustification : Forte charge en recherche et développement : traitement d'image/signal, asservissement directionnel temps réel et calibration sur piste.",
-      "status": "todo",
+      "status": "in_progress",
       "branch": "task/t103-f13-maintien-voie",
       "creator": "damou",
       "createdAt": "2026-11-27T10:55:00.000Z"
@@ -198,7 +198,7 @@
       "assignee": "locko",
       "milestone": "L1",
       "desc": "Volet 2 : GTB — Pilotage éclairage.\n\nDescription synthétique : Détection de présence (PIR/micro-ondes) + luxmétrie, extinction progressive (2 à 5 min).\n\nSpécifications clés : Capteurs PIR/micro-ondes + luxmètre, tempo 2 à 5 min.\nNiveau de difficulté : 3.0/10 (Faible).\nJustification : Standard en domotique : câblage capteurs, réglage des seuils de luminosité et temporisations.",
-      "status": "in_progress",
+      "status": "todo",
       "branch": "task/t107-f23-pilotage-eclairage",
       "creator": "damou",
       "createdAt": "2026-11-27T10:55:00.000Z"
@@ -288,32 +288,6 @@
           "size": "294 KB"
         }
       ]
-    },
-    {
-      "id": "J9525",
-      "date": "2026-11-27 13:18",
-      "author": "damou",
-      "title": "Shema",
-      "content": "realisation de shemas generaux sur la borne de recharge",
-      "taskId": "T102",
-      "tags": [
-        "T102",
-        "Avancement"
-      ],
-      "file": {
-        "name": "borne de recharge.pdf",
-        "url": "https://raw.githubusercontent.com/bouraschihab1-star/sae-supervision-geii/main/uploads/1795781928174_borne_de_recharge.pdf",
-        "size": "96 KB",
-        "folder": null
-      },
-      "files": [
-        {
-          "name": "borne de recharge.pdf",
-          "url": "https://raw.githubusercontent.com/bouraschihab1-star/sae-supervision-geii/main/uploads/1795781928174_borne_de_recharge.pdf",
-          "size": "96 KB",
-          "folder": null
-        }
-      ]
     }
   ],
   "files": [
@@ -341,10 +315,7 @@
       "date": "2026-11-25 14:00",
       "size": "Lien Wiki Officiel",
       "category": "Documentation",
-      "folder": "Corbeille",
-      "_previousFolder": "Documentation",
-      "deletedAt": "2026-11-27T12:15:51.678Z",
-      "deletedBy": "damou"
+      "folder": "Documentation"
     },
     {
       "name": "Cahier_des_Charges_SAE_GEII (1).docx",
@@ -353,10 +324,7 @@
       "date": "2026-11-26 18:47",
       "size": "Document Word",
       "category": "Livrable",
-      "folder": "Corbeille",
-      "_previousFolder": "Cahier des Charges",
-      "deletedAt": "2026-11-27T12:15:35.942Z",
-      "deletedBy": "damou"
+      "folder": "Cahier des Charges"
     },
     {
       "name": "Cahier_des_Charges_SAE_BUT3_GEII_LinkedInStyle.pdf",
@@ -364,10 +332,7 @@
       "uploader": "bouras",
       "date": "2026-11-26 19:17",
       "category": "Fichier",
-      "folder": "Corbeille",
-      "_previousFolder": "Cahier des Charges",
-      "deletedAt": "2026-11-27T12:16:02.198Z",
-      "deletedBy": "damou"
+      "folder": "Cahier des Charges"
     },
     {
       "name": "IMG_9315.jpeg",
@@ -438,14 +403,6 @@
       "date": "2026-11-27 10:51",
       "category": "Livrable",
       "folder": "Livrables"
-    },
-    {
-      "name": "borne de recharge.pdf",
-      "url": "https://raw.githubusercontent.com/bouraschihab1-star/sae-supervision-geii/main/uploads/1795781928174_borne_de_recharge.pdf",
-      "uploader": "damou",
-      "date": "2026-11-27 13:18",
-      "category": "Journal",
-      "folder": null
     }
   ],
   "folders": [
