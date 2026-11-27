@@ -1,6 +1,6 @@
 {
   "_version": 531,
-  "_localModified": 1795781751687,
+  "_localModified": 1795781762200,
   "project": {
     "title": "SAÉ BUT3 GEII Troyes - Supervision & Avancement",
     "sub_title": "Véhicule Autonome et Domotique (Promo 2025-2026)",
@@ -338,7 +338,10 @@
       "uploader": "bouras",
       "date": "2026-11-26 19:17",
       "category": "Fichier",
-      "folder": "Cahier des Charges"
+      "folder": "Corbeille",
+      "_previousFolder": "Cahier des Charges",
+      "deletedAt": "2026-11-27T12:16:02.198Z",
+      "deletedBy": "damou"
     },
     {
       "name": "IMG_9315.jpeg",
