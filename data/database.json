@@ -292,6 +292,14 @@
   ],
   "files": [
     {
+      "name": "Cahier_des_Charges_SAE_GEII_Fini.pdf",
+      "url": "https://raw.githubusercontent.com/bouraschihab1-star/sae-supervision-geii/main/uploads/Cahier_des_Charges_SAE_GEII_Fini.pdf",
+      "folder": "Cahier des charges fini",
+      "category": "Livrable",
+      "uploader": "bouras",
+      "date": "2026-11-27 12:09"
+    },
+    {
       "name": "Cahier_des_Charges_SAE_GEII_Damou_LinkedInStyle.pdf",
       "url": "https://raw.githubusercontent.com/bouraschihab1-star/sae-supervision-geii/main/uploads/1795769145033_Cahier_des_Charges_SAE_GEII_Damou_LinkedInStyle.pdf",
       "uploader": "bouras",
@@ -398,6 +406,7 @@
     }
   ],
   "folders": [
+    "Cahier des charges fini",
     "Cahier des Charges",
     "Photos & Schémas",
     "Documentation",
