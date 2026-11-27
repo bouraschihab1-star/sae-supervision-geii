@@ -1,6 +1,6 @@
 {
-  "_version": 501,
-  "_localModified": 1795770919488,
+  "_version": 506,
+  "_localModified": 1795771434002,
   "project": {
     "title": "SAÉ BUT3 GEII Troyes - Supervision & Avancement",
     "sub_title": "Véhicule Autonome et Domotique (Promo 2025-2026)",
@@ -86,7 +86,7 @@
   "journal": [
     {
       "id": "J3064",
-      "date": "2026-11-26",
+      "date": "2026-11-26 18:47",
       "author": "locko",
       "title": "Cahier des charges avancement",
       "content": "Rédaction du cahier des charges, avancement 70%\nA faire : vérifier chaque points clés, ajustement, approfondissement (optionnel)",
@@ -102,7 +102,7 @@
     },
     {
       "id": "J9488",
-      "date": "2026-11-27",
+      "date": "2026-11-27 10:15",
       "author": "bouras",
       "title": "cahier des charges avancement",
       "content": "donnée sur chaque tache  et format amelioré\n\nA faire : verifié chaque parti du fichiers pour ce mettre d'accord sur le fichier fini ; commencer à penser la repartition",
