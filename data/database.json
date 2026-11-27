@@ -1,6 +1,6 @@
 {
-  "_version": 516,
-  "_localModified": 1795773171012,
+  "_version": 521,
+  "_localModified": 1795773603667,
   "project": {
     "title": "SAÉ BUT3 GEII Troyes - Supervision & Avancement",
     "sub_title": "Véhicule Autonome et Domotique (Promo 2025-2026)",
@@ -82,7 +82,158 @@
       "done": false
     }
   ],
-  "tasks": [],
+  "tasks": [
+    {
+      "id": "T101",
+      "title": "[F1.1] Alimentation & Batteries (Pack 48V)",
+      "category": "Véhicule Autonome",
+      "assignees": [
+        "diouf"
+      ],
+      "assignee": "diouf",
+      "milestone": "L1",
+      "desc": "Volet 1 : Kart — Alimentation & Batteries.\n\nDescription synthétique : Pack 48 V DC (20-30 Ah), coupe-circuit d'urgence bipolaire et fusible calibré.\n\nSpécifications clés : 48V DC (42-54,6V), 1-1,5 kWh, fusible 120% Inom.\nNiveau de difficulté : 5.0/10 (Moyenne).\nJustification : Expertise des batteries existantes, bilan de puissance, câblage de puissance et conformité sécurité (NF EN 60204-1).",
+      "status": "todo",
+      "branch": "task/t101-f11-alim-batteries",
+      "creator": "damou",
+      "createdAt": "2026-11-27T10:55:00.000Z"
+    },
+    {
+      "id": "T102",
+      "title": "[F1.2] Recharge Solaire & Borne de charge",
+      "category": "Véhicule Autonome",
+      "assignees": [
+        "damou"
+      ],
+      "assignee": "damou",
+      "milestone": "L1",
+      "desc": "Volet 1 : Kart — Recharge Solaire & Borne.\n\nDescription synthétique : 8 panneaux PV (2000 Wc, 4S2P), régulateur MPPT, batterie tampon 50 Ah (< 6 h).\n\nSpécifications clés : 2000 Wc, MPPT 250V/50A, tampon 50 Ah, rendement > 85%.\nNiveau de difficulté : 6.0/10 (Moyenne).\nJustification : Dimensionnement électrotechnique, relevés I(V), interconnexion sécurisée borne/kart (NF EN 61851) et protections AC/DC.",
+      "status": "todo",
+      "branch": "task/t102-f12-recharge-solaire",
+      "creator": "damou",
+      "createdAt": "2026-11-27T10:55:00.000Z"
+    },
+    {
+      "id": "T103",
+      "title": "[F1.3] Maintien de voie (Guidage Autonome)",
+      "category": "Véhicule Autonome",
+      "assignees": [
+        "bouras"
+      ],
+      "assignee": "bouras",
+      "milestone": "L1",
+      "desc": "Volet 1 : Kart — Maintien de voie.\n\nDescription synthétique : Détection de marquage au sol par caméra/optique (1-5 m, écart <= 15 cm à 10 km/h).\n\nSpécifications clés : Portée 1-5 m, écart latéral <= 15 cm, vitesse 10-15 km/h.\nNiveau de difficulté : 9.0/10 (Élevée).\nJustification : Forte charge en recherche et développement : traitement d'image/signal, asservissement directionnel temps réel et calibration sur piste.",
+      "status": "todo",
+      "branch": "task/t103-f13-maintien-voie",
+      "creator": "damou",
+      "createdAt": "2026-11-27T10:55:00.000Z"
+    },
+    {
+      "id": "T104",
+      "title": "[F1.4] Stationnement automatisé & Manœuvres",
+      "category": "Véhicule Autonome",
+      "assignees": [
+        "bouras"
+      ],
+      "assignee": "bouras",
+      "milestone": "L1",
+      "desc": "Volet 1 : Kart — Stationnement automatisé.\n\nDescription synthétique : Détection d'obstacles ultrasons/LiDAR (0,15-3 m) et manœuvre sur place de 2,5 x 1,8 m.\n\nSpécifications clés : Ultrasons/LiDAR 0,15-3 m (rés. <= 3 cm), place 2,5x1,8 m.\nNiveau de difficulté : 9.0/10 (Élevée).\nJustification : Algorithmes de trajectoire complexes, fusion de capteurs périphériques et nombreux essais terrain pour éviter tout choc.",
+      "status": "todo",
+      "branch": "task/t104-f14-stationnement-auto",
+      "creator": "damou",
+      "createdAt": "2026-11-27T10:55:00.000Z"
+    },
+    {
+      "id": "T105",
+      "title": "[F2.1] Récupération de chaleur (LTG)",
+      "category": "Domotique LTG",
+      "assignees": [
+        "elghazouani"
+      ],
+      "assignee": "elghazouani",
+      "milestone": "L1",
+      "desc": "Volet 2 : GTB — Récupération chaleur (LTG).\n\nDescription synthétique : Pilotage VMC/aéro-éjecteur dès que T_LTG >= 25 °C et T_local < 20 °C (alerte 28 °C).\n\nSpécifications clés : Précision <= +/-0,5 °C, seuil 25 °C / 20 °C, alerte 28 °C.\nNiveau de difficulté : 5.0/10 (Moyenne).\nJustification : Capteurs différentiels précis (+/- 0,5 °C), régulation par hystérésis et intégration mécanique/aéraulique sur l'existant.",
+      "status": "todo",
+      "branch": "task/t105-f21-recup-chaleur-ltg",
+      "creator": "damou",
+      "createdAt": "2026-11-27T10:55:00.000Z"
+    },
+    {
+      "id": "T106",
+      "title": "[F2.2] Refroidissement nocturne (Free-cooling)",
+      "category": "Domotique LTG",
+      "assignees": [
+        "locko"
+      ],
+      "assignee": "locko",
+      "milestone": "L1",
+      "desc": "Volet 2 : GTB — Refroidissement nocturne.\n\nDescription synthétique : Free-cooling de 22 h à 6 h si T_int > 23 °C et Delta_T >= 3 °C (arrêt à 20 °C).\n\nSpécifications clés : Plage 22h-06h, T_int > 23 °C, Delta_T >= 3 °C, arrêt 20 °C.\nNiveau de difficulté : 4.0/10 (Faible).\nJustification : Logique séquentielle simple combinant horloge temps réel (RTC) et comparaison de sondes intérieure/extérieure.",
+      "status": "todo",
+      "branch": "task/t106-f22-refroidissement-nocturne",
+      "creator": "damou",
+      "createdAt": "2026-11-27T10:55:00.000Z"
+    },
+    {
+      "id": "T107",
+      "title": "[F2.3] Pilotage éclairage automatisé",
+      "category": "Domotique LTG",
+      "assignees": [
+        "locko"
+      ],
+      "assignee": "locko",
+      "milestone": "L1",
+      "desc": "Volet 2 : GTB — Pilotage éclairage.\n\nDescription synthétique : Détection de présence (PIR/micro-ondes) + luxmétrie, extinction progressive (2 à 5 min).\n\nSpécifications clés : Capteurs PIR/micro-ondes + luxmètre, tempo 2 à 5 min.\nNiveau de difficulté : 3.0/10 (Faible).\nJustification : Standard en domotique : câblage capteurs, réglage des seuils de luminosité et temporisations.",
+      "status": "todo",
+      "branch": "task/t107-f23-pilotage-eclairage",
+      "creator": "damou",
+      "createdAt": "2026-11-27T10:55:00.000Z"
+    },
+    {
+      "id": "T108",
+      "title": "[F2.4] Contrôle d'accès & Sécurité (Salle 3D)",
+      "category": "Domotique LTG",
+      "assignees": [
+        "elghazouani"
+      ],
+      "assignee": "elghazouani",
+      "milestone": "L1",
+      "desc": "Volet 2 : GTB — Accès & Sécurité (Salle 3D).\n\nDescription synthétique : Badge RFID/digicode journalisé, détection COV/fumée, coupure puissance à 30 °C.\n\nSpécifications clés : RFID/digicode, T 18-25 °C, COV/fumée, disjonction >= 30 °C.\nNiveau de difficulté : 6.0/10 (Moyenne).\nJustification : Gestion de base de données badges, sécurité incendie/thermique avec disjonction relais sur imprimantes 3D.",
+      "status": "todo",
+      "branch": "task/t108-f24-acces-securite-3d",
+      "creator": "damou",
+      "createdAt": "2026-11-27T10:55:00.000Z"
+    },
+    {
+      "id": "T109",
+      "title": "[F2.5] Arrosage automatique intelligent",
+      "category": "Domotique LTG",
+      "assignees": [
+        "diouf"
+      ],
+      "assignee": "diouf",
+      "milestone": "L1",
+      "desc": "Volet 2 : GTB — Arrosage automatique.\n\nDescription synthétique : Déclenchement si humidité sol < 30 % (débit 0,2-0,5 L/min, 30 s max) + sécurité niveau bas.\n\nSpécifications clés : Humidité < 30 %, débit 0,2-0,5 L/min, tempo max 30 s.\nNiveau de difficulté : 3.0/10 (Faible).\nJustification : Logique combinatoire basique avec sécurités anti-marche à sec et anti-débordement faciles à tester.",
+      "status": "todo",
+      "branch": "task/t109-f25-arrosage-automatique",
+      "creator": "damou",
+      "createdAt": "2026-11-27T10:55:00.000Z"
+    },
+    {
+      "id": "T110",
+      "title": "[F2.6] Bus & Supervision centrale (Modbus / MQTT)",
+      "category": "Supervision & Comm",
+      "assignees": [
+        "damou"
+      ],
+      "assignee": "damou",
+      "milestone": "L1",
+      "desc": "Volet 2 : GTB — Bus & Supervision centrale.\n\nDescription synthétique : Modbus RTU (RS485) + passerelle MQTT, tableau de bord (< 2 s) et historique >= 30 jours.\n\nSpécifications clés : RS485 Modbus RTU, MQTT, rafraîchissement < 2 s, histo >= 30 j.\nNiveau de difficulté : 8.0/10 (Élevée).\nJustification : Gros travail d'intégration : déploiement du bus RS485 dans le bâtiment, passerelle réseau, base de données et interface graphique unifiée.",
+      "status": "todo",
+      "branch": "task/t110-f26-bus-supervision-mqtt",
+      "creator": "damou",
+      "createdAt": "2026-11-27T10:55:00.000Z"
+    }
+  ],
   "journal": [
     {
       "id": "J3064",
