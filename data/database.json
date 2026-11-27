@@ -1,6 +1,6 @@
 {
-  "_version": 500,
-  "_localModified": 1795768647079,
+  "_version": 501,
+  "_localModified": 1795769147176,
   "project": {
     "title": "SAÉ BUT3 GEII Troyes - Supervision & Avancement",
     "sub_title": "Véhicule Autonome et Domotique (Promo 2025-2026)",
@@ -102,6 +102,14 @@
     }
   ],
   "files": [
+    {
+      "name": "Cahier_des_Charges_SAE_GEII_Damou_LinkedInStyle.pdf",
+      "url": "https://raw.githubusercontent.com/bouraschihab1-star/sae-supervision-geii/main/uploads/1795769145033_Cahier_des_Charges_SAE_GEII_Damou_LinkedInStyle.pdf",
+      "uploader": "bouras",
+      "date": "2026-11-27",
+      "size": "397 KB (9 pages)",
+      "category": "Cahier des Charges"
+    },
     {
       "name": "cahier_des_charges_geii_s5.pdf",
       "url": "https://wikigeii.iut-troyes.univ-reims.fr/index.php?title=Cours:SaeS5",
