@@ -297,7 +297,7 @@
               <th class="py-2.5 px-4 font-semibold">Dossier</th>
               <th class="py-2.5 px-4 font-semibold">Catégorie</th>
               <th class="py-2.5 px-4 font-semibold">Auteur</th>
-              <th class="py-2.5 px-4 font-semibold">Date</th>
+              <th class="py-2.5 px-4 font-semibold whitespace-nowrap">Date & Heure</th>
               <th class="py-2.5 px-4 text-right font-semibold">Actions</th>
             </tr>
           </thead>
@@ -750,6 +750,28 @@
         return `${mDateOnly[3]}/${mDateOnly[2]}/${mDateOnly[1]}`;
       }
       return str;
+    }
+
+    function formatFileDateDisplay(f) {
+      if (!f) return '';
+      if (f.date && f.date.includes(':')) {
+        return formatJournalDateDisplay(f.date);
+      }
+      if (f.url) {
+        const m = f.url.match(/\/uploads\/(\d{12,14})_/);
+        if (m) {
+          const d = new Date(parseInt(m[1], 10));
+          if (!isNaN(d.getTime())) {
+            const dd = String(d.getDate()).padStart(2, '0');
+            const mm = String(d.getMonth() + 1).padStart(2, '0');
+            const yyyy = d.getFullYear();
+            const hh = String(d.getHours()).padStart(2, '0');
+            const min = String(d.getMinutes()).padStart(2, '0');
+            return `${dd}/${mm}/${yyyy} à ${hh}:${min}`;
+          }
+        }
+      }
+      return formatJournalDateDisplay(f.date || '');
     }
 
     function updateCountdown() {
@@ -2006,7 +2028,7 @@
           <td class="py-2.5 px-4">${folderDisplay}</td>
           <td class="py-2.5 px-4 text-gray-500">${f.category || 'Doc'}</td>
           <td class="py-2.5 px-4 text-gray-500">${f.uploader}</td>
-          <td class="py-2.5 px-4 text-gray-400 font-mono text-[11px]">${formatJournalDateDisplay(f.date)}</td>
+          <td class="py-2.5 px-4 text-zinc-600 font-mono text-[11px] whitespace-nowrap font-medium">${formatFileDateDisplay(f)}</td>
           <td class="py-2.5 px-4 text-right space-x-1.5 whitespace-nowrap">
             ${canPreview ? `<button type="button" onclick="openDocumentViewer('${f.url}', '${escapedName}')" class="px-2 py-0.5 bg-black text-white rounded font-semibold text-[10px] hover:bg-zinc-800 transition">Aperçu</button>` : ''}
             <button type="button" onclick="downloadFile('${f.url}', '${escapedName}')" class="px-2 py-0.5 border border-zinc-400 bg-white text-black rounded font-semibold text-[10px] hover:bg-zinc-100 transition">Télécharger ↓</button>
