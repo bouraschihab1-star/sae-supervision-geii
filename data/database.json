@@ -1,6 +1,6 @@
 {
   "_version": 500,
-  "_localModified": 1795744086494,
+  "_localModified": 1795768637949,
   "project": {
     "title": "SAÉ BUT3 GEII Troyes - Supervision & Avancement",
     "sub_title": "Véhicule Autonome et Domotique (Promo 2025-2026)",
@@ -150,6 +150,13 @@
       "name": "IMG_9306.jpeg",
       "url": "https://raw.githubusercontent.com/bouraschihab1-star/sae-supervision-geii/main/uploads/1795744081484_IMG_9306.jpeg",
       "uploader": "bouras",
+      "date": "2026-11-27",
+      "category": "Fichier"
+    },
+    {
+      "name": "Cahier_des_Charges_SAE_GEII.docx-1.pdf",
+      "url": "https://raw.githubusercontent.com/bouraschihab1-star/sae-supervision-geii/main/uploads/1795768636418_Cahier_des_Charges_SAE_GEII.docx-1.pdf",
+      "uploader": "damou",
       "date": "2026-11-27",
       "category": "Fichier"
     }
