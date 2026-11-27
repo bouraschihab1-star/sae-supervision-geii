@@ -248,23 +248,57 @@
 
     <!-- 4. FILES -->
     <section id="view-files" class="space-y-4 hidden">
-      <div class="flex items-center justify-between">
-        <span class="text-xs font-semibold text-black uppercase tracking-wider">Fichiers</span>
-        <button onclick="document.getElementById('fileInput').click()" class="px-3 py-1.5 text-xs font-semibold bg-black text-white rounded hover:bg-gray-800 transition">
-          + Fichier
-        </button>
-        <input type="file" id="fileInput" onchange="uploadFile(event)" multiple class="hidden" />
+      <!-- Barre d'outils Fichiers & Navigation -->
+      <div class="flex flex-wrap items-center justify-between gap-3 bg-white p-3.5 rounded-lg border border-zinc-200 shadow-sm">
+        <div class="flex items-center space-x-2 text-xs">
+          <span class="font-bold text-black uppercase tracking-wider text-[11px]">Explorateur</span>
+          <span class="text-zinc-300">|</span>
+          <div id="filesBreadcrumbs" class="flex items-center space-x-1.5 font-medium text-xs">
+            <!-- Rendu dynamique du fil d'Ariane -->
+          </div>
+        </div>
+        <div class="flex items-center space-x-2">
+          <button onclick="openCreateFolderModal()" class="px-3 py-1.5 text-xs font-semibold border border-zinc-300 bg-white text-black rounded hover:bg-zinc-50 transition shadow-sm flex items-center space-x-1.5">
+            <span>📁+</span>
+            <span>Nouveau dossier</span>
+          </button>
+          <button onclick="document.getElementById('fileInput').click()" class="px-3 py-1.5 text-xs font-semibold bg-black text-white rounded hover:bg-zinc-800 transition flex items-center space-x-1.5 shadow-sm">
+            <span>+</span>
+            <span id="btnUploadFileText">Ajouter fichier</span>
+          </button>
+          <input type="file" id="fileInput" onchange="uploadFile(event)" multiple class="hidden" />
+        </div>
       </div>
 
-      <div class="glass-card rounded-lg overflow-hidden">
+      <!-- DOSSIERS (Grille dynamique des dossiers) -->
+      <div id="foldersSection" class="space-y-2">
+        <div class="flex items-center justify-between text-[11px] text-zinc-500 font-semibold uppercase tracking-wider px-1">
+          <span>Dossiers</span>
+          <span id="foldersCountBadge" class="text-zinc-400 font-mono text-[10px]">0 dossier</span>
+        </div>
+        <div id="foldersGrid" class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <!-- Rendu dynamique des cartes de dossiers -->
+        </div>
+      </div>
+
+      <!-- TABLEAU DES FICHIERS -->
+      <div class="glass-card rounded-lg overflow-hidden border border-zinc-200 bg-white shadow-sm">
+        <div class="px-4 py-2.5 bg-zinc-50 border-b border-zinc-200 flex justify-between items-center text-[11px] text-zinc-600 font-medium">
+          <div class="flex items-center space-x-2">
+            <span id="filesSectionTitle" class="font-bold text-black">Tous les fichiers</span>
+            <span id="filesCountBadge" class="font-mono bg-zinc-200 text-zinc-700 px-1.5 py-0.5 rounded text-[10px]">0 fichier</span>
+          </div>
+          <div id="filesFolderFilterNotice" class="text-zinc-500 text-[11px]"></div>
+        </div>
         <table class="w-full text-left text-xs">
           <thead class="bg-gray-50/60 text-gray-500 border-b border-gray-200/60">
             <tr>
-              <th class="py-2.5 px-4 font-semibold">Nom</th>
+              <th class="py-2.5 px-4 font-semibold">Nom du fichier</th>
+              <th class="py-2.5 px-4 font-semibold">Dossier</th>
               <th class="py-2.5 px-4 font-semibold">Catégorie</th>
               <th class="py-2.5 px-4 font-semibold">Auteur</th>
               <th class="py-2.5 px-4 font-semibold">Date</th>
-              <th class="py-2.5 px-4 text-right font-semibold">Action</th>
+              <th class="py-2.5 px-4 text-right font-semibold">Actions</th>
             </tr>
           </thead>
           <tbody id="filesTable" class="divide-y divide-gray-100"></tbody>
@@ -520,6 +554,59 @@
     </div>
   </div>
 
+  <!-- MODAL CRÉATION DE DOSSIER -->
+  <div id="createFolderModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="glass-card rounded-xl p-6 w-full max-w-sm space-y-4 shadow-2xl bg-white border border-black">
+      <div class="flex justify-between items-center pb-2 border-b border-zinc-200">
+        <h3 class="font-bold text-sm text-black flex items-center space-x-1.5">
+          <span>📁</span>
+          <span>Nouveau Dossier</span>
+        </h3>
+        <button onclick="closeModal('createFolderModal')" class="text-zinc-400 hover:text-black font-semibold text-xs">✕</button>
+      </div>
+      <form onsubmit="handleCreateFolderSubmit(event)" class="space-y-4">
+        <div class="space-y-1.5">
+          <label class="text-[11px] font-semibold text-zinc-700 uppercase tracking-wider">Nom du dossier</label>
+          <input type="text" id="newFolderNameInput" required placeholder="Ex: CdCF, Photos, Livrables..." class="w-full text-xs p-2.5 border border-zinc-300 rounded font-medium focus:border-black focus:outline-none" />
+        </div>
+        <div class="flex justify-end space-x-2 pt-2">
+          <button type="button" onclick="closeModal('createFolderModal')" class="px-3 py-1.5 text-xs font-semibold border border-zinc-300 rounded hover:bg-zinc-100 transition">Annuler</button>
+          <button type="submit" class="px-3 py-1.5 text-xs font-semibold bg-black text-white rounded hover:bg-zinc-800 transition">Créer le dossier</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL DÉPLACER UN FICHIER -->
+  <div id="moveFileModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="glass-card rounded-xl p-6 w-full max-w-md space-y-4 shadow-2xl bg-white border border-black">
+      <div class="flex justify-between items-center pb-2 border-b border-zinc-200">
+        <h3 class="font-bold text-sm text-black flex items-center space-x-1.5">
+          <span>📂</span>
+          <span>Déplacer le fichier</span>
+        </h3>
+        <button onclick="closeModal('moveFileModal')" class="text-zinc-400 hover:text-black font-semibold text-xs">✕</button>
+      </div>
+      <form onsubmit="handleMoveFileSubmit(event)" class="space-y-4">
+        <input type="hidden" id="moveFileTargetIndex" />
+        <div class="space-y-1">
+          <div class="text-[11px] font-semibold text-zinc-500 uppercase tracking-wider">Fichier sélectionné</div>
+          <div id="moveFileNameDisplay" class="text-xs font-bold text-black font-mono break-all p-2 bg-zinc-100 rounded border border-zinc-200"></div>
+        </div>
+        <div class="space-y-1.5">
+          <label class="text-[11px] font-semibold text-zinc-700 uppercase tracking-wider">Dossier de destination</label>
+          <select id="moveFileFolderSelect" class="w-full text-xs p-2.5 border border-zinc-300 rounded font-medium focus:border-black focus:outline-none bg-white">
+            <!-- Rempli dynamiquement -->
+          </select>
+        </div>
+        <div class="flex justify-end space-x-2 pt-2">
+          <button type="button" onclick="closeModal('moveFileModal')" class="px-3 py-1.5 text-xs font-semibold border border-zinc-300 rounded hover:bg-zinc-100 transition">Annuler</button>
+          <button type="submit" class="px-3 py-1.5 text-xs font-semibold bg-black text-white rounded hover:bg-zinc-800 transition">Déplacer ici</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- TOAST DE NOTIFICATION SAUVEGARDE / PERSISTANCE -->
   <div id="saveToast" class="fixed bottom-4 right-4 z-50 text-xs px-3 py-2 rounded-lg bg-black text-white font-medium shadow-xl transition-all duration-300 opacity-0 pointer-events-none flex items-center space-x-2 border border-zinc-700">
     <span id="saveToastText">Enregistré</span>
@@ -547,7 +634,9 @@
       db: null,
       fileSha: null,
       token: localStorage.getItem('sae_gh_token') || DEFAULT_GH_TOKEN,
-      chartInstance: null
+      chartInstance: null,
+      currentFolder: null,
+      fileToMoveIndex: null
     };
 
     function checkAuth() {
@@ -1335,7 +1424,7 @@
              lower.endsWith('.txt') || lower.endsWith('.md');
     }
 
-    async function uploadSingleFileToGitHub(file, category = 'Journal') {
+    async function uploadSingleFileToGitHub(file, category = 'Journal', targetFolder = null) {
       return new Promise((resolve) => {
         const reader = new FileReader();
         reader.onload = async () => {
@@ -1346,6 +1435,8 @@
             const timestamp = Date.now();
             const path = `uploads/${timestamp}_${cleanName}`;
             const apiUrl = `https://api.github.com/repos/${GITHUB_REPO}/contents/${path}`;
+
+            const fileFolder = targetFolder !== null ? targetFolder : (category === 'Fichier' ? state.currentFolder : null);
 
             if (state.token) {
               const res = await fetch(apiUrl, {
@@ -1363,7 +1454,8 @@
                 const fileInfo = {
                   name: file.name,
                   url: rawUrl,
-                  size: `${Math.round(file.size / 1024)} KB`
+                  size: `${Math.round(file.size / 1024)} KB`,
+                  folder: fileFolder
                 };
                 if (!state.db.files) state.db.files = [];
                 state.db.files.push({
@@ -1371,7 +1463,8 @@
                   url: rawUrl,
                   uploader: state.currentUser,
                   date: getNowFormattedMinute(),
-                  category
+                  category,
+                  folder: fileFolder
                 });
                 resolve(fileInfo);
                 return;
@@ -1382,7 +1475,8 @@
             const fileInfo = {
               name: file.name,
               url: dataUrl,
-              size: `${Math.round(file.size / 1024)} KB`
+              size: `${Math.round(file.size / 1024)} KB`,
+              folder: fileFolder
             };
             if (!state.db.files) state.db.files = [];
             state.db.files.push({
@@ -1390,7 +1484,8 @@
               url: dataUrl,
               uploader: state.currentUser,
               date: getNowFormattedMinute(),
-              category: `${category} (Local)`
+              category: `${category} (Local)`,
+              folder: fileFolder
             });
             resolve(fileInfo);
           } catch (err) {
@@ -1681,12 +1776,226 @@
       await saveDb(`Journal: [${taskId}] ${entry.title}`);
     }
 
+    function getFolders() {
+      if (!state.db) return [];
+      if (!Array.isArray(state.db.folders)) {
+        state.db.folders = ['Cahier des Charges', 'Photos & Schémas', 'Documentation', 'Livrables'];
+      }
+      (state.db.files || []).forEach(f => {
+        if (f.folder && !state.db.folders.includes(f.folder)) {
+          state.db.folders.push(f.folder);
+        }
+      });
+      return state.db.folders;
+    }
+
+    function setCurrentFolder(folderName) {
+      state.currentFolder = folderName || null;
+      renderFiles();
+    }
+
+    function openCreateFolderModal() {
+      const input = document.getElementById('newFolderNameInput');
+      if (input) input.value = '';
+      document.getElementById('createFolderModal').classList.remove('hidden');
+      setTimeout(() => { if (input) input.focus(); }, 100);
+    }
+
+    async function handleCreateFolderSubmit(e) {
+      e.preventDefault();
+      const input = document.getElementById('newFolderNameInput');
+      const name = input.value.trim();
+      if (!name) return;
+
+      const folders = getFolders();
+      if (folders.some(f => f.toLowerCase() === name.toLowerCase())) {
+        alert(`Le dossier "${name}" existe déjà.`);
+        return;
+      }
+
+      state.db.folders.push(name);
+      closeModal('createFolderModal');
+      setCurrentFolder(name);
+      await saveDb(`Création du dossier: ${name}`);
+      showSaveIndicator(`✓ Dossier "${name}" créé`);
+    }
+
+    async function deleteFolder(folderName) {
+      const filesInFolder = (state.db.files || []).filter(f => f.folder === folderName);
+      if (filesInFolder.length > 0) {
+        alert(`Impossible de supprimer le dossier "${folderName}" car il contient ${filesInFolder.length} fichier(s). Déplacez ou supprimez ces fichiers au préalable.`);
+        return;
+      }
+      if (!confirm(`Supprimer définitivement le dossier vide "${folderName}" ?`)) return;
+
+      state.db.folders = getFolders().filter(f => f !== folderName);
+      if (state.currentFolder === folderName) {
+        state.currentFolder = null;
+      }
+      renderFiles();
+      await saveDb(`Suppression du dossier: ${folderName}`);
+      showSaveIndicator(`✓ Dossier "${folderName}" supprimé`);
+    }
+
+    function openMoveFileModal(idx) {
+      if (!state.db || !state.db.files || !state.db.files[idx]) return;
+      const f = state.db.files[idx];
+      state.fileToMoveIndex = idx;
+
+      document.getElementById('moveFileNameDisplay').textContent = f.name;
+      const select = document.getElementById('moveFileFolderSelect');
+      select.innerHTML = '';
+
+      // Option Racine
+      const optRoot = document.createElement('option');
+      optRoot.value = '';
+      optRoot.textContent = '📁 Racine (aucun sous-dossier)';
+      if (!f.folder) optRoot.selected = true;
+      select.appendChild(optRoot);
+
+      // Options Dossiers
+      getFolders().forEach(folder => {
+        const opt = document.createElement('option');
+        opt.value = folder;
+        opt.textContent = `📂 ${folder}`;
+        if (f.folder === folder) opt.selected = true;
+        select.appendChild(opt);
+      });
+
+      document.getElementById('moveFileModal').classList.remove('hidden');
+    }
+
+    async function handleMoveFileSubmit(e) {
+      e.preventDefault();
+      const idx = state.fileToMoveIndex;
+      if (idx === null || idx === undefined || !state.db.files[idx]) return;
+
+      const f = state.db.files[idx];
+      const targetFolder = document.getElementById('moveFileFolderSelect').value.trim() || null;
+      f.folder = targetFolder;
+
+      closeModal('moveFileModal');
+      renderFiles();
+      const destName = targetFolder ? `📂 ${targetFolder}` : '📁 Racine';
+      await saveDb(`Déplacement de ${f.name} vers ${targetFolder || 'Racine'}`);
+      showSaveIndicator(`✓ Déplacé vers ${destName}`);
+    }
+
     function renderFiles() {
+      const folders = getFolders();
+      const allFiles = state.db.files || [];
+      const currentFolder = state.currentFolder;
+
+      // 1. Fil d'Ariane
+      const bc = document.getElementById('filesBreadcrumbs');
+      if (bc) {
+        if (!currentFolder) {
+          bc.innerHTML = `
+            <span class="font-bold text-black flex items-center space-x-1 bg-zinc-100 px-2 py-0.5 rounded border border-zinc-200">
+              <span>📁</span><span>Racine</span>
+            </span>
+          `;
+        } else {
+          bc.innerHTML = `
+            <button onclick="setCurrentFolder(null)" class="text-zinc-500 hover:text-black font-semibold flex items-center space-x-1 transition">
+              <span>📁 Racine</span>
+            </button>
+            <span class="text-zinc-400">/</span>
+            <span class="font-bold text-black flex items-center space-x-1 bg-zinc-100 px-2 py-0.5 rounded border border-zinc-200">
+              <span>📂</span><span>${currentFolder}</span>
+            </span>
+            <button onclick="setCurrentFolder(null)" class="ml-2 text-[10px] text-zinc-600 bg-white border border-zinc-300 hover:bg-zinc-100 px-2 py-0.5 rounded transition font-semibold">
+              ← Revenir à la Racine
+            </button>
+          `;
+        }
+      }
+
+      // 2. Bouton d'upload texte dynamique
+      const btnUploadText = document.getElementById('btnUploadFileText');
+      if (btnUploadText) {
+        btnUploadText.textContent = currentFolder ? `Ajouter dans "${currentFolder}"` : 'Ajouter fichier';
+      }
+
+      // 3. Grille des dossiers
+      const foldersGrid = document.getElementById('foldersGrid');
+      const foldersCountBadge = document.getElementById('foldersCountBadge');
+      if (foldersCountBadge) foldersCountBadge.textContent = `${folders.length} dossier${folders.length > 1 ? 's' : ''}`;
+
+      if (foldersGrid) {
+        foldersGrid.innerHTML = '';
+        folders.forEach(folder => {
+          const count = allFiles.filter(f => f.folder === folder).length;
+          const isSelected = currentFolder === folder;
+          const escapedFolder = folder.replace(/'/g, "\\'");
+          const card = document.createElement('div');
+          card.className = `p-3 rounded-lg border transition cursor-pointer shadow-sm flex items-center justify-between ${
+            isSelected 
+              ? 'bg-zinc-900 text-white border-black' 
+              : 'bg-white text-black border-zinc-200 hover:border-black'
+          }`;
+          card.onclick = () => setCurrentFolder(isSelected ? null : folder);
+          card.innerHTML = `
+            <div class="flex items-center space-x-2.5 truncate">
+              <div class="w-8 h-8 rounded flex items-center justify-center text-base ${isSelected ? 'bg-zinc-800 text-white' : 'bg-zinc-100'}">📂</div>
+              <div class="truncate">
+                <div class="font-bold text-xs truncate ${isSelected ? 'text-white' : 'text-black'}">${folder}</div>
+                <div class="text-[10px] ${isSelected ? 'text-zinc-300' : 'text-zinc-500'} font-mono">${count} fichier${count > 1 ? 's' : ''}</div>
+              </div>
+            </div>
+            <div class="flex items-center space-x-1 pl-2" onclick="event.stopPropagation()">
+              ${count === 0 ? `<button onclick="deleteFolder('${escapedFolder}')" title="Supprimer ce dossier vide" class="text-zinc-400 hover:text-red-500 p-1 text-xs">🗑️</button>` : ''}
+              <span class="${isSelected ? 'text-zinc-300' : 'text-zinc-400'} font-bold text-xs">→</span>
+            </div>
+          `;
+          foldersGrid.appendChild(card);
+        });
+      }
+
+      // 4. Filtrage et Tableau des Fichiers
+      let filteredFiles = [];
+      const titleEl = document.getElementById('filesSectionTitle');
+      const countEl = document.getElementById('filesCountBadge');
+      const noticeEl = document.getElementById('filesFolderFilterNotice');
+
+      if (currentFolder) {
+        filteredFiles = allFiles.map((f, i) => ({ ...f, _originalIdx: i })).filter(f => f.folder === currentFolder);
+        if (titleEl) titleEl.textContent = `Dossier: ${currentFolder}`;
+        if (noticeEl) noticeEl.innerHTML = `<button onclick="setCurrentFolder(null)" class="text-black font-semibold hover:underline">Voir tous les fichiers ↗</button>`;
+      } else {
+        filteredFiles = allFiles.map((f, i) => ({ ...f, _originalIdx: i }));
+        if (titleEl) titleEl.textContent = 'Tous les fichiers';
+        if (noticeEl) noticeEl.textContent = 'Cliquez sur un dossier ci-dessus pour filtrer';
+      }
+
+      if (countEl) countEl.textContent = `${filteredFiles.length} fichier${filteredFiles.length > 1 ? 's' : ''}`;
+
       const tbody = document.getElementById('filesTable');
       tbody.innerHTML = '';
-      (state.db.files || []).forEach(f => {
+
+      if (filteredFiles.length === 0) {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td colspan="6" class="py-8 text-center text-zinc-400">
+            <div class="space-y-1">
+              <div class="text-base">📂</div>
+              <div class="text-xs font-semibold text-zinc-600">Aucun fichier ${currentFolder ? `dans "${currentFolder}"` : 'disponible'}.</div>
+              <div class="text-[11px] text-zinc-400">Utilisez le bouton "+ Ajouter fichier" pour téléverser des documents dans ce dossier.</div>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+        return;
+      }
+
+      filteredFiles.forEach(f => {
         const canPreview = isPreviewable(f.name);
         const escapedName = (f.name || 'document').replace(/'/g, "\\'");
+        const originalIdx = f._originalIdx;
+        const folderDisplay = f.folder 
+          ? `<button onclick="setCurrentFolder('${f.folder.replace(/'/g, "\\'")}')" class="px-2 py-0.5 bg-zinc-100 hover:bg-zinc-200 border border-zinc-200 rounded text-[10px] font-semibold text-black transition">📂 ${f.folder}</button>`
+          : `<span class="text-zinc-400 text-[10px] font-mono">📁 Racine</span>`;
+
         const tr = document.createElement('tr');
         tr.className = 'hover:bg-gray-50';
         tr.innerHTML = `
@@ -1694,12 +2003,14 @@
             <span class="font-bold text-[10px] bg-zinc-200 px-1 py-0.5 rounded mr-1.5">${getFileBadge(f.name)}</span>
             ${f.name}
           </td>
+          <td class="py-2.5 px-4">${folderDisplay}</td>
           <td class="py-2.5 px-4 text-gray-500">${f.category || 'Doc'}</td>
           <td class="py-2.5 px-4 text-gray-500">${f.uploader}</td>
           <td class="py-2.5 px-4 text-gray-400 font-mono text-[11px]">${formatJournalDateDisplay(f.date)}</td>
           <td class="py-2.5 px-4 text-right space-x-1.5 whitespace-nowrap">
             ${canPreview ? `<button type="button" onclick="openDocumentViewer('${f.url}', '${escapedName}')" class="px-2 py-0.5 bg-black text-white rounded font-semibold text-[10px] hover:bg-zinc-800 transition">Aperçu</button>` : ''}
             <button type="button" onclick="downloadFile('${f.url}', '${escapedName}')" class="px-2 py-0.5 border border-zinc-400 bg-white text-black rounded font-semibold text-[10px] hover:bg-zinc-100 transition">Télécharger ↓</button>
+            <button type="button" onclick="openMoveFileModal(${originalIdx})" class="px-2 py-0.5 border border-zinc-300 bg-zinc-50 text-black rounded font-semibold text-[10px] hover:bg-zinc-200 transition" title="Déplacer vers un autre dossier">Déplacer ↗</button>
           </td>
         `;
         tbody.appendChild(tr);
@@ -1710,12 +2021,14 @@
       const filesList = e.target.files ? Array.from(e.target.files) : [];
       if (!filesList.length) return;
 
+      const targetFolder = state.currentFolder;
       showSaveIndicator(`Téléversement de ${filesList.length} fichier(s)...`);
       for (const f of filesList) {
-        await uploadSingleFileToGitHub(f, 'Fichier');
+        await uploadSingleFileToGitHub(f, 'Fichier', targetFolder);
       }
       renderFiles();
-      await saveDb(`${filesList.length} fichier(s) ajouté(s)`);
+      const folderNote = targetFolder ? ` dans "${targetFolder}"` : '';
+      await saveDb(`${filesList.length} fichier(s) ajouté(s)${folderNote}`);
       e.target.value = '';
     }
 
