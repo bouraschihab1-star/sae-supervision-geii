@@ -259,7 +259,7 @@
         </div>
         <div class="flex items-center space-x-2">
           <button onclick="openCreateFolderModal()" class="px-3 py-1.5 text-xs font-semibold border border-zinc-300 bg-white text-black rounded hover:bg-zinc-50 transition shadow-sm flex items-center space-x-1.5">
-            <span>📁+</span>
+            <span class="font-bold text-xs">+</span>
             <span>Nouveau dossier</span>
           </button>
           <button onclick="document.getElementById('fileInput').click()" class="px-3 py-1.5 text-xs font-semibold bg-black text-white rounded hover:bg-zinc-800 transition flex items-center space-x-1.5 shadow-sm">
@@ -423,7 +423,7 @@
         <div class="p-3 bg-zinc-50 border border-zinc-200 rounded text-[11px] leading-relaxed space-y-1.5">
           <div class="font-bold text-black uppercase tracking-wider text-[10px]">À quoi sert ce Token ?</div>
           <p>
-            Ce tableau de bord fonctionne dans le navigateur. Pour enregistrer définitivement vos tâches, jalons et rapports sur le dépôt GitHub partagé avec votre groupe (afin que Damou, Diouf, Al Gahzouani et Locko les voient en temps réel), GitHub exige une clé d'autorisation personnelle (Personal Access Token).
+            Ce tableau de bord fonctionne dans le navigateur. Pour enregistrer définitivement vos tâches, jalons et rapports sur le dépôt GitHub partagé avec votre groupe (afin que Damou, Diouf, Al Gahzouany et Locko les voient en temps réel), GitHub exige une clé d'autorisation personnelle (Personal Access Token).
           </p>
           <p class="text-zinc-500">
             <em>Sans token, toutes vos modifications restent enregistrées localement dans votre navigateur sans être perdues au rechargement, mais ne sont pas partagées sur GitHub.</em>
@@ -457,7 +457,7 @@
             <option value="bouras">Bouras</option>
             <option value="damou">Damou</option>
             <option value="diouf">Diouf</option>
-            <option value="elghazouani">Al Gahzouani</option>
+            <option value="elghazouani">Al Gahzouany</option>
             <option value="locko">Locko</option>
           </select>
         </div>
@@ -559,7 +559,6 @@
     <div class="glass-card rounded-xl p-6 w-full max-w-sm space-y-4 shadow-2xl bg-white border border-black">
       <div class="flex justify-between items-center pb-2 border-b border-zinc-200">
         <h3 class="font-bold text-sm text-black flex items-center space-x-1.5">
-          <span>📁</span>
           <span>Nouveau Dossier</span>
         </h3>
         <button onclick="closeModal('createFolderModal')" class="text-zinc-400 hover:text-black font-semibold text-xs">✕</button>
@@ -582,7 +581,6 @@
     <div class="glass-card rounded-xl p-6 w-full max-w-md space-y-4 shadow-2xl bg-white border border-black">
       <div class="flex justify-between items-center pb-2 border-b border-zinc-200">
         <h3 class="font-bold text-sm text-black flex items-center space-x-1.5">
-          <span>📂</span>
           <span>Déplacer le fichier</span>
         </h3>
         <button onclick="closeModal('moveFileModal')" class="text-zinc-400 hover:text-black font-semibold text-xs">✕</button>
@@ -624,7 +622,8 @@
       bouras: { name: 'Bouras', pass: 'root', role: 'admin' },
       damou: { name: 'Damou', pass: 'geii', role: 'member' },
       diouf: { name: 'Diouf', pass: 'geii', role: 'member' },
-      elghazouani: { name: 'Al Gahzouani', pass: 'geii', role: 'member' },
+      elghazouani: { name: 'Al Gahzouany', pass: 'geii', role: 'member' },
+      elghazouany: { name: 'Al Gahzouany', pass: 'geii', role: 'member' },
       locko: { name: 'Locko', pass: 'geii', role: 'member' }
     };
 
@@ -1149,7 +1148,7 @@
             <div class="mt-2.5 pt-1.5 border-t border-zinc-200/70 space-y-1.5">
               <div class="flex items-center justify-between text-[11px]">
                 <div class="flex items-center space-x-1.5 font-bold text-black truncate pr-2" title="Assigné à : ${assigneesNames}">
-                  <span class="text-zinc-400 text-xs">👤</span>
+                  
                   <span class="text-black font-bold tracking-tight text-xs">${assigneesNames || 'Non assigné'}</span>
                 </div>
                 <span class="px-1.5 py-0.5 rounded text-[10px] font-mono shrink-0 ${taskLogs.length ? 'bg-black text-white font-bold' : 'border border-zinc-300 text-zinc-600 bg-white/70'}">
@@ -1159,7 +1158,7 @@
               ${task.branch ? `
                 <div class="flex items-center">
                   <a href="https://github.com/${GITHUB_REPO}/tree/${task.branch}" target="_blank" onclick="event.stopPropagation()" title="Branche Git : ${task.branch}" class="inline-flex items-center space-x-1 px-1.5 py-0.5 rounded bg-zinc-100 hover:bg-zinc-200 border border-zinc-300/80 text-zinc-700 font-mono text-[9px] max-w-full truncate transition">
-                    <span class="text-zinc-400 font-sans">🌿</span>
+                    
                     <span class="text-zinc-500 font-semibold">git:</span>
                     <span class="truncate font-semibold text-black">${task.branch.replace('task/', '')}</span>
                   </a>
@@ -1879,7 +1878,7 @@
       // Option Racine
       const optRoot = document.createElement('option');
       optRoot.value = '';
-      optRoot.textContent = '📁 Racine (aucun sous-dossier)';
+      optRoot.textContent = 'Racine (aucun sous-dossier)';
       if (!f.folder) optRoot.selected = true;
       select.appendChild(optRoot);
 
@@ -1887,7 +1886,7 @@
       getFolders().forEach(folder => {
         const opt = document.createElement('option');
         opt.value = folder;
-        opt.textContent = `📂 ${folder}`;
+        opt.textContent = folder;
         if (f.folder === folder) opt.selected = true;
         select.appendChild(opt);
       });
@@ -1906,7 +1905,7 @@
 
       closeModal('moveFileModal');
       renderFiles();
-      const destName = targetFolder ? `📂 ${targetFolder}` : '📁 Racine';
+      const destName = targetFolder ? targetFolder : 'Racine';
       await saveDb(`Déplacement de ${f.name} vers ${targetFolder || 'Racine'}`);
       showSaveIndicator(`✓ Déplacé vers ${destName}`);
     }
@@ -1922,17 +1921,17 @@
         if (!currentFolder) {
           bc.innerHTML = `
             <span class="font-bold text-black flex items-center space-x-1 bg-zinc-100 px-2 py-0.5 rounded border border-zinc-200">
-              <span>📁</span><span>Racine</span>
+              <span>Racine</span>
             </span>
           `;
         } else {
           bc.innerHTML = `
             <button onclick="setCurrentFolder(null)" class="text-zinc-500 hover:text-black font-semibold flex items-center space-x-1 transition">
-              <span>📁 Racine</span>
+              <span>Racine</span>
             </button>
             <span class="text-zinc-400">/</span>
             <span class="font-bold text-black flex items-center space-x-1 bg-zinc-100 px-2 py-0.5 rounded border border-zinc-200">
-              <span>📂</span><span>${currentFolder}</span>
+              <span>${currentFolder}</span>
             </span>
             <button onclick="setCurrentFolder(null)" class="ml-2 text-[10px] text-zinc-600 bg-white border border-zinc-300 hover:bg-zinc-100 px-2 py-0.5 rounded transition font-semibold">
               ← Revenir à la Racine
@@ -1967,14 +1966,16 @@
           card.onclick = () => setCurrentFolder(isSelected ? null : folder);
           card.innerHTML = `
             <div class="flex items-center space-x-2.5 truncate">
-              <div class="w-8 h-8 rounded flex items-center justify-center text-base ${isSelected ? 'bg-zinc-800 text-white' : 'bg-zinc-100'}">📂</div>
+              <div class="w-7 h-7 rounded flex items-center justify-center ${isSelected ? 'bg-zinc-800 text-white' : 'bg-zinc-100 text-zinc-700'}">
+                <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 20 20"><path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"/></svg>
+              </div>
               <div class="truncate">
                 <div class="font-bold text-xs truncate ${isSelected ? 'text-white' : 'text-black'}">${folder}</div>
                 <div class="text-[10px] ${isSelected ? 'text-zinc-300' : 'text-zinc-500'} font-mono">${count} fichier${count > 1 ? 's' : ''}</div>
               </div>
             </div>
             <div class="flex items-center space-x-1 pl-2" onclick="event.stopPropagation()">
-              ${count === 0 ? `<button onclick="deleteFolder('${escapedFolder}')" title="Supprimer ce dossier vide" class="text-zinc-400 hover:text-red-500 p-1 text-xs">🗑️</button>` : ''}
+              ${count === 0 ? `<button onclick="deleteFolder('${escapedFolder}')" title="Supprimer ce dossier vide" class="text-zinc-400 hover:text-red-600 px-1.5 py-0.5 rounded text-[10px] font-semibold border border-transparent hover:border-red-200 transition">Supprimer</button>` : ''}
               <span class="${isSelected ? 'text-zinc-300' : 'text-zinc-400'} font-bold text-xs">→</span>
             </div>
           `;
@@ -2008,7 +2009,7 @@
         tr.innerHTML = `
           <td colspan="6" class="py-8 text-center text-zinc-400">
             <div class="space-y-1">
-              <div class="text-base">📂</div>
+              
               <div class="text-xs font-semibold text-zinc-600">Aucun fichier ${currentFolder ? `dans "${currentFolder}"` : 'disponible'}.</div>
               <div class="text-[11px] text-zinc-400">Utilisez le bouton "+ Ajouter fichier" pour téléverser des documents dans ce dossier.</div>
             </div>
@@ -2023,8 +2024,8 @@
         const escapedName = (f.name || 'document').replace(/'/g, "\\'");
         const originalIdx = f._originalIdx;
         const folderDisplay = f.folder 
-          ? `<button onclick="setCurrentFolder('${f.folder.replace(/'/g, "\\'")}')" class="px-2 py-0.5 bg-zinc-100 hover:bg-zinc-200 border border-zinc-200 rounded text-[10px] font-semibold text-black transition">📂 ${f.folder}</button>`
-          : `<span class="text-zinc-400 text-[10px] font-mono">📁 Racine</span>`;
+          ? `<button onclick="setCurrentFolder('${f.folder.replace(/'/g, "\\'")}')" class="px-2 py-0.5 bg-zinc-100 hover:bg-zinc-200 border border-zinc-200 rounded text-[10px] font-semibold text-black transition">${f.folder}</button>`
+          : `<span class="text-zinc-400 text-[10px] font-mono">Racine</span>`;
 
         const tr = document.createElement('tr');
         tr.className = 'hover:bg-gray-50';
@@ -2072,7 +2073,7 @@
 
       let txt = `RAPPORT QUOTIDIEN — ${today}\n`;
       txt += `PROJET : SAÉ BUT3 GEII Troyes (Véhicule & Domotique)\n`;
-      txt += `ÉQUIPE : Damou, Diouf, Al Gahzouani, Bouras, Locko\n\n`;
+      txt += `ÉQUIPE : Damou, Diouf, Al Gahzouany, Bouras, Locko\n\n`;
       txt += `TÂCHES : ${tasks.length} total | ${done.length} validées | ${inProg.length} en cours\n`;
       inProg.forEach(t => {
         const assigneesStr = getTaskAssignees(t).map(u => (USERS_AUTH[u] && USERS_AUTH[u].name) || u).join(' & ');
