@@ -1808,10 +1808,12 @@
     function getFolders() {
       if (!state.db) return [];
       if (!Array.isArray(state.db.folders)) {
-        state.db.folders = ['Cahier des Charges', 'Photos & Schémas', 'Documentation', 'Livrables'];
+        state.db.folders = ['Cahier des Charges', 'Photos & Schémas', 'Documentation', 'Livrables', 'Codes & Sources'];
       }
+      // Toujours exclure Corbeille de la liste des dossiers réguliers
+      state.db.folders = state.db.folders.filter(f => f !== 'Corbeille');
       (state.db.files || []).forEach(f => {
-        if (f.folder && !state.db.folders.includes(f.folder)) {
+        if (f.folder && f.folder !== 'Corbeille' && !state.db.folders.includes(f.folder)) {
           state.db.folders.push(f.folder);
         }
       });
@@ -1836,6 +1838,11 @@
       const name = input.value.trim();
       if (!name) return;
 
+      if (name.toLowerCase() === 'corbeille') {
+        alert('Le nom "Corbeille" est réservé pour la corbeille système.');
+        return;
+      }
+
       const folders = getFolders();
       if (folders.some(f => f.toLowerCase() === name.toLowerCase())) {
         alert(`Le dossier "${name}" existe déjà.`);
@@ -1850,6 +1857,10 @@
     }
 
     async function deleteFolder(folderName) {
+      if (folderName === 'Corbeille') {
+        alert('Le dossier Corbeille est un dossier système protégé et ne peut pas être supprimé.');
+        return;
+      }
       const filesInFolder = (state.db.files || []).filter(f => f.folder === folderName);
       if (filesInFolder.length > 0) {
         alert(`Impossible de supprimer le dossier "${folderName}" car il contient ${filesInFolder.length} fichier(s). Déplacez ou supprimez ces fichiers au préalable.`);
@@ -1879,11 +1890,11 @@
       const optRoot = document.createElement('option');
       optRoot.value = '';
       optRoot.textContent = 'Racine (aucun sous-dossier)';
-      if (!f.folder) optRoot.selected = true;
+      if (!f.folder || f.folder === 'Corbeille') optRoot.selected = true;
       select.appendChild(optRoot);
 
-      // Options Dossiers
-      getFolders().forEach(folder => {
+      // Options Dossiers (excluant Corbeille)
+      getFolders().filter(f => f !== 'Corbeille').forEach(folder => {
         const opt = document.createElement('option');
         opt.value = folder;
         opt.textContent = folder;
@@ -1902,18 +1913,53 @@
       const f = state.db.files[idx];
       const targetFolder = document.getElementById('moveFileFolderSelect').value.trim() || null;
       f.folder = targetFolder;
+      delete f._previousFolder;
+      delete f.deletedAt;
+      delete f.deletedBy;
 
       closeModal('moveFileModal');
       renderFiles();
       const destName = targetFolder ? targetFolder : 'Racine';
-      await saveDb(`Déplacement de ${f.name} vers ${targetFolder || 'Racine'}`);
+      await saveDb(`Déplacement de ${f.name} vers ${destName}`);
       showSaveIndicator(`✓ Déplacé vers ${destName}`);
+    }
+
+    async function moveToTrash(idx) {
+      if (!state.db || !state.db.files || !state.db.files[idx]) return;
+      const f = state.db.files[idx];
+      if (!confirm(`Placer "${f.name}" dans la Corbeille ?\n\nLe fichier sera masqué de l'interface mais reste conservé en sécurité sur GitHub. Vous pourrez le restaurer à tout moment depuis la Corbeille.`)) {
+        return;
+      }
+      f._previousFolder = f.folder || null;
+      f.folder = 'Corbeille';
+      f.deletedAt = new Date().toISOString();
+      f.deletedBy = state.currentUser || 'anonyme';
+
+      renderFiles();
+      await saveDb(`Mise en corbeille: ${f.name}`);
+      showSaveIndicator(`✓ "${f.name}" placé dans la Corbeille`);
+    }
+
+    async function restoreFile(idx) {
+      if (!state.db || !state.db.files || !state.db.files[idx]) return;
+      const f = state.db.files[idx];
+      const targetFolder = (f._previousFolder && f._previousFolder !== 'Corbeille') ? f._previousFolder : null;
+      f.folder = targetFolder;
+      delete f._previousFolder;
+      delete f.deletedAt;
+      delete f.deletedBy;
+
+      renderFiles();
+      const destName = targetFolder ? `dossier "${targetFolder}"` : 'la Racine';
+      await saveDb(`Restauration de ${f.name} vers ${targetFolder || 'Racine'}`);
+      showSaveIndicator(`✓ "${f.name}" restauré dans ${destName}`);
     }
 
     function renderFiles() {
       const folders = getFolders();
       const allFiles = state.db.files || [];
       const currentFolder = state.currentFolder;
+      const trashCount = allFiles.filter(f => f.folder === 'Corbeille').length;
 
       // 1. Fil d'Ariane
       const bc = document.getElementById('filesBreadcrumbs');
@@ -1923,6 +1969,19 @@
             <span class="font-bold text-black flex items-center space-x-1 bg-zinc-100 px-2 py-0.5 rounded border border-zinc-200">
               <span>Racine</span>
             </span>
+          `;
+        } else if (currentFolder === 'Corbeille') {
+          bc.innerHTML = `
+            <button onclick="setCurrentFolder(null)" class="text-zinc-500 hover:text-black font-semibold flex items-center space-x-1 transition">
+              <span>Racine</span>
+            </button>
+            <span class="text-zinc-400">/</span>
+            <span class="font-bold text-red-700 flex items-center space-x-1 bg-red-50 px-2 py-0.5 rounded border border-red-200">
+              <span>Corbeille (fichiers archivés)</span>
+            </span>
+            <button onclick="setCurrentFolder(null)" class="ml-2 text-[10px] text-zinc-600 bg-white border border-zinc-300 hover:bg-zinc-100 px-2 py-0.5 rounded transition font-semibold">
+              ← Revenir à la Racine
+            </button>
           `;
         } else {
           bc.innerHTML = `
@@ -1943,7 +2002,11 @@
       // 2. Bouton d'upload texte dynamique
       const btnUploadText = document.getElementById('btnUploadFileText');
       if (btnUploadText) {
-        btnUploadText.textContent = currentFolder ? `Ajouter dans "${currentFolder}"` : 'Ajouter fichier';
+        if (currentFolder === 'Corbeille') {
+          btnUploadText.textContent = 'Ajouter fichier (Racine)';
+        } else {
+          btnUploadText.textContent = currentFolder ? `Ajouter dans "${currentFolder}"` : 'Ajouter fichier';
+        }
       }
 
       // 3. Grille des dossiers
@@ -1981,6 +2044,33 @@
           `;
           foldersGrid.appendChild(card);
         });
+
+        // Carte spéciale : Corbeille
+        const isTrashSelected = currentFolder === 'Corbeille';
+        const trashCard = document.createElement('div');
+        trashCard.className = `p-3 rounded-lg border transition cursor-pointer shadow-sm flex items-center justify-between ${
+          isTrashSelected 
+            ? 'bg-zinc-900 text-white border-black ring-1 ring-zinc-700' 
+            : (trashCount > 0 
+                ? 'bg-zinc-50 text-zinc-700 border-zinc-300 hover:border-black' 
+                : 'bg-zinc-50/60 text-zinc-400 border-zinc-200 hover:border-zinc-400')
+        }`;
+        trashCard.onclick = () => setCurrentFolder(isTrashSelected ? null : 'Corbeille');
+        trashCard.innerHTML = `
+          <div class="flex items-center space-x-2.5 truncate">
+            <div class="w-7 h-7 rounded flex items-center justify-center ${isTrashSelected ? 'bg-zinc-800 text-white' : 'bg-zinc-200 text-zinc-600'}">
+              <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+            </div>
+            <div class="truncate">
+              <div class="font-bold text-xs truncate ${isTrashSelected ? 'text-white' : 'text-zinc-800'}">Corbeille</div>
+              <div class="text-[10px] ${isTrashSelected ? 'text-zinc-300' : (trashCount > 0 ? 'text-zinc-600 font-semibold' : 'text-zinc-400')} font-mono">${trashCount} fichier${trashCount > 1 ? 's' : ''}</div>
+            </div>
+          </div>
+          <div class="flex items-center space-x-1 pl-2">
+            <span class="${isTrashSelected ? 'text-zinc-300' : 'text-zinc-400'} font-bold text-xs">→</span>
+          </div>
+        `;
+        foldersGrid.appendChild(trashCard);
       }
 
       // 4. Filtrage et Tableau des Fichiers
@@ -1989,12 +2079,21 @@
       const countEl = document.getElementById('filesCountBadge');
       const noticeEl = document.getElementById('filesFolderFilterNotice');
 
-      if (currentFolder) {
-        filteredFiles = allFiles.map((f, i) => ({ ...f, _originalIdx: i })).filter(f => f.folder === currentFolder);
+      if (currentFolder === 'Corbeille') {
+        filteredFiles = allFiles.map((f, i) => ({ ...f, _originalIdx: i })).filter(f => f.folder === 'Corbeille');
+        if (titleEl) titleEl.textContent = 'Corbeille (Fichiers supprimés de l\'interface)';
+        if (noticeEl) noticeEl.innerHTML = `
+          <div class="flex items-center justify-between w-full">
+            <span class="text-zinc-500 text-[11px]">Les fichiers placés ici sont masqués mais restent intacts sur le stockage GitHub. Cliquez sur <strong>Restaurer</strong> pour les réintégrer.</span>
+            <button onclick="setCurrentFolder(null)" class="text-black font-semibold text-xs hover:underline ml-2">← Racine</button>
+          </div>
+        `;
+      } else if (currentFolder) {
+        filteredFiles = allFiles.map((f, i) => ({ ...f, _originalIdx: i })).filter(f => f.folder === currentFolder && f.folder !== 'Corbeille');
         if (titleEl) titleEl.textContent = `Dossier: ${currentFolder}`;
         if (noticeEl) noticeEl.innerHTML = `<button onclick="setCurrentFolder(null)" class="text-black font-semibold hover:underline">Voir tous les fichiers ↗</button>`;
       } else {
-        filteredFiles = allFiles.map((f, i) => ({ ...f, _originalIdx: i }));
+        filteredFiles = allFiles.map((f, i) => ({ ...f, _originalIdx: i })).filter(f => f.folder !== 'Corbeille');
         if (titleEl) titleEl.textContent = 'Tous les fichiers';
         if (noticeEl) noticeEl.textContent = 'Cliquez sur un dossier ci-dessus pour filtrer';
       }
@@ -2006,12 +2105,18 @@
 
       if (filteredFiles.length === 0) {
         const tr = document.createElement('tr');
+        const emptyMsg = currentFolder === 'Corbeille' 
+          ? 'La corbeille est vide.' 
+          : `Aucun fichier ${currentFolder ? `dans "${currentFolder}"` : 'disponible'}.`;
+        const emptyHint = currentFolder === 'Corbeille' 
+          ? 'Aucun fichier n\'a été placé en corbeille.' 
+          : 'Utilisez le bouton "+ Ajouter fichier" pour téléverser des documents.';
+
         tr.innerHTML = `
           <td colspan="6" class="py-8 text-center text-zinc-400">
             <div class="space-y-1">
-              
-              <div class="text-xs font-semibold text-zinc-600">Aucun fichier ${currentFolder ? `dans "${currentFolder}"` : 'disponible'}.</div>
-              <div class="text-[11px] text-zinc-400">Utilisez le bouton "+ Ajouter fichier" pour téléverser des documents dans ce dossier.</div>
+              <div class="text-xs font-semibold text-zinc-600">${emptyMsg}</div>
+              <div class="text-[11px] text-zinc-400">${emptyHint}</div>
             </div>
           </td>
         `;
@@ -2023,9 +2128,15 @@
         const canPreview = isPreviewable(f.name);
         const escapedName = (f.name || 'document').replace(/'/g, "\\'");
         const originalIdx = f._originalIdx;
-        const folderDisplay = f.folder 
-          ? `<button onclick="setCurrentFolder('${f.folder.replace(/'/g, "\\'")}')" class="px-2 py-0.5 bg-zinc-100 hover:bg-zinc-200 border border-zinc-200 rounded text-[10px] font-semibold text-black transition">${f.folder}</button>`
-          : `<span class="text-zinc-400 text-[10px] font-mono">Racine</span>`;
+
+        let folderDisplay = '';
+        if (f.folder === 'Corbeille') {
+          folderDisplay = `<span class="px-2 py-0.5 bg-red-50 border border-red-200 rounded text-[10px] font-semibold text-red-700" title="Origine : ${f._previousFolder || 'Racine'}">Corbeille (${f._previousFolder || 'Racine'})</span>`;
+        } else if (f.folder) {
+          folderDisplay = `<button onclick="setCurrentFolder('${f.folder.replace(/'/g, "\\'")}')" class="px-2 py-0.5 bg-zinc-100 hover:bg-zinc-200 border border-zinc-200 rounded text-[10px] font-semibold text-black transition">${f.folder}</button>`;
+        } else {
+          folderDisplay = `<span class="text-zinc-400 text-[10px] font-mono">Racine</span>`;
+        }
 
         const tr = document.createElement('tr');
         tr.className = 'hover:bg-gray-50';
@@ -2041,7 +2152,11 @@
           <td class="py-2.5 px-4 text-right space-x-1.5 whitespace-nowrap">
             ${canPreview ? `<button type="button" onclick="openDocumentViewer('${f.url}', '${escapedName}')" class="px-2 py-0.5 bg-black text-white rounded font-semibold text-[10px] hover:bg-zinc-800 transition">Aperçu</button>` : ''}
             <button type="button" onclick="downloadFile('${f.url}', '${escapedName}')" class="px-2 py-0.5 border border-zinc-400 bg-white text-black rounded font-semibold text-[10px] hover:bg-zinc-100 transition">Télécharger ↓</button>
-            <button type="button" onclick="openMoveFileModal(${originalIdx})" class="px-2 py-0.5 border border-zinc-300 bg-zinc-50 text-black rounded font-semibold text-[10px] hover:bg-zinc-200 transition" title="Déplacer vers un autre dossier">Déplacer ↗</button>
+            ${f.folder === 'Corbeille' 
+              ? `<button type="button" onclick="restoreFile(${originalIdx})" class="px-2 py-0.5 border border-zinc-400 bg-white text-black rounded font-semibold text-[10px] hover:bg-zinc-100 transition" title="Restaurer le fichier vers son dossier d'origine">Restaurer</button>`
+              : `<button type="button" onclick="openMoveFileModal(${originalIdx})" class="px-2 py-0.5 border border-zinc-300 bg-zinc-50 text-black rounded font-semibold text-[10px] hover:bg-zinc-200 transition" title="Déplacer vers un autre dossier">Déplacer ↗</button>
+                 <button type="button" onclick="moveToTrash(${originalIdx})" class="px-2 py-0.5 border border-red-200 bg-white text-red-600 rounded font-semibold text-[10px] hover:bg-red-50 hover:border-red-300 transition" title="Placer dans la Corbeille (conservé en sécurité sur GitHub)">Supprimer</button>`
+            }
           </td>
         `;
         tbody.appendChild(tr);
@@ -2052,7 +2167,7 @@
       const filesList = e.target.files ? Array.from(e.target.files) : [];
       if (!filesList.length) return;
 
-      const targetFolder = state.currentFolder;
+      const targetFolder = state.currentFolder === 'Corbeille' ? null : state.currentFolder;
       showSaveIndicator(`Téléversement de ${filesList.length} fichier(s)...`);
       for (const f of filesList) {
         await uploadSingleFileToGitHub(f, 'Fichier', targetFolder);
