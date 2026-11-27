@@ -1,6 +1,6 @@
 {
   "_version": 531,
-  "_localModified": 1795781740835,
+  "_localModified": 1795781751687,
   "project": {
     "title": "SAÉ BUT3 GEII Troyes - Supervision & Avancement",
     "sub_title": "Véhicule Autonome et Domotique (Promo 2025-2026)",
@@ -315,7 +315,10 @@
       "date": "2026-11-25 14:00",
       "size": "Lien Wiki Officiel",
       "category": "Documentation",
-      "folder": "Documentation"
+      "folder": "Corbeille",
+      "_previousFolder": "Documentation",
+      "deletedAt": "2026-11-27T12:15:51.678Z",
+      "deletedBy": "damou"
     },
     {
       "name": "Cahier_des_Charges_SAE_GEII (1).docx",
