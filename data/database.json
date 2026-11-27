@@ -1,6 +1,6 @@
 {
-  "_version": 531,
-  "_localModified": 1795789074514,
+  "_version": 541,
+  "_localModified": 1795789403757,
   "project": {
     "title": "SAÉ BUT3 GEII Troyes - Supervision & Avancement",
     "sub_title": "Véhicule Autonome et Domotique (Promo 2025-2026)",
@@ -96,7 +96,8 @@
       "status": "in_progress",
       "branch": "task/t101-f11-alim-batteries",
       "creator": "damou",
-      "createdAt": "2026-11-27T10:55:00.000Z"
+      "createdAt": "2026-11-27T10:55:00.000Z",
+      "updatedAt": "2026-11-27T15:23:23Z"
     },
     {
       "id": "T102",
@@ -108,10 +109,11 @@
       "assignee": "damou",
       "milestone": "L1",
       "desc": "Volet 1 : Kart — Recharge Solaire & Borne.\n\nDescription synthétique : 8 panneaux PV (2000 Wc, 4S2P), régulateur MPPT, batterie tampon 50 Ah (< 6 h).\n\nSpécifications clés : 2000 Wc, MPPT 250V/50A, tampon 50 Ah, rendement > 85%.\nNiveau de difficulté : 6.0/10 (Moyenne).\nJustification : Dimensionnement électrotechnique, relevés I(V), interconnexion sécurisée borne/kart (NF EN 61851) et protections AC/DC.",
-      "status": "todo",
+      "status": "in_progress",
       "branch": "task/t102-f12-recharge-solaire",
       "creator": "damou",
-      "createdAt": "2026-11-27T10:55:00.000Z"
+      "createdAt": "2026-11-27T10:55:00.000Z",
+      "updatedAt": "2026-11-27T15:23:23Z"
     },
     {
       "id": "T103",
@@ -126,7 +128,8 @@
       "status": "in_progress",
       "branch": "task/t103-f13-maintien-voie",
       "creator": "damou",
-      "createdAt": "2026-11-27T10:55:00.000Z"
+      "createdAt": "2026-11-27T10:55:00.000Z",
+      "updatedAt": "2026-11-27T15:23:23Z"
     },
     {
       "id": "T104",
@@ -141,7 +144,8 @@
       "status": "todo",
       "branch": "task/t104-f14-stationnement-auto",
       "creator": "damou",
-      "createdAt": "2026-11-27T10:55:00.000Z"
+      "createdAt": "2026-11-27T10:55:00.000Z",
+      "updatedAt": "2026-11-27T15:23:23Z"
     },
     {
       "id": "T111",
@@ -156,7 +160,8 @@
       "status": "todo",
       "branch": "task/t111-supervision-kart-ecran",
       "creator": "bouras",
-      "createdAt": "2026-11-27T11:08:00.000Z"
+      "createdAt": "2026-11-27T11:08:00.000Z",
+      "updatedAt": "2026-11-27T15:23:23Z"
     },
     {
       "id": "T105",
@@ -171,7 +176,8 @@
       "status": "todo",
       "branch": "task/t105-f21-recup-chaleur-ltg",
       "creator": "damou",
-      "createdAt": "2026-11-27T10:55:00.000Z"
+      "createdAt": "2026-11-27T10:55:00.000Z",
+      "updatedAt": "2026-11-27T15:23:23Z"
     },
     {
       "id": "T106",
@@ -186,7 +192,8 @@
       "status": "todo",
       "branch": "task/t106-f22-refroidissement-nocturne",
       "creator": "damou",
-      "createdAt": "2026-11-27T10:55:00.000Z"
+      "createdAt": "2026-11-27T10:55:00.000Z",
+      "updatedAt": "2026-11-27T15:23:23Z"
     },
     {
       "id": "T107",
@@ -198,10 +205,11 @@
       "assignee": "locko",
       "milestone": "L1",
       "desc": "Volet 2 : GTB — Pilotage éclairage.\n\nDescription synthétique : Détection de présence (PIR/micro-ondes) + luxmétrie, extinction progressive (2 à 5 min).\n\nSpécifications clés : Capteurs PIR/micro-ondes + luxmètre, tempo 2 à 5 min.\nNiveau de difficulté : 3.0/10 (Faible).\nJustification : Standard en domotique : câblage capteurs, réglage des seuils de luminosité et temporisations.",
-      "status": "todo",
+      "status": "in_progress",
       "branch": "task/t107-f23-pilotage-eclairage",
       "creator": "damou",
-      "createdAt": "2026-11-27T10:55:00.000Z"
+      "createdAt": "2026-11-27T10:55:00.000Z",
+      "updatedAt": "2026-11-27T15:23:23Z"
     },
     {
       "id": "T108",
@@ -213,10 +221,11 @@
       "assignee": "elghazouani",
       "milestone": "L1",
       "desc": "Volet 2 : GTB — Accès & Sécurité (Salle 3D).\n\nDescription synthétique : Badge RFID/digicode journalisé, détection COV/fumée, coupure puissance à 30 °C.\n\nSpécifications clés : RFID/digicode, T 18-25 °C, COV/fumée, disjonction >= 30 °C.\nNiveau de difficulté : 6.0/10 (Moyenne).\nJustification : Gestion de base de données badges, sécurité incendie/thermique avec disjonction relais sur imprimantes 3D.",
-      "status": "todo",
+      "status": "in_progress",
       "branch": "task/t108-f24-acces-securite-3d",
       "creator": "damou",
-      "createdAt": "2026-11-27T10:55:00.000Z"
+      "createdAt": "2026-11-27T10:55:00.000Z",
+      "updatedAt": "2026-11-27T15:23:23Z"
     },
     {
       "id": "T109",
@@ -231,7 +240,8 @@
       "status": "todo",
       "branch": "task/t109-f25-arrosage-automatique",
       "creator": "damou",
-      "createdAt": "2026-11-27T10:55:00.000Z"
+      "createdAt": "2026-11-27T10:55:00.000Z",
+      "updatedAt": "2026-11-27T15:23:23Z"
     },
     {
       "id": "T110",
@@ -246,10 +256,21 @@
       "status": "todo",
       "branch": "task/t110-f26-bus-supervision-mqtt",
       "creator": "damou",
-      "createdAt": "2026-11-27T10:55:00.000Z"
+      "createdAt": "2026-11-27T10:55:00.000Z",
+      "updatedAt": "2026-11-27T15:23:23Z"
     }
   ],
   "journal": [
+    {
+      "id": "J9525",
+      "title": "Shema",
+      "author": "damou",
+      "date": "2026-11-27 13:18",
+      "text": "Avancement schéma et dimensionnement",
+      "category": "Technique",
+      "status": "in_progress",
+      "taskId": "T102"
+    },
     {
       "id": "J3064",
       "date": "2026-11-26 18:47",
