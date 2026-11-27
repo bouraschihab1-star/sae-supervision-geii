@@ -1,6 +1,6 @@
 {
   "_version": 531,
-  "_localModified": 1795781762200,
+  "_localModified": 1795781929528,
   "project": {
     "title": "SAÉ BUT3 GEII Troyes - Supervision & Avancement",
     "sub_title": "Véhicule Autonome et Domotique (Promo 2025-2026)",
@@ -288,6 +288,32 @@
           "size": "294 KB"
         }
       ]
+    },
+    {
+      "id": "J9525",
+      "date": "2026-11-27 13:18",
+      "author": "damou",
+      "title": "Shema",
+      "content": "realisation de shemas generaux sur la borne de recharge",
+      "taskId": "T102",
+      "tags": [
+        "T102",
+        "Avancement"
+      ],
+      "file": {
+        "name": "borne de recharge.pdf",
+        "url": "https://raw.githubusercontent.com/bouraschihab1-star/sae-supervision-geii/main/uploads/1795781928174_borne_de_recharge.pdf",
+        "size": "96 KB",
+        "folder": null
+      },
+      "files": [
+        {
+          "name": "borne de recharge.pdf",
+          "url": "https://raw.githubusercontent.com/bouraschihab1-star/sae-supervision-geii/main/uploads/1795781928174_borne_de_recharge.pdf",
+          "size": "96 KB",
+          "folder": null
+        }
+      ]
     }
   ],
   "files": [
@@ -412,6 +438,14 @@
       "date": "2026-11-27 10:51",
       "category": "Livrable",
       "folder": "Livrables"
+    },
+    {
+      "name": "borne de recharge.pdf",
+      "url": "https://raw.githubusercontent.com/bouraschihab1-star/sae-supervision-geii/main/uploads/1795781928174_borne_de_recharge.pdf",
+      "uploader": "damou",
+      "date": "2026-11-27 13:18",
+      "category": "Journal",
+      "folder": null
     }
   ],
   "folders": [
