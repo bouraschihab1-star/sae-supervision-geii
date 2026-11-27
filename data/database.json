@@ -1,6 +1,6 @@
 {
   "_version": 531,
-  "_localModified": 1795781943989,
+  "_localModified": 1795784906043,
   "project": {
     "title": "SAÉ BUT3 GEII Troyes - Supervision & Avancement",
     "sub_title": "Véhicule Autonome et Domotique (Promo 2025-2026)",
@@ -93,7 +93,7 @@
       "assignee": "diouf",
       "milestone": "L1",
       "desc": "Volet 1 : Kart — Alimentation & Batteries.\n\nDescription synthétique : Pack 48 V DC (20-30 Ah), coupe-circuit d'urgence bipolaire et fusible calibré.\n\nSpécifications clés : 48V DC (42-54,6V), 1-1,5 kWh, fusible 120% Inom.\nNiveau de difficulté : 5.0/10 (Moyenne).\nJustification : Expertise des batteries existantes, bilan de puissance, câblage de puissance et conformité sécurité (NF EN 60204-1).",
-      "status": "todo",
+      "status": "in_progress",
       "branch": "task/t101-f11-alim-batteries",
       "creator": "damou",
       "createdAt": "2026-11-27T10:55:00.000Z"
