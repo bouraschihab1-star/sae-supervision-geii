@@ -2,6 +2,9 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Supervision</title>
   <script src="https://cdn.tailwindcss.com"></script>
@@ -795,79 +798,97 @@
       }
     }
 
-    function mergeDatabases(localDb, remoteDb, targetTaskId = null) {
+    function mergeDatabases(localDb, remoteDb, action = {}) {
       if (!remoteDb) return localDb;
       if (!localDb) return remoteDb;
 
       const merged = { ...remoteDb };
 
-      // 1. Fusion fine des tâches (Tasks)
-      const remoteTasks = remoteDb.tasks || [];
-      const localTasks = localDb.tasks || [];
-      const taskMap = new Map();
-      remoteTasks.forEach(t => taskMap.set(t.id, { ...t }));
-
-      localTasks.forEach(lt => {
-        const rt = taskMap.get(lt.id);
-        if (!rt) {
-          taskMap.set(lt.id, lt);
-        } else {
-          // Si cette tâche est celle qui vient d'être manipulée par l'utilisateur courant
-          if (targetTaskId && lt.id === targetTaskId) {
-            taskMap.set(lt.id, {
-              ...rt,
-              status: lt.status,
-              updatedAt: lt.updatedAt || new Date().toISOString(),
-              updatedBy: state.currentUser || lt.updatedBy
-            });
-          } else {
-            // Comparaison par horodatage : si la version locale est plus récente
-            const localTime = lt.updatedAt ? new Date(lt.updatedAt).getTime() : 0;
-            const remoteTime = rt.updatedAt ? new Date(rt.updatedAt).getTime() : 0;
-            if (localTime > remoteTime) {
-              taskMap.set(lt.id, { ...rt, status: lt.status, updatedAt: lt.updatedAt, updatedBy: lt.updatedBy });
-            } else {
-              // Par défaut : l'état distant de l'équipe prime
-              taskMap.set(lt.id, rt);
-            }
-          }
+      // 1. TÂCHES (TASKS) : Par défaut, l'état distant fait foi absolue !
+      const remoteTasks = (remoteDb.tasks || []).map(t => ({ ...t }));
+      if (action && action.type === 'moveTask') {
+        const target = remoteTasks.find(t => t.id === action.taskId);
+        if (target) {
+          target.status = action.newStatus;
+          target.updatedAt = new Date().toISOString();
+          target.updatedBy = state.currentUser || target.updatedBy;
         }
-      });
-      merged.tasks = Array.from(taskMap.values());
+        merged.tasks = remoteTasks;
+      } else if (action && action.type === 'createTask') {
+        merged.tasks = [...remoteTasks.filter(t => t.id !== action.task.id), action.task];
+      } else if (action && action.type === 'deleteTask') {
+        merged.tasks = remoteTasks.filter(t => t.id !== action.taskId);
+      } else if (action && action.type === 'gitBranch') {
+        const target = remoteTasks.find(t => t.id === action.taskId);
+        if (target) target.branch = action.branchName;
+        merged.tasks = remoteTasks;
+      } else {
+        // TOUTES LES AUTRES ACTIONS (Upload fichiers, Journal, Corbeille, Dossiers) :
+        // LES TÂCHES NE SONT JAMAIS TOUCHÉES !
+        merged.tasks = remoteTasks;
+      }
 
-      // 2. Fusion du journal (Journal entries sans perte)
-      const journalMap = new Map();
-      (remoteDb.journal || []).forEach(j => journalMap.set(j.id, j));
-      (localDb.journal || []).forEach(j => {
-        if (!journalMap.has(j.id)) journalMap.set(j.id, j);
-        else {
-          const rj = journalMap.get(j.id);
-          journalMap.set(j.id, { ...rj, ...j });
-        }
-      });
-      merged.journal = Array.from(journalMap.values());
+      // 2. JOURNAL (JOURNAL)
+      const remoteJournal = (remoteDb.journal || []).map(j => ({ ...j }));
+      if (action && action.type === 'addJournal' && action.entry) {
+        merged.journal = [action.entry, ...remoteJournal.filter(j => j.id !== action.entry.id)];
+      } else {
+        merged.journal = remoteJournal;
+      }
       merged.journal.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
 
-      // 3. Fusion des fichiers (Files sans perte)
-      const fileMap = new Map();
-      (remoteDb.files || []).forEach(f => fileMap.set(f.name + '|' + (f.url || ''), f));
-      (localDb.files || []).forEach(f => {
-        const key = f.name + '|' + (f.url || '');
-        if (!fileMap.has(key)) {
-          fileMap.set(key, f);
-        } else {
-          const rf = fileMap.get(key);
-          if (f.folder === 'Corbeille' || rf.folder === 'Corbeille') {
-            fileMap.set(key, { ...rf, folder: 'Corbeille', _previousFolder: f._previousFolder || rf._previousFolder });
-          } else {
-            fileMap.set(key, { ...rf, ...f });
+      // 3. FICHIERS (FILES)
+      const remoteFiles = (remoteDb.files || []).map(f => ({ ...f }));
+      if (action && action.type === 'uploadFiles' && Array.isArray(action.newFiles)) {
+        const existingUrls = new Set(remoteFiles.map(f => f.url || f.name));
+        const newItems = [];
+        action.newFiles.forEach(f => {
+          if (!existingUrls.has(f.url || f.name)) {
+            newItems.push({
+              name: f.name,
+              url: f.url,
+              uploader: state.currentUser || 'anonyme',
+              date: getNowFormattedMinute(),
+              category: 'Fichier',
+              folder: f.folder || null
+            });
+            existingUrls.add(f.url || f.name);
           }
+        });
+        merged.files = [...newItems, ...remoteFiles];
+      } else if (action && action.type === 'trashFile') {
+        const target = remoteFiles.find(f => f.name === action.fileName);
+        if (target) {
+          target._previousFolder = target.folder || null;
+          target.folder = 'Corbeille';
+          target.deletedAt = new Date().toISOString();
+          target.deletedBy = state.currentUser;
         }
-      });
-      merged.files = Array.from(fileMap.values());
+        merged.files = remoteFiles;
+      } else if (action && action.type === 'restoreFile') {
+        const target = remoteFiles.find(f => f.name === action.fileName);
+        if (target) {
+          target.folder = (target._previousFolder && target._previousFolder !== 'Corbeille') ? target._previousFolder : null;
+          delete target._previousFolder;
+          delete target.deletedAt;
+          delete target.deletedBy;
+        }
+        merged.files = remoteFiles;
+      } else if (action && action.type === 'moveFile') {
+        const target = remoteFiles.find(f => f.name === action.fileName);
+        if (target) {
+          target.folder = action.targetFolder || null;
+          delete target._previousFolder;
+        }
+        merged.files = remoteFiles;
+      } else {
+        merged.files = remoteFiles;
+      }
 
-      // 4. Dossiers (Folders)
-      const foldersSet = new Set([...(remoteDb.folders || []), ...(localDb.folders || [])]);
+      // 4. DOSSIERS (FOLDERS)
+      const foldersSet = new Set(remoteDb.folders || []);
+      if (action && action.type === 'createFolder') foldersSet.add(action.folderName);
+      if (action && action.type === 'deleteFolder') foldersSet.delete(action.folderName);
       foldersSet.delete('Corbeille');
       const foldersArr = Array.from(foldersSet);
       if (foldersArr.includes('Cahier des charges fini')) {
@@ -876,6 +897,7 @@
         merged.folders = foldersArr;
       }
 
+      merged._version = (remoteDb._version || 500) + 1;
       merged._localModified = Date.now();
       return merged;
     }
@@ -894,7 +916,7 @@
       }
 
       try {
-        // 2. Si un token GitHub est configuré : la version GitHub distante fait foi
+        // 2. Si un token GitHub est configuré : la version GitHub distante fait foi absolue
         if (state.token) {
           const resp = await fetch(GITHUB_API_URL + `?_t=${Date.now()}`, {
             headers: { 'Authorization': `token ${state.token}`, 'Accept': 'application/vnd.github.v3+json' }
@@ -923,7 +945,7 @@
       }
     }
 
-    async function saveDb(commitMsg, targetTaskId = null) {
+    async function saveDb(commitMsg, action = {}) {
       if (!state.db) return;
       state.db._localModified = Date.now();
       localStorage.setItem('sae_db_cache', JSON.stringify(state.db));
@@ -936,7 +958,7 @@
       showSaveIndicator('Synchronisation GitHub...');
 
       try {
-        // 1. Récupérer la dernière version distante pour fusionner sans écraser le travail de l'équipe
+        // 1. Récupérer la dernière version distante pour fusionner sans jamais écraser le travail de l'équipe
         const shaRes = await fetch(GITHUB_API_URL + `?_t=${Date.now()}`, {
           headers: { 'Authorization': `token ${state.token}`, 'Accept': 'application/vnd.github.v3+json' }
         });
@@ -946,7 +968,7 @@
           if (shaData.content) {
             try {
               const remoteDb = JSON.parse(decodeURIComponent(escape(atob(shaData.content))));
-              state.db = mergeDatabases(state.db, remoteDb, targetTaskId);
+              state.db = mergeDatabases(state.db, remoteDb, action);
             } catch (err) {
               console.warn('Erreur décodage remoteDb dans saveDb:', err);
             }
@@ -984,7 +1006,7 @@
             state.fileSha = refData.sha;
             if (refData.content) {
               const freshRemote = JSON.parse(decodeURIComponent(escape(atob(refData.content))));
-              state.db = mergeDatabases(state.db, freshRemote, targetTaskId);
+              state.db = mergeDatabases(state.db, freshRemote, action);
             }
             const retryContent = btoa(unescape(encodeURIComponent(JSON.stringify(state.db, null, 2))));
             const retryRes = await fetch(GITHUB_API_URL, {
@@ -1039,7 +1061,7 @@
             }
           }
         } catch (e) {
-          // Erreur réseau passagère, silencieux
+          // Silencieux
         }
       }, 6000);
     }
@@ -1320,7 +1342,7 @@
         renderKanban();
         renderStats();
         renderChart();
-        await saveDb(`Tâche déplacée: ${t.title}`, id);
+        await saveDb(`Tâche déplacée: ${t.title}`, { type: "moveTask", taskId: id, newStatus: steps[idx] });
       }
     }
 
@@ -1386,7 +1408,7 @@
       showSaveIndicator('Création de la branche sur GitHub...');
       const ok = await createGitHubBranch(branchName);
       if (ok) {
-        await saveDb(`Branche Git créée: ${branchName}`);
+        await saveDb(`Branche Git créée: ${branchName}`, { type: "gitBranch", taskId, branchName });
         openTaskDetailsModal(taskId);
         renderKanban();
         alert(`Branche Git "${branchName}" créée avec succès sur GitHub !`);
@@ -1438,7 +1460,7 @@
       renderChart();
       renderMembers();
       renderJournal();
-      await saveDb(`Nouvelle tâche [${newTask.id}]: ${newTask.title}`);
+      await saveDb(`Nouvelle tâche [${newTask.id}]: ${newTask.title}`, { type: "createTask", task: newTask });
 
       if (branchName && state.token) {
         createGitHubBranch(branchName).then(ok => {
@@ -1480,7 +1502,7 @@
       renderChart();
       renderMembers();
       renderJournal();
-      await saveDb(`Tâche supprimée: ${t.title}`);
+      await saveDb(`Tâche supprimée: ${t.title}`, { type: "deleteTask", taskId: id });
     }
 
     let currentViewerUrl = '';
@@ -1776,7 +1798,7 @@
       renderJournal();
       renderKanban();
       generateAuditText();
-      await saveDb(`Journal: ${entry.title}`);
+      await saveDb(`Journal: ${entry.title}`, { type: "addJournal", entry });
     }
 
     // OUVERTURE DE LA VUE DÉTAILLÉE D'UNE TÂCHE ET DE SES EFFETS JOURNALIERS
@@ -1926,7 +1948,7 @@
       renderKanban();
       generateAuditText();
       openTaskDetailsModal(taskId); // recharger les entrées dans la vue de la tâche
-      await saveDb(`Journal: [${taskId}] ${entry.title}`);
+      await saveDb(`Journal: [${taskId}] ${entry.title}`, { type: "addJournal", entry });
     }
 
     function getFolders() {
@@ -1976,7 +1998,7 @@
       state.db.folders.push(name);
       closeModal('createFolderModal');
       setCurrentFolder(name);
-      await saveDb(`Création du dossier: ${name}`);
+      await saveDb(`Création du dossier: ${name}`, { type: "createFolder", folderName: name });
       showSaveIndicator(`✓ Dossier "${name}" créé`);
     }
 
@@ -1997,7 +2019,7 @@
         state.currentFolder = null;
       }
       renderFiles();
-      await saveDb(`Suppression du dossier: ${folderName}`);
+      await saveDb(`Suppression du dossier: ${folderName}`, { type: "deleteFolder", folderName });
       showSaveIndicator(`✓ Dossier "${folderName}" supprimé`);
     }
 
@@ -2044,7 +2066,7 @@
       closeModal('moveFileModal');
       renderFiles();
       const destName = targetFolder ? targetFolder : 'Racine';
-      await saveDb(`Déplacement de ${f.name} vers ${destName}`);
+      await saveDb(`Déplacement de ${f.name} vers ${destName}`, { type: "moveFile", fileName: f.name, targetFolder });
       showSaveIndicator(`✓ Déplacé vers ${destName}`);
     }
 
@@ -2060,7 +2082,7 @@
       f.deletedBy = state.currentUser || 'anonyme';
 
       renderFiles();
-      await saveDb(`Mise en corbeille: ${f.name}`);
+      await saveDb(`Mise en corbeille: ${f.name}`, { type: "trashFile", fileName: f.name });
       showSaveIndicator(`✓ "${f.name}" placé dans la Corbeille`);
     }
 
@@ -2075,7 +2097,7 @@
 
       renderFiles();
       const destName = targetFolder ? `dossier "${targetFolder}"` : 'la Racine';
-      await saveDb(`Restauration de ${f.name} vers ${targetFolder || 'Racine'}`);
+      await saveDb(`Restauration de ${f.name} vers ${targetFolder || "Racine"}`, { type: "restoreFile", fileName: f.name });
       showSaveIndicator(`✓ "${f.name}" restauré dans ${destName}`);
     }
 
@@ -2295,12 +2317,14 @@
 
       const targetFolder = state.currentFolder === 'Corbeille' ? null : state.currentFolder;
       showSaveIndicator(`Téléversement de ${filesList.length} fichier(s)...`);
+      const uploadedFiles = [];
       for (const f of filesList) {
-        await uploadSingleFileToGitHub(f, 'Fichier', targetFolder);
+        const res = await uploadSingleFileToGitHub(f, 'Fichier', targetFolder);
+        if (res) uploadedFiles.push(res);
       }
       renderFiles();
       const folderNote = targetFolder ? ` dans "${targetFolder}"` : '';
-      await saveDb(`${filesList.length} fichier(s) ajouté(s)${folderNote}`);
+      await saveDb(`${filesList.length} fichier(s) ajouté(s)${folderNote}`, { type: 'uploadFiles', newFiles: uploadedFiles });
       e.target.value = '';
     }
 
