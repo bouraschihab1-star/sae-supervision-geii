@@ -1,6 +1,6 @@
 {
-  "_version": 506,
-  "_localModified": 1795773055299,
+  "_version": 511,
+  "_localModified": 1795773098500,
   "project": {
     "title": "SAÉ BUT3 GEII Troyes - Supervision & Avancement",
     "sub_title": "Véhicule Autonome et Domotique (Promo 2025-2026)",
@@ -131,7 +131,8 @@
       "uploader": "bouras",
       "date": "2026-11-27",
       "size": "397 KB (9 pages)",
-      "category": "Cahier des Charges"
+      "category": "Cahier des Charges",
+      "folder": "Cahier des Charges"
     },
     {
       "name": "cahier_des_charges_geii_s5.pdf",
@@ -139,7 +140,8 @@
       "uploader": "bouras",
       "date": "2026-11-25",
       "size": "Lien Wiki Officiel",
-      "category": "Documentation"
+      "category": "Documentation",
+      "folder": "Documentation"
     },
     {
       "name": "Cahier_des_Charges_SAE_GEII (1).docx",
@@ -147,70 +149,87 @@
       "uploader": "locko",
       "date": "2026-11-26",
       "size": "Document Word",
-      "category": "Livrable"
+      "category": "Livrable",
+      "folder": "Cahier des Charges"
     },
     {
       "name": "Cahier_des_Charges_SAE_BUT3_GEII_LinkedInStyle.pdf",
       "url": "https://raw.githubusercontent.com/bouraschihab1-star/sae-supervision-geii/main/uploads/1795717021284_Cahier_des_Charges_SAE_BUT3_GEII_LinkedInStyle.pdf",
       "uploader": "bouras",
       "date": "2026-11-26",
-      "category": "Fichier"
+      "category": "Fichier",
+      "folder": "Cahier des Charges"
     },
     {
       "name": "IMG_9315.jpeg",
       "url": "https://raw.githubusercontent.com/bouraschihab1-star/sae-supervision-geii/main/uploads/1795744072522_IMG_9315.jpeg",
       "uploader": "bouras",
       "date": "2026-11-27",
-      "category": "Fichier"
+      "category": "Fichier",
+      "folder": "Photos & Schémas"
     },
     {
       "name": "IMG_9314.jpeg",
       "url": "https://raw.githubusercontent.com/bouraschihab1-star/sae-supervision-geii/main/uploads/1795744076160_IMG_9314.jpeg",
       "uploader": "bouras",
       "date": "2026-11-27",
-      "category": "Fichier"
+      "category": "Fichier",
+      "folder": "Photos & Schémas"
     },
     {
       "name": "IMG_9309.jpeg",
       "url": "https://raw.githubusercontent.com/bouraschihab1-star/sae-supervision-geii/main/uploads/1795744079230_IMG_9309.jpeg",
       "uploader": "bouras",
       "date": "2026-11-27",
-      "category": "Fichier"
+      "category": "Fichier",
+      "folder": "Photos & Schémas"
     },
     {
       "name": "IMG_9306.jpeg",
       "url": "https://raw.githubusercontent.com/bouraschihab1-star/sae-supervision-geii/main/uploads/1795744081484_IMG_9306.jpeg",
       "uploader": "bouras",
       "date": "2026-11-27",
-      "category": "Fichier"
+      "category": "Fichier",
+      "folder": "Photos & Schémas"
     },
     {
       "name": "Cahier_des_Charges_SAE_GEII.docx-1.pdf",
       "url": "https://raw.githubusercontent.com/bouraschihab1-star/sae-supervision-geii/main/uploads/1795768636418_Cahier_des_Charges_SAE_GEII.docx-1.pdf",
       "uploader": "damou",
       "date": "2026-11-27",
-      "category": "Fichier"
+      "category": "Fichier",
+      "folder": "Cahier des Charges"
     },
     {
       "name": "Cahier_des_Charges_SAE_GEII_Damou_LinkedInStyle.pdf",
       "url": "https://raw.githubusercontent.com/bouraschihab1-star/sae-supervision-geii/main/uploads/1795770141850_Cahier_des_Charges_SAE_GEII_Damou_LinkedInStyle.pdf",
       "uploader": "bouras",
       "date": "2026-11-27",
-      "category": "Fichier"
+      "category": "Fichier",
+      "folder": "Cahier des Charges"
     },
     {
       "name": "Cahier_des_Charges_SAE_GEII_Damou_LinkedInStyle.pdf",
       "url": "https://raw.githubusercontent.com/bouraschihab1-star/sae-supervision-geii/main/uploads/1795770917840_Cahier_des_Charges_SAE_GEII_Damou_LinkedInStyle.pdf",
       "uploader": "bouras",
       "date": "2026-11-27",
-      "category": "Journal"
+      "category": "Journal",
+      "folder": "Cahier des Charges"
     },
     {
       "name": "Analyse_Fonctions_Difficulte_SAE_GEII.xlsx",
-      "url": "https://raw.githubusercontent.com/bouraschihab1-star/sae-supervision-geii/main/uploads/1795773054083_Analyse_Fonctions_Difficulte_SAE_GEII.xlsx",
+      "url": "https://raw.githubusercontent.com/bouraschihab1-star/sae-supervision-geii/main/uploads/1795773097300_Analyse_Fonctions_Difficulte_SAE_GEII.xlsx",
       "uploader": "damou",
-      "date": "2026-11-27",
-      "category": "Fichier"
+      "date": "2026-11-27 10:51",
+      "category": "Fichier",
+      "folder": null
     }
+  ],
+  "folders": [
+    "Cahier des Charges",
+    "Photos & Schémas",
+    "Documentation",
+    "Livrables",
+    "Codes & Sources"
   ]
 }
