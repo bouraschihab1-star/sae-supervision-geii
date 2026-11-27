@@ -723,6 +723,7 @@
       updateCountdown();
       await loadDb();
       renderAll();
+      startAutoSync();
     });
 
     function getNowFormattedMinute() {
@@ -794,8 +795,93 @@
       }
     }
 
+    function mergeDatabases(localDb, remoteDb, targetTaskId = null) {
+      if (!remoteDb) return localDb;
+      if (!localDb) return remoteDb;
+
+      const merged = { ...remoteDb };
+
+      // 1. Fusion fine des tâches (Tasks)
+      const remoteTasks = remoteDb.tasks || [];
+      const localTasks = localDb.tasks || [];
+      const taskMap = new Map();
+      remoteTasks.forEach(t => taskMap.set(t.id, { ...t }));
+
+      localTasks.forEach(lt => {
+        const rt = taskMap.get(lt.id);
+        if (!rt) {
+          taskMap.set(lt.id, lt);
+        } else {
+          // Si cette tâche est celle qui vient d'être manipulée par l'utilisateur courant
+          if (targetTaskId && lt.id === targetTaskId) {
+            taskMap.set(lt.id, {
+              ...rt,
+              status: lt.status,
+              updatedAt: lt.updatedAt || new Date().toISOString(),
+              updatedBy: state.currentUser || lt.updatedBy
+            });
+          } else {
+            // Comparaison par horodatage : si la version locale est plus récente
+            const localTime = lt.updatedAt ? new Date(lt.updatedAt).getTime() : 0;
+            const remoteTime = rt.updatedAt ? new Date(rt.updatedAt).getTime() : 0;
+            if (localTime > remoteTime) {
+              taskMap.set(lt.id, { ...rt, status: lt.status, updatedAt: lt.updatedAt, updatedBy: lt.updatedBy });
+            } else {
+              // Par défaut : l'état distant de l'équipe prime
+              taskMap.set(lt.id, rt);
+            }
+          }
+        }
+      });
+      merged.tasks = Array.from(taskMap.values());
+
+      // 2. Fusion du journal (Journal entries sans perte)
+      const journalMap = new Map();
+      (remoteDb.journal || []).forEach(j => journalMap.set(j.id, j));
+      (localDb.journal || []).forEach(j => {
+        if (!journalMap.has(j.id)) journalMap.set(j.id, j);
+        else {
+          const rj = journalMap.get(j.id);
+          journalMap.set(j.id, { ...rj, ...j });
+        }
+      });
+      merged.journal = Array.from(journalMap.values());
+      merged.journal.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+
+      // 3. Fusion des fichiers (Files sans perte)
+      const fileMap = new Map();
+      (remoteDb.files || []).forEach(f => fileMap.set(f.name + '|' + (f.url || ''), f));
+      (localDb.files || []).forEach(f => {
+        const key = f.name + '|' + (f.url || '');
+        if (!fileMap.has(key)) {
+          fileMap.set(key, f);
+        } else {
+          const rf = fileMap.get(key);
+          if (f.folder === 'Corbeille' || rf.folder === 'Corbeille') {
+            fileMap.set(key, { ...rf, folder: 'Corbeille', _previousFolder: f._previousFolder || rf._previousFolder });
+          } else {
+            fileMap.set(key, { ...rf, ...f });
+          }
+        }
+      });
+      merged.files = Array.from(fileMap.values());
+
+      // 4. Dossiers (Folders)
+      const foldersSet = new Set([...(remoteDb.folders || []), ...(localDb.folders || [])]);
+      foldersSet.delete('Corbeille');
+      const foldersArr = Array.from(foldersSet);
+      if (foldersArr.includes('Cahier des charges fini')) {
+        merged.folders = ['Cahier des charges fini', ...foldersArr.filter(f => f !== 'Cahier des charges fini')];
+      } else {
+        merged.folders = foldersArr;
+      }
+
+      merged._localModified = Date.now();
+      return merged;
+    }
+
     async function loadDb() {
-      // 1. Charger immédiatement le cache local existant pour éviter toute perte au rechargement
+      // 1. Charger immédiatement le cache local existant pour un affichage instantané
       const localData = localStorage.getItem('sae_db_cache');
       let localDb = null;
       if (localData) {
@@ -808,58 +894,38 @@
       }
 
       try {
-        // 2. Si un token GitHub est présent : synchroniser avec l'API GitHub
+        // 2. Si un token GitHub est configuré : la version GitHub distante fait foi
         if (state.token) {
-          const resp = await fetch(GITHUB_API_URL, {
+          const resp = await fetch(GITHUB_API_URL + `?_t=${Date.now()}`, {
             headers: { 'Authorization': `token ${state.token}`, 'Accept': 'application/vnd.github.v3+json' }
           });
           if (resp.ok) {
             const data = await resp.json();
             state.fileSha = data.sha;
-            const remoteDb = JSON.parse(decodeURIComponent(escape(atob(data.content))));
-            
-            // Si la base distante a une version supérieure (réinitialisation forcée)
-            if (remoteDb._version && (!localDb || !localDb._version || remoteDb._version > localDb._version)) {
+            if (data.content) {
+              const remoteDb = JSON.parse(decodeURIComponent(escape(atob(data.content))));
               state.db = remoteDb;
-              localStorage.setItem('sae_db_cache', JSON.stringify(state.db));
+              localStorage.setItem('sae_db_cache', JSON.stringify(remoteDb));
               return;
             }
-
-            // Si des modifications locales existent et sont plus récentes, on synchronise vers GitHub
-            if (localDb && localDb._localModified && (!remoteDb._localModified || localDb._localModified > remoteDb._localModified)) {
-              saveDb('Synchronisation des modifications locales');
-            } else {
-              state.db = remoteDb;
-              localStorage.setItem('sae_db_cache', JSON.stringify(state.db));
-            }
-            return;
           }
         }
 
-        // 3. Premier chargement initial ou réinitialisation depuis le repo public
+        // 3. Fallback raw public
         const raw = await fetch(`${GITHUB_RAW_URL}?t=${Date.now()}`);
         if (raw.ok) {
           const rawDb = await raw.json();
-          if (!localDb || (rawDb._version && (!localDb._version || rawDb._version > localDb._version))) {
-            state.db = rawDb;
-            localStorage.setItem('sae_db_cache', JSON.stringify(state.db));
-            return;
-          }
-        }
-
-        // 4. Si PAS de token GitHub : si on a déjà des modifications locales, NE PAS LES ÉCRASER !
-        if (localDb) {
-          return;
+          state.db = rawDb;
+          localStorage.setItem('sae_db_cache', JSON.stringify(rawDb));
         }
       } catch (e) {
         console.warn('Mode hors-ligne / lecture locale:', e);
       }
     }
 
-    async function saveDb(commitMsg) {
+    async function saveDb(commitMsg, targetTaskId = null) {
       if (!state.db) return;
       state.db._localModified = Date.now();
-      // Sauvegarde immédiate dans le navigateur pour garantir 0 perte au refresh
       localStorage.setItem('sae_db_cache', JSON.stringify(state.db));
 
       if (!state.token) {
@@ -870,14 +936,24 @@
       showSaveIndicator('Synchronisation GitHub...');
 
       try {
-        const shaRes = await fetch(GITHUB_API_URL, {
+        // 1. Récupérer la dernière version distante pour fusionner sans écraser le travail de l'équipe
+        const shaRes = await fetch(GITHUB_API_URL + `?_t=${Date.now()}`, {
           headers: { 'Authorization': `token ${state.token}`, 'Accept': 'application/vnd.github.v3+json' }
         });
         if (shaRes.ok) {
           const shaData = await shaRes.json();
           state.fileSha = shaData.sha;
+          if (shaData.content) {
+            try {
+              const remoteDb = JSON.parse(decodeURIComponent(escape(atob(shaData.content))));
+              state.db = mergeDatabases(state.db, remoteDb, targetTaskId);
+            } catch (err) {
+              console.warn('Erreur décodage remoteDb dans saveDb:', err);
+            }
+          }
         }
 
+        // 2. Préparation du payload avec données fusionnées
         const content = btoa(unescape(encodeURIComponent(JSON.stringify(state.db, null, 2))));
         const res = await fetch(GITHUB_API_URL, {
           method: 'PUT',
@@ -896,25 +972,38 @@
         if (res.ok) {
           const resData = await res.json();
           state.fileSha = resData.content ? resData.content.sha : state.fileSha;
+          localStorage.setItem('sae_db_cache', JSON.stringify(state.db));
           showSaveIndicator('✓ Synchronisé avec GitHub');
         } else if (res.status === 409) {
-          // Conflit de version SHA : récupérer immédiatement la dernière empreinte et retenter
-          const refetch = await fetch(GITHUB_API_URL, { headers: { 'Authorization': `token ${state.token}` } });
+          // Conflit concurrent : nouvelle tentative immédiate avec re-fusion fraîche
+          const refetch = await fetch(GITHUB_API_URL + `?_t=${Date.now()}`, {
+            headers: { 'Authorization': `token ${state.token}`, 'Accept': 'application/vnd.github.v3+json' }
+          });
           if (refetch.ok) {
-            state.fileSha = (await refetch.json()).sha;
+            const refData = await refetch.json();
+            state.fileSha = refData.sha;
+            if (refData.content) {
+              const freshRemote = JSON.parse(decodeURIComponent(escape(atob(refData.content))));
+              state.db = mergeDatabases(state.db, freshRemote, targetTaskId);
+            }
+            const retryContent = btoa(unescape(encodeURIComponent(JSON.stringify(state.db, null, 2))));
             const retryRes = await fetch(GITHUB_API_URL, {
               method: 'PUT',
               headers: { 'Authorization': `token ${state.token}`, 'Content-Type': 'application/json' },
-              body: JSON.stringify({ message: `${commitMsg} [${state.currentUser}]`, content, sha: state.fileSha, branch: 'main' })
+              body: JSON.stringify({
+                message: `${commitMsg} [${state.currentUser}]`,
+                content: retryContent,
+                sha: state.fileSha,
+                branch: 'main'
+              })
             });
             if (retryRes.ok) {
-              const resData2 = await retryRes.json();
-              state.fileSha = resData2.content ? resData2.content.sha : state.fileSha;
+              const retryData = await retryRes.json();
+              state.fileSha = retryData.content ? retryData.content.sha : state.fileSha;
+              localStorage.setItem('sae_db_cache', JSON.stringify(state.db));
               showSaveIndicator('✓ Synchronisé avec GitHub');
-              return;
             }
           }
-          showSaveIndicator('Erreur sync GitHub (409)');
         } else {
           showSaveIndicator('Erreur sync GitHub');
         }
@@ -922,6 +1011,37 @@
         console.error('Erreur saveDb:', err);
         showSaveIndicator('Erreur réseau');
       }
+    }
+
+    let autoSyncTimer = null;
+    function startAutoSync() {
+      if (autoSyncTimer) clearInterval(autoSyncTimer);
+      autoSyncTimer = setInterval(async () => {
+        if (!state.token || !state.db) return;
+        // Ne pas perturber la saisie si un modal est ouvert
+        const activeModal = document.querySelector('.modal:not(.hidden)');
+        if (activeModal && activeModal.id !== 'loginModal') return;
+
+        try {
+          const resp = await fetch(GITHUB_API_URL + `?_t=${Date.now()}`, {
+            headers: { 'Authorization': `token ${state.token}`, 'Accept': 'application/vnd.github.v3+json' }
+          });
+          if (!resp.ok) return;
+          const data = await resp.json();
+          if (data.sha && data.sha !== state.fileSha) {
+            state.fileSha = data.sha;
+            if (data.content) {
+              const remoteDb = JSON.parse(decodeURIComponent(escape(atob(data.content))));
+              state.db = mergeDatabases(state.db, remoteDb);
+              localStorage.setItem('sae_db_cache', JSON.stringify(state.db));
+              renderAll();
+              showSaveIndicator('✓ Synchronisé en direct');
+            }
+          }
+        } catch (e) {
+          // Erreur réseau passagère, silencieux
+        }
+      }, 6000);
     }
 
     function renderAll() {
@@ -1195,10 +1315,12 @@
       const idx = steps.indexOf(t.status) + dir;
       if (idx >= 0 && idx < steps.length) {
         t.status = steps[idx];
+        t.updatedAt = new Date().toISOString();
+        t.updatedBy = state.currentUser;
         renderKanban();
         renderStats();
         renderChart();
-        await saveDb(`Tâche déplacée: ${t.title}`);
+        await saveDb(`Tâche déplacée: ${t.title}`, id);
       }
     }
 
