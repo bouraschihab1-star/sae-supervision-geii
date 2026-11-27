@@ -1,6 +1,6 @@
 {
   "_version": 531,
-  "_localModified": 1795781929528,
+  "_localModified": 1795781943989,
   "project": {
     "title": "SAÉ BUT3 GEII Troyes - Supervision & Avancement",
     "sub_title": "Véhicule Autonome et Domotique (Promo 2025-2026)",
@@ -108,7 +108,7 @@
       "assignee": "damou",
       "milestone": "L1",
       "desc": "Volet 1 : Kart — Recharge Solaire & Borne.\n\nDescription synthétique : 8 panneaux PV (2000 Wc, 4S2P), régulateur MPPT, batterie tampon 50 Ah (< 6 h).\n\nSpécifications clés : 2000 Wc, MPPT 250V/50A, tampon 50 Ah, rendement > 85%.\nNiveau de difficulté : 6.0/10 (Moyenne).\nJustification : Dimensionnement électrotechnique, relevés I(V), interconnexion sécurisée borne/kart (NF EN 61851) et protections AC/DC.",
-      "status": "todo",
+      "status": "in_progress",
       "branch": "task/t102-f12-recharge-solaire",
       "creator": "damou",
       "createdAt": "2026-11-27T10:55:00.000Z"
